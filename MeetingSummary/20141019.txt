@@ -1,0 +1,46 @@
+1.phase :
+	a.  create a new client 
+	    search existing clients
+	    edit clients infomation
+	
+	b.  notification for client special status
+	    eg. birthday, spring clean reminder
+
+	!!! spring clean 
+	item name, notes, date, frequency
+	
+	reminder list every login
+		reminder active and expire
+
+	client notes just like facebook (only for admin)	
+
+	rotation, like key
+	week 1-4 , text field 
+	
+	generat PDF and email to client
+
+	c.  Invoice Generator and send out by email
+		
+	Invoice component, select client, input price and date 
+
+	
+
+user role: admin, staff, client 
+
+2.phase :
+	
+	a. manager review module
+
+	b. staff team management
+	   create new team 
+	   add/delete team members
+		
+	c. work schedule(like google calendar)
+	   work notifications for each team.
+	   SMS, Email, Print out work list 
+
+	d. auto confirm base on schedule by sending SMS to client,
+
+	if client confirm, send a SMS to team leader,
+	if team leader confirm  send a SMS to manager,
+
