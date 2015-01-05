@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html ng-app="thatCleanGirl">
+	<head>
+		<meta charset="UTF-8" /> 
+		<title>That Clean Girl</title>
+		<meta name="keywords" content="That Clean Girl">
+		<meta name="description" content="That Clean Girl">
+		<meta name="author" content="Zhong Ping" />
+		<link rel="stylesheet" type="text/css" href="./css/normalize.css" />
+		<link rel="stylesheet" type="text/css" href="./css/bootstrap.css" />
+		<link rel="stylesheet" type="text/css" href="./css/style.css" />
+	</head>
+	<body>
+		
+		<div class="header">
+			<div class="logo">LOGO</div>
+			
+			<ul class="top-menu">
+				<li class=" top-menu-item active">Client Management</li>
+				<li class=" top-menu-item hover">Staff Management</li>
+			</ul>			
+			<ul class="right-corner">
+				<li class=" right-corner-item">Logout</li>
+			</ul>
+		</div>
+		<div class="content">
+			<div class="sider">
+				<div class="sider-user-info">
+					<div class="sider-user-photo">
+						<span class="sider-user-photo-circle">
+							<img src="https://d262ilb51hltx0.cloudfront.net/fit/c/600/600/0*CiM9yeDbOtLPfTOs.jpeg" 
+							class="sider-user-photo-image" title="Jessica" >
+						</span>
+					</div>
+					<div class="sider-user-info-role">
+						Manager
+					</div>
+					<div class="sider-user-info-name">
+						Jessica
+					</div>					
+				</div>
+				<div class="sider-divider">
+				</div>
+
+				<ul class="sider-actions"> 
+					<li class="sider-actions-item active"><span class="sider-actions-item-icon">*</span>Client List</li>
+					<li class="sider-actions-item"><span class="sider-actions-item-icon">+</span>New Client</li>
+				</ul>				
+			</div>
+						
+			<div class="main">
+				<div class="client-list" style="display:none">
+					<div class="client-list-filter">
+						<div class="control-search">
+							<input class="control-search-input" type="text">
+							<div class="control-search-button">Search</div>
+						</div>
+					</div>
+					<table class="client-list-table table-hover">
+						<thead>
+							<tr>
+								<th>Client Name</th>
+								<th>TeL</th>
+								<th>Address</th>
+								<th>Frequency</th>
+								<th>Notification</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Sydney Park</td>
+								<td>+61 2 9265 9333</td>
+								<td>Sydney Park Road St Peters NSW 2044</td>
+								<td>Weekly</td>
+								<td>
+									<span class="glyphicon glyphicon-gift"></span> 
+									<span class="glyphicon glyphicon glyphicon-bell"></span>
+								</td>
+							</tr>
+							<tr>
+								<td>Sydney Park</td>
+								<td>+61 2 9265 9333</td>
+								<td>Sydney Park Road St Peters NSW 2044</td>
+								<td>Weekly</td>
+								<td> 
+									<span class="glyphicon glyphicon glyphicon-bell"></span>
+								</td>
+							</tr>
+							<tr>
+								<td>Sydney Park</td>
+								<td>+61 2 9265 9333</td>
+								<td>Sydney Park Road St Peters NSW 2044</td>
+								<td>Weekly</td>
+								<td> 
+									<span class="glyphicon glyphicon glyphicon-bell"></span>
+								</td>
+							</tr>
+							<tr>
+								<td>Sydney Park</td>
+								<td>+61 2 9265 9333</td>
+								<td>Sydney Park Road St Peters NSW 2044</td>
+								<td>Weekly</td>
+								<td> 
+									<span class="glyphicon glyphicon glyphicon-bell"></span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="create-client">
+					<div class="create-section">
+						<div class="create-section-header">
+							<span class="create-section-header-square">
+							</span>
+							<span class="create-section-header-title">
+							Client Info
+							<span>
+						</div>
+						<div class="create-section-body">
+							<div class="form-row">
+								<div class="form-group">
+									<label for="clientInfoName">Client Name</label>									
+									<input id="clientInfoName" class="form-control" type="text">
+								</div>
+								<div class="form-group">
+									<label for="clientInfoName">Driver License</label>						
+									<input id="clientInfoName" class="form-control" type="text">
+								</div>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			
+		</div>
+		
+		<div class="footer">
+			<div>footer</div>
+		</div>	
+			
+	</body>
+	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="js/angular.min.js"></script>
+	<script type="text/javascript" src="js/app.js"></script>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
