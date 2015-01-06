@@ -254,8 +254,53 @@ table {
 .create-section-body{
 	min-height:100px;
 	background-color:#fff;
-	padding:15px 25px;
+	padding:10px 15px;
 }
+.form-row{
+	width:100%;
+	
+}
+.form-group{
+	float:left;
+	display:table;
+	margin-right:30px;
+	margin-bottom:20px;
+}
+.form-control-label{
+	display:table-cell;
+	width:90px;	
+	font-size:12px;
+	font-weight:bold;
+	color: #333;
+	line-height:1;
+	text-align:right;
+}
+.form-control{
+	display:table-cell;
+	width: 100%;
+	height: 25px;
+	padding: 3px 6px;
+	margin-left:15px;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;	
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	-webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+	-o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+.form-control-short{
+	width: 70%;	
+}
+.form-control-long{
+	width: 200%;	
+}
+
 .footer{
 	background-color:#ffad33;
 	text-align:center;
