@@ -32,11 +32,11 @@
 							class="sider-user-photo-image" title="Jessica" >
 						</span>
 					</div>
-					<div class="sider-user-info-role">
-						Manager
-					</div>
 					<div class="sider-user-info-name">
 						Jessica
+					</div>
+					<div class="sider-user-info-role">
+						Manager
 					</div>					
 				</div>
 				<div class="sider-divider">
@@ -107,6 +107,9 @@
 						</tbody>
 					</table>
 				</div>
+				<!-- Client Info Section -->
+				<!-- Client Info Section -->
+				<!-- Client Info Section -->
 				<div class="create-client">
 					<div class="create-section">
 						<div class="create-section-header">
@@ -153,34 +156,279 @@
 									</div>
 								</div>								
 							</div>
-							 
-							<!--<div class="form-row">
-								<div class="form-group">
-									<label for="clientInfoName" class="form-control-label">Client Name</label>									
-									<input id="clientInfoName" class="form-control" type="text">
+							<div class="row form-divider">
+							</div>
+							<div class="row form-row">
+								<div class="col-xs-6 form-group">
+									<label for="startDate" class="col-xs-4 form-control-label">Start Date</label>
+									<div class="col-xs-8">
+										<input id="startDate" class="form-control" type="text">
+									</div>
 								</div>
-								<div class="form-group">
-									<label for="driverLicense" class="form-control-label">Driver License</label>						
-									<input id="driverLicense" class="form-control form-control-short" type="text">
+								<div class="col-xs-6 form-group">
+									<label for="price" class="col-xs-4 form-control-label">Price</label>
+									<div class="col-xs-6">
+										<input id="price" class="form-control" type="text">
+									</div>
 								</div>
 							</div>
-							<div class="form-row">
-								<div class="form-group">
-									<label for="mobile" class="form-control-label">Mobile</label>									
-									<input id="mobile" class="form-control" type="text">
-								</div>
-								<div class="form-group">
-									<label for="birthday" class="form-control-label">Birthday</label>						
-									<input id="birthday" class="form-control form-control-short" type="text">
+							<div class="row form-row">
+								<div class="col-xs-6 form-group">
+									<label for="active" class="col-xs-4 form-control-label">Active</label>
+									<div class="col-xs-8 form-control-radios">
+										<input type="radio" name="active" class="form-control" value="false">No
+										<input type="radio" name="active" class="form-control" value="true">Yes
+									</div>
 								</div>
 							</div>
-							<div class="form-row">
-								<div class="form-group">
-									<label for="mobile" class="form-control-label">Address</label>									
-									<input id="mobile" class="form-control form-control-long" type="text">
+							
+							<div class="row form-row">
+								<div class="col-xs-12 form-group">
+									<label for="active" class="col-xs-2 form-control-label">Rotation</label>
+									<div class="col-xs-10">
+										<div class="col-xs-12 form-control-rotation">
+											<label for="rotitionWeek1" class="col-xs-2 form-control-label">Week 1</label>
+											<div class="col-xs-8">
+												<input id="rotitionWeek1" class="form-control" type="text">
+											</div>
+										</div>
+										<div class="col-xs-12 form-control-rotation">
+											<label for="rotitionWeek2" class="col-xs-2 form-control-label">Week 2</label>
+											<div class="col-xs-8">
+												<input id="rotitionWeek2" class="form-control" type="text">
+											</div>
+										</div>										
+									</div>
 								</div>
-							</div> -->
+							</div>
+							
+							
+							<div class="row form-row">
+								<div class="col-xs-12 form-group">
+									<label for="clientRemark" class="col-xs-2 form-control-label">Remark</label>
+									<div class="col-xs-9">
+										<textarea id="clientRemark" class="form-control" rows="3"></textarea>
+									</div>
+								</div>								
+							</div>
 						</div>
+					</div>
+					<!-- Job Details Section -->
+					<!-- Job Details Section -->
+					<!-- Job Details Section -->
+					<div class="create-section">
+						<div class="create-section-header">
+							<span class="create-section-header-square">
+							</span>
+							<span class="create-section-header-title">
+							Job Details
+							<span>
+						</div>
+						<div class="create-section-body">
+							<div class="row form-row">
+								<div class="col-xs-12 form-group">
+									<label for="frequency" class="col-xs-2 form-control-label">Frequency</label>
+									<div class="col-xs-4">
+										<select name="frequency" class="form-control">
+												<option>Twice a week</option>
+												<option>Weekly</option>
+												<option>Fortnightly</option>
+												<option>Monthly</option>
+												<option>When need</option>
+										</select>
+
+									</div>
+								</div>
+							</div>
+							
+							<div class="row form-row">
+								<div class="col-xs-6 form-group">
+									<label for="key" class="col-xs-4 form-control-label">Key</label>
+									<div class="col-xs-7 form-control-radios">
+										<input type="radio" name="key" class="form-control" value="false">No
+										<input type="radio" name="key" class="form-control" value="true">Yes
+									</div>
+								</div>
+								<div class="col-xs-6 form-group form-group-sub-divider">
+									<div class="row" >
+										<div class="col-xs-10 form-group-sub">
+											<label for="keyKeeping" class="col-xs-4 form-control-label">Keeping</label>
+											<div class="col-xs-8">
+												<select name="keyKeeping" class="form-control">
+													<option>kept by us</option>
+													<option>put back original place</option>
+													<option>put back kitchen bench</option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="row" >						
+										<div class="col-xs-10 form-group-sub">
+											<label for="alarmIn" class="col-xs-4 form-control-label">Alarm In</label>
+											<div class="col-xs-8">	
+												<input type="text" name="alarmIn" class="form-control">
+											</div>
+										</div>
+									</div>
+									<div class="row" >
+										<div class="col-xs-10 form-group-sub">
+											<label for="alarmOut" class="col-xs-4 form-control-label">Alarm Out</label>
+											<div class="col-xs-8">	
+												<input type="text" name="alarmOut" class="form-control">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="row form-row">
+								<div class="col-xs-6 form-group">
+									<label for="pets" class="col-xs-4 form-control-label">Pets</label>
+									<div class="col-xs-7 form-control-radios">
+										<input type="radio" name="pets" class="form-control" value="false">No
+										<input type="radio" name="pets" class="form-control" value="true">Yes
+									</div>
+								</div>
+								<div class="col-xs-6 form-group form-group-sub-divider">
+									<div class="row" >
+										<div class="col-xs-10 form-group-sub">
+											<label for="petsKeeping" class="col-xs-4 form-control-label">Keeping</label>
+											<div class="col-xs-8">
+												<select name="petsKeeping" class="form-control">
+													<option>doesn't matter</option>
+													<option>kept indoor</option>
+													<option>kept outdoor</option>
+												</select>
+											</div>
+										</div>
+									</div>									
+								</div>
+							</div>
+							
+							<div class="row form-row">
+								<div class="col-xs-12 form-group">
+									<label for="jobRemark" class="col-xs-2 form-control-label">Remark</label>
+									<div class="col-xs-9">
+										<textarea id="jobRemark" class="form-control" rows="3"></textarea>
+									</div>
+								</div>								
+							</div>
+							<div class="row form-divider">
+							</div>
+							<!-- Items sub-section -->
+							<!-- Items sub-section -->
+							<!-- Items sub-section -->
+							<div class="row create-subSection">
+								<div class="create-subSection-header">
+									<span class="create-subSection-header-square">
+									Items&nbsp;&nbsp; 								
+										<small> Total :</small> 19
+									</span>									
+									<span class="create-subSection-header-title">
+									Special Request
+									</span>
+								</div>
+								<div class="create-subSection-body">									
+									<ul class="col-xs-12 job-item-list">
+										<li class=" row job-item active">
+											<div class=" job-item-head">
+												<span class=" job-item-head-name">Formal lounge</span>
+												<span class=" job-item-head-times">*</span>
+												<span class="job-item-head-num">1</span>
+												<div class="job-item-actions">
+													<span class="job-item-action-button glyphicon glyphicon-edit" ></span><span class="job-item-action-button glyphicon glyphicon-trash"></span>
+												</div>
+											</div>	
+											
+											<div class=" job-item-detail">
+												Special Request afafadfadfasdfasd afadfasdfasdfasd a fadsfaf adfa afasdf afasdf asdf asdfasdf asdfasdfas fasdf afad
+											</div>						
+										</li>									
+										<li class=" row job-item">
+											<div class="job-item-head">
+												<span class=" job-item-head-name">Formal dining </span>
+												<span class=" job-item-head-times">*</span>
+												<span class="job-item-head-num">1</span>
+												<div class="job-item-actions">
+													<span class="job-item-action-button glyphicon glyphicon-edit" ></span><span class="job-item-action-button glyphicon glyphicon-trash"></span>
+												</div>
+											</div>	
+											<div class=" job-item-detail">
+												Special Request afafadfadfasdfasd afadfasdfasdfasd a fadsfaf adfa afasdf afasdf asdf asdfasdf asdfasdfas fasdf afad
+											</div>											
+										</li>
+										<li class=" row job-item">
+											<div class=" job-item-head">
+												<span class=" job-item-head-name">Family room </span>
+												<span class=" job-item-head-times">*</span>
+												<span class="job-item-head-num">2</span>
+												<div class="job-item-actions">
+													<span class="job-item-action-button glyphicon glyphicon-edit" ></span><span class="job-item-action-button glyphicon glyphicon-trash"></span>
+												</div>
+											</div>	
+											<div class=" job-item-detail">
+												Special Request afafadfadfasdfasd afadfasdfasdfasd a fadsfaf adfa afasdf afasdf asdf asdfasdf asdfasdfas fasdf afad
+											</div>											
+										</li>
+										<li class=" row job-add-item-buton">
+											Add New Item								
+										</li>
+										
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Payment section -->
+					<!-- Payment section -->
+					<!-- Payment section -->
+					<div class="create-section">
+						<div class="create-section-header">
+							<span class="create-section-header-square">
+							</span>
+							<span class="create-section-header-title">
+							Payment
+							<span>
+						</div>
+						<div class="create-section-body">
+							<div class="row form-row">
+								<div class="col-xs-12 form-group">
+									<label for="payment" class="col-xs-2 form-control-label">Payment</label>
+									<div class="col-xs-10 form-control-radios">
+										<input type="radio" name="payment" class="form-control" value="cash">Cash
+										<input type="radio" name="payment" class="form-control" value="cheque">Cheque
+										<input type="radio" name="payment" class="form-control" value="debt">Direct Debt
+									</div>
+								</div>
+							</div>
+
+							<div class="row form-divider">
+							</div>
+							<div class="row form-row">
+								<div class="col-xs-6 form-group">
+									<label for="hasInvoice" class="col-xs-4 form-control-label">Invoice</label>
+									<div class="col-xs-7 form-control-radios">
+										<input type="radio" name="hasInvoice" class="form-control" value="false">No
+										<input type="radio" name="hasInvoice" class="form-control" value="true">Yes
+									</div>
+									
+								</div>
+								<div class="col-xs-6 form-group form-group-sub-divider">
+									<div class="row" >
+										<div class="col-xs-10 form-group-sub">
+											<label for="invoiceTitle" class="col-xs-4 form-control-label">Invoice Title</label>
+											<div class="col-xs-8">
+												<input type="text" name="invoiceTitle" class="form-control">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>							
+						</div>
+					</div>
+					<div class="row bottom-actions-section">
+						<span class="bottom-action-button">Submit</span>
+						<span class="bottom-action-button">Cancel</span>
 					</div>
 					
 				</div>
