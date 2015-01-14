@@ -10,21 +10,24 @@
 		<link rel="stylesheet" type="text/css" href="./css/bootstrap.css" />
 		<link rel="stylesheet" type="text/css" href="./css/style.css" />
 	</head>
-	<body>
-		
+	<body>	
 		<div class="header">
-			<div class="logo">LOGO</div>
-			
-			<ul class="top-menu">
-				<li class=" top-menu-item active">Client Management</li>
-				<li class=" top-menu-item hover">Staff Management</li>
+			<div class="logo">LOGO</div>			
+			<ul class="top-menu" ng-controller="TopMenuController as top">
+				<li class=" top-menu-item" 
+					ng-repeat="component in top.components" 
+					ng-click="top.switchComponent($index)"
+					ng-class="$index==top.curComponentIndex?'active':''"
+					>
+					{{ component.name }}
+				</li>
 			</ul>			
 			<ul class="right-corner">
 				<li class=" right-corner-item">Logout</li>
 			</ul>
 		</div>
 		<div class="content">
-			<div class="sider">
+			<div class="sider" ng-controller="SiderController as sider">
 				<div class="sider-user-info">
 					<div class="sider-user-photo">
 						<span class="sider-user-photo-circle">
@@ -42,9 +45,13 @@
 				<div class="sider-divider">
 				</div>
 
-				<ul class="sider-actions"> 
-					<li class="sider-actions-item active"><span class="sider-actions-item-icon">*</span>Client List</li>
-					<li class="sider-actions-item"><span class="sider-actions-item-icon">+</span>New Client</li>
+				<ul class="sider-menu">
+					<li class="sider-menu-item" ng-repeat="module in sider.modules" 
+						ng-class="$index==sider.curModuleIndex?'active':''"
+						ng-click="sider.switchModule($index)" >
+						<span class="sider-menu-item-icon">*</span>
+						{{	module.name}}
+					</li>
 				</ul>				
 			</div>
 						

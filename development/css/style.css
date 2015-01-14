@@ -136,12 +136,12 @@ table {
 	text-align:center;
 	color:#333;
 }
-.sider-actions{
+.sider-menu{
 	margin:0 auto;
 	padding:0 10px;
 	list-style: none;	
 }
-.sider-actions-item{
+.sider-menu-item{
 	display: block;
 	height:25px;
 	line-height:25px;
@@ -154,14 +154,14 @@ table {
 	border:1px solid #ffad33;
 	
 }
-.sider-actions-item-icon{
+.sider-menu-item-icon{
 	float:left;
 }
-.sider-actions-item:hover{
+.sider-menu-item:hover{
 	background-color:#F5F5F5;
 }
-.sider-actions-item.active,
-.sider-actions-item.active:hover{
+.sider-menu-item.active,
+.sider-menu-item.active:hover{
 	background-color:#ffad33;
 	color:#FAFAFA;
 }
