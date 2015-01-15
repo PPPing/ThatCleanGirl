@@ -16,11 +16,12 @@
 			<ul class="top-menu" ng-controller="TopMenuController as top">
 				<li class=" top-menu-item" 
 					ng-repeat="component in top.components" 
-					ng-click="top.switchComponent($index)"
+					ng-click="changeComponents($index)"
 					ng-class="$index==top.curComponentIndex?'active':''"
 					>
-					{{ component.name }}
+					{{ component.name}}
 				</li>
+				
 			</ul>			
 			<ul class="right-corner">
 				<li class=" right-corner-item">Logout</li>
@@ -42,15 +43,14 @@
 						Manager
 					</div>					
 				</div>
-				<div class="sider-divider">
+				<div class="sider-divider">				
 				</div>
-
 				<ul class="sider-menu">
-					<li class="sider-menu-item" ng-repeat="module in sider.modules" 
+					<li class="sider-menu-item" ng-repeat="module in getModules()" 
 						ng-class="$index==sider.curModuleIndex?'active':''"
-						ng-click="sider.switchModule($index)" >
+						ng-click="updateId()" >
 						<span class="sider-menu-item-icon">*</span>
-						{{	module.name}}
+						{{module.name}}
 					</li>
 				</ul>				
 			</div>
@@ -445,8 +445,7 @@
 		
 		<div class="footer">
 			<div>footer</div>
-		</div>	
-			
+		</div>			
 	</body>
 	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
 	<script type="text/javascript" src="js/angular.min.js"></script>
