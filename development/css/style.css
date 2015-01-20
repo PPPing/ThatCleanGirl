@@ -36,6 +36,7 @@ table {
 	background-color:#ff9900;
 	padding:0 10px;
 	text-align:center;
+	box-shadow:0px 0px 3px rgba(0, 0, 0, 0.1);
 }
 .top-menu{
 	margin:0;
@@ -87,7 +88,8 @@ table {
 	float:left;
 	background-color:#fff;
 	height:100%;
-	position:absolute;	
+	position:absolute;
+	box-shadow:0px 0px 3px rgba(0, 0, 0, 0.1);
 }
 .sider-divider{
 	width:100%;
@@ -242,6 +244,7 @@ table {
 */
 .create-section{
 	margin-bottom:15px;
+	box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1 );
 }
 .create-section-header{
 	height:20px;

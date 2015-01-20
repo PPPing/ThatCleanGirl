@@ -48,14 +48,17 @@
 				<ul class="sider-menu">
 					<li class="sider-menu-item" ng-repeat="module in getModules()" 
 						ng-class="$index==sider.curModuleIndex?'active':''"
-						ng-click="updateId()" >
+						ng-click="changeModule($index)" >
 						<span class="sider-menu-item-icon">*</span>
 						{{module.name}}
 					</li>
 				</ul>				
 			</div>
-						
 			<div class="main">
+				<module-container></module-container>
+			</div>
+			<div class="main">
+				
 				<div class="client-list" style="display:none">
 					<div class="client-list-filter">
 						<div class="control-search">
