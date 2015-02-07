@@ -1,0 +1,60 @@
+[{
+	"clientId": "111",
+	"clientName": "Sydney Park",
+	"tel": "+61 2 9265 9333",
+	"address": "Sydney Park Road St Peters NSW 2044",
+	"frequency": "weekly",
+	"notifications": [
+						{
+							"type":"birthday",
+							"icon":"gift"
+						},
+						{
+							"type":"birthday",
+							"icon":"bell"
+						}
+					]
+},
+{
+	"clientId": "222",
+	"clientName": "Sydney Park",
+	"tel": "+61 2 9265 9333",
+	"address": "Sydney Park Road St Peters NSW 2044",
+	"frequency": "weekly",
+	"notifications": [
+						{
+							"type":"birthday",
+							"icon":"gift"
+						},
+						{
+							"type":"birthday",
+							"icon":"bell"
+						}
+					]
+},
+{
+	"clientId": "333",
+	"clientName": "Sydney Park",
+	"tel": "+61 2 9265 9333",
+	"address": "Sydney Park Road St Peters NSW 2044",
+	"frequency": "weekly",
+	"notifications": [
+						{
+							"type":"birthday",
+							"icon":"gift"
+						}
+					]
+},
+{
+	"clientId": "444",
+	"clientName": "Sydney Park",
+	"tel": "+61 2 9265 9333",
+	"address": "Sydney Park Road St Peters NSW 2044",
+	"frequency": "weekly",
+	"notifications": [
+						{
+							"type":"birthday",
+							"icon":"gift"
+						}
+					]
+}]

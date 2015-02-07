@@ -1,37 +1,6 @@
 (function(){
 	var app = angular.module('thatCleanGirl', [ ]);	
 
-	app.filter("multiline",function(){
-		return function(input) {
-			return $("<div>"+"1.adfasdfasdf"+"</div>"+"<div>"+"2.adfasdfasdf"+"</div>");
-		};
-	});
-	app.directive('dMultiline',function() {
-		return {			
-			restrict: 'A',
-			require: 'ngModel',
-			scope: {
-				bindModel : '=ngModel',
-			},
-			link: function ($scope, element, attrs) {
-				$scope.$watch(
-                    function( $scope ) {	
-                        if($scope.bindModel){
-							return $scope.bindModel;
-						}else{
-							return "";
-						}
-                    },
-                    function( newValue ) {						
-						if(newValue!=""){
-							element.html(newValue.replace(/\n/g,"<br>"));
-						}
-                    }
-                );	
-			}
-		};
-	});
-	
 	app.factory('UserService',function(){
 		var UserService = {
 			account:"jessica",
@@ -86,7 +55,7 @@
 					modules:modules
 				}
 				modulesStack.push(modulesInfoNode);
-				//console.log(modulesStack);
+				console.log(modulesStack);
 		};
 		pushModulesStack(curModuleIndex,components[curComponentIndex].modules);
 		var MenuService = {
@@ -108,7 +77,7 @@
 			},
 			getActiveModule:function(){
 				var moduleStackNode = modulesStack[modulesStack.length-1];
-				//console.log(moduleStackNode);
+				console.log(moduleStackNode);
 				return moduleStackNode.modules[moduleStackNode.curModuleIndex];
 			},
 			getModulesStackDepth:function(){
@@ -139,7 +108,7 @@
 		this.components = MenuService.getComponents();
 		$scope.changeComponents = MenuService.changeComponents;
 		$scope.getComponentIndex = MenuService.getComponentIndex;
-		//console.log(this.components);
+		console.log(this.components);
 
 	}]);	
 	app.controller('SiderController',['$scope','MenuService',function($scope,MenuService){
@@ -159,9 +128,9 @@
 				$scope.getActiveModule = MenuService.getActiveModule;
 				$scope.$watch(
                     function( $scope ) {
-                        //console.log( "Function watched" );
+                        console.log( "Function watched" );
                         // This becomes the value we're "watching".
-						//console.log($scope.getActiveModule());
+						console.log($scope.getActiveModule());
                         return $scope.getActiveModule().id;
                     },
                     function( newValue ) {
@@ -178,33 +147,14 @@
 		return {
 			restrict: 'E',
 			scope: {},
-			controller: function($scope) {
-				$scope.moduleInfo={
-					curSubmodule:"client-list",
-					clientDetail_clientId:null
-				};
-			},
-			templateUrl:'directives/modules/clientList.html',
-			controllerAs: 'clientListModule'
-		};
-	});
-	
-	app.directive('clientListTmpl',function(){
-		return {
-			restrict: 'E',
 			controller: function($scope,$http,MenuService,UserService) {
+				$scope.curSubmodule="client-list";
 				$http.get('/github/ThatCleanGirl/development/sampleData/clientList.json')
 				.then(function(result) {
 					console.log(result);
-					$scope.clientListData = result.data;
-				});
-				this.viewClientDetail=function(clientId){
-					console.log(clientId);
-					console.log($scope.moduleInfo);
-					$scope.moduleInfo.curSubmodule="client-detail";
-					$scope.moduleInfo.clientDetail_clientId = clientId;
-				};
-				/* var clientDetailmodules=[
+					$scope.clients = result.data;
+				});	
+				var clientDetailmodules=[
 					{
 						id:"client-detail",
 						name:"Client Detail",
@@ -217,109 +167,26 @@
 					clientId="111";
 					$http.get('/github/ThatCleanGirl/development/sampleData/clientDetail-'+clientId+'.json?timestamp='+ new Date())
 					.then(function(result) {
-						//console.log(result);
+						console.log(result);
 						$scope.clientDetail = result.data;
 						$scope.curSubmodule = "client-detail";
 						$scope.UserService = UserService;
 						$scope.postComment = function(){
-							//console.log(this.newComment);
+							console.log(this.newComment);
 						}
 						MenuService.pushModulesStack(clientDetailmodules);
 				});
-				} */
-			},
-			templateUrl:'directives/templates/clientListTmpl.html',
-			controllerAs: 'clientListTmpl'
-		};
-	});
-	
-	app.directive('clientDetailTmpl',function(){
-		return {
-			restrict: 'E',
-			controller: function($scope,$http,MenuService,UserService) {
-				var clientDetailmodules=[
-					{
-						id:"client-detail",
-						name:"Client Detail",
-						isSubModule:true
-					}
-				];
-				
-				$scope.$watch(
-                    function( $scope ) {
-                        return $scope.moduleInfo.clientDetail_clientId;
-                    },
-                    function( newValue ) {
-						newValue = "111";
-						$http.get('/github/ThatCleanGirl/development/sampleData/clientDetail-'+newValue+'.json?timestamp='+ new Date())
-						.then(function(result) {
-							$scope.clientDetail = result.data;
-							$scope.UserService = UserService;
-							$scope.postComment = function(){
-							};
-							MenuService.pushModulesStack(clientDetailmodules);
-						});
-                    }
-                );	
-			},
-			templateUrl:'directives/templates/clientDetailTmpl.html',
-			controllerAs: 'clientDetailTmpl'
-		};
-	});
-	
- 	app.directive('clientInfoSectionTmpl',function(){
-		return{
-			restrict: 'E',
-			controller: function($scope) {				
-				$scope.editMode=false;
-				//$scope.test="adfadfasdf";
-				$scope.test="testData";
-				console.log($scope);
-				$scope.submit=function(){
-					console.log($scope.clientDetail);
-					$scope.editMode=false;
 				}
 			},
-			templateUrl:'directives/templates/clientInfoSectionTmpl.html',
-			controllerAs: 'clientInfoSection'
+			templateUrl:'templates/clientList.html',
+			controllerAs: 'clientList'
 		};
 	});
-	
-	app.directive('jobDetailSectionTmpl',function(){
-		return{
-			restrict: 'E',
-			controller: function($scope) {	
-			},
-			templateUrl:'directives/templates/jobDetailSectionTmpl.html',
-			controllerAs: 'jobDetailSection'
-		};
-	}); 
-	
-	app.directive('paymentSectionTmpl',function(){
-		return{
-			restrict: 'E',
-			controller: function($scope) {		
-			},
-			templateUrl:'directives/templates/paymentSectionTmpl.html',
-			controllerAs: 'paymentSection'
-		};
-	});
-	
-	app.directive('commentsSectionTmpl',function(){
-		return{
-			restrict: 'E',
-			controller: function($scope) {		
-			},
-			templateUrl:'directives/templates/commentsSectionTmpl.html',
-			controllerAs: 'commentsSection'
-		};
-	});
-
-	
 	app.directive('moduleNewClient',function() {
 		return {
 			restrict: 'E',
-			templateUrl:'directives/modules/createClient.html',
+			/* template: '<div>module New Client</div>', */
+			templateUrl:'templates/createClient.html',
 			scope: {}
 		};
 	});

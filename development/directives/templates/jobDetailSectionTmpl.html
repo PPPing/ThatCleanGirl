@@ -1,0 +1,112 @@
+<!-- Job Details Section -->
+					<!-- Job Details Section -->
+					<!-- Job Details Section -->
+					<div class="module-section">
+						<div class="module-section-header">
+							<span class="module-section-header-square">
+							</span>
+							<span class="module-section-header-title">
+							Job Details
+							<span>
+						</div>
+						<div class="module-section-body">
+							<div class="row form-row">
+								<div class="col-xs-12 form-group">
+									<label for="frequency" class="col-xs-2 form-control-label">Frequency</label>
+									<div class="col-xs-4">
+										<div name="frequency">{{clientDetail.jobDetails.frequency}}</div>
+									</div>
+								</div>
+							</div>
+							<div class="row form-row">
+								<div class="col-xs-12 form-group">
+									<label class="col-xs-2 form-control-label">Key</label>
+									<div class="col-xs-10">
+										<div ng-show="!clientDetail.jobDetails.key.hasKey">No key</div>
+										<div class="col-xs-12 form-control-pair-item">
+											<label for="keyInfo-keeping" class="col-xs-2 form-control-label">Keeping</label>
+											<div class="col-xs-1">
+												<strong>-</strong>
+											</div>
+											<div class="col-xs-8">
+												<div name="keyInfo-keeping">{{clientDetail.jobDetails.key.keeping}}</div>
+											</div>
+										</div>
+										<div class="col-xs-12 form-control-pair-item">
+											<label for="keyInfo-alarmIn" class="col-xs-2 form-control-label">Alarm In</label>
+											<div class="col-xs-1">
+												<strong>-</strong>
+											</div>
+											<div class="col-xs-8">
+												<div name="keyInfo-alarmIn">{{clientDetail.jobDetails.key.alarmIn}}</div>
+											</div>
+										</div>
+										<div class="col-xs-12 form-control-pair-item">
+											<label for="keyInfo-alarmOut" class="col-xs-2 form-control-label">Alarm Out</label>
+											<div class="col-xs-1">
+												<strong>-</strong>
+											</div>
+											<div class="col-xs-8">
+												<div name="keyInfo-alarmOut">{{clientDetail.jobDetails.key.alarmOut}}</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row form-row">
+								<div class="col-xs-12 form-group">
+									<label class="col-xs-2 form-control-label">Pets</label>
+									<div class="col-xs-10">
+										<div ng-show="!clientDetail.jobDetails.pets.hasPet">No pet</div>
+										<div class="col-xs-12 form-control-pair-item">
+											<label for="petsInfo-keeping" class="col-xs-2 form-control-label">Keeping</label>
+											<div class="col-xs-1">
+												<strong>-</strong>
+											</div>
+											<div class="col-xs-8">
+												<div name="petsInfo-keeping">{{clientDetail.jobDetails.pets.keeping}}</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>								
+							<div class="row form-row">
+								<div class="col-xs-12 form-group">
+									<label for="attention" class="col-xs-2 form-control-label">Attention</label>
+									<div class="col-xs-9">
+										<div name="attention">{{clientDetail.jobDetails.attention}}</div>
+									</div>
+								</div>								
+							</div>
+							<div class="row form-divider">
+							</div>
+							<!-- Items sub-section -->
+							<!-- Items sub-section -->
+							<!-- Items sub-section -->
+							<div class="row module-subSection">
+								<div class="module-subSection-header">
+									<span class="module-subSection-header-square">
+									Items&nbsp;&nbsp; 								
+										<small> Total :</small> 19
+									</span>									
+									<span class="module-subSection-header-title">
+									Special Request
+									</span>
+								</div>
+								<div class="module-subSection-body">									
+									<ul class="col-xs-12 job-item-list">
+										<li class=" row job-item" ng-repeat="item in clientDetail.jobDetails.items">
+											<div class=" job-item-head">
+												<span class=" job-item-head-name">{{item.name}}</span>
+												<span class=" job-item-head-times">*</span>
+												<span class="job-item-head-num">{{item.amount}}</span>
+											</div>		
+											<div class=" job-item-detail expanded">
+												{{item.request}}
+											</div>						
+										</li>																			
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>

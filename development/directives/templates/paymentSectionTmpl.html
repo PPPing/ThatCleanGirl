@@ -1,0 +1,68 @@
+<!-- Payment section -->
+					<!-- Payment section -->
+					<!-- Payment section -->
+					<div class="module-section">
+						<div class="module-section-header">
+							<span class="module-section-header-square">
+							</span>
+							<span class="module-section-header-title">
+							Payment
+							<span>
+						</div>
+						<div class="module-section-body">
+							<div class="row form-row">
+								<div class="col-xs-12 form-group">
+									<label for="payment" class="col-xs-2 form-control-label">Payment</label>
+									<div class="col-xs-10">
+										<div name="petsInfo-keeping">{{clientDetail.paymentType}}</div>
+									</div>
+								</div>
+							</div>
+							<div class="row form-divider">
+							</div>
+							<div class="row form-row">
+							<div class="col-xs-12 form-group">
+									<label class="col-xs-2 form-control-label">Invoice</label>
+									<div class="col-xs-10">
+										<div ng-show="!clientDetail.invoiceNeeded">Not Needed</div>
+										<div class="col-xs-12 form-control-pair-item">
+											<label for="petsInfo-keeping" class="col-xs-2 form-control-label">Invoice Title</label>
+											<div class="col-xs-1">
+												<strong>-</strong>
+											</div>
+											<div class="col-xs-8">
+												<div name="petsInfo-keeping">{{clientDetail.invoiceTitle}}</div>
+											</div>
+										</div>
+									</div>
+							</div>
+							</div>							
+						</div>
+					</div>
+					<div class="module-section">
+						<div class="module-section-header">
+							<span class="module-section-header-square">
+							</span>
+							<span class="module-section-header-title">
+							Service History
+							<span>
+						</div>
+							<table class="service-history-table table-hover">
+								<thead>
+									<tr>
+										<th>Service Date</th>
+										<th>Payment</th>
+										<th>Price</th>										
+										<th>Feedback</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="serviceRecord in clientDetail.serviceHistory">
+										<td>{{serviceRecord.serviceDate}}</td>
+										<td>{{serviceRecord.paymentType}}</td>
+										<td>{{serviceRecord.price | currency:"USD$"}}</td>
+										<td>{{serviceRecord.feedback}}</td>
+									</tr>
+								</tbody>
+							</table>
+					</div>
