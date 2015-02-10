@@ -1,12 +1,33 @@
 (function(){
 	var app = angular.module('thatCleanGirl', [ ]);	
 
-	app.filter("multiline",function(){
-		return function(input) {
-			return $("<div>"+"1.adfasdfasdf"+"</div>"+"<div>"+"2.adfasdfasdf"+"</div>");
+	app.directive('dMultiline',function() {
+		return {			
+			restrict: 'A',
+			require: 'ngModel',
+			scope: {
+				bindModel : '=ngModel',
+			},
+			link: function ($scope, element, attrs) {
+				$scope.$watch(
+                    function( $scope ) {	
+                        if($scope.bindModel){
+							return $scope.bindModel;
+						}else{
+							return "";
+						}
+                    },
+                    function( newValue ) {						
+						if(newValue!=""){
+							element.html(newValue.replace(/\n/g,"<br>"));
+						}
+                    }
+                );	
+			}
 		};
 	});
-	app.directive('dMultiline',function() {
+	
+	app.directive('dFormControlRotationGroup',function() {
 		return {			
 			restrict: 'A',
 			require: 'ngModel',
@@ -98,7 +119,7 @@
 				return curComponentIndex;
 			},
 			getModuleIndex:function(){
-				return curModuleIndex;
+				return modulesStack[modulesStack.length-1].curModuleIndex;
 			}, 
 			getComponents:function(){
 				return components;
@@ -204,29 +225,6 @@
 					$scope.moduleInfo.curSubmodule="client-detail";
 					$scope.moduleInfo.clientDetail_clientId = clientId;
 				};
-				/* var clientDetailmodules=[
-					{
-						id:"client-detail",
-						name:"Client Detail",
-						isSubModule:true
-					}
-				];
-				
-				this.viewClientDetail=function(clientId){
-					console.log("viewClientDetail : "+clientId);
-					clientId="111";
-					$http.get('/github/ThatCleanGirl/development/sampleData/clientDetail-'+clientId+'.json?timestamp='+ new Date())
-					.then(function(result) {
-						//console.log(result);
-						$scope.clientDetail = result.data;
-						$scope.curSubmodule = "client-detail";
-						$scope.UserService = UserService;
-						$scope.postComment = function(){
-							//console.log(this.newComment);
-						}
-						MenuService.pushModulesStack(clientDetailmodules);
-				});
-				} */
 			},
 			templateUrl:'directives/templates/clientListTmpl.html',
 			controllerAs: 'clientListTmpl'
@@ -270,15 +268,19 @@
  	app.directive('clientInfoSectionTmpl',function(){
 		return{
 			restrict: 'E',
+			require: 'ngModel',
+			scope: {
+				clientDetail : '=ngModel',
+				editMode:'=editMode'
+			},
 			controller: function($scope) {				
-				$scope.editMode=false;
-				//$scope.test="adfadfasdf";
-				$scope.test="testData";
-				console.log($scope);
 				$scope.submit=function(){
-					console.log($scope.clientDetail);
 					$scope.editMode=false;
 				}
+				$scope.$on('setEidtMode', function (event,eidtMode) {
+					console.log("on setEidtMode : "+eidtMode); // 'Data to send'
+					$scope.editMode = eidtMode
+				});
 			},
 			templateUrl:'directives/templates/clientInfoSectionTmpl.html',
 			controllerAs: 'clientInfoSection'
@@ -288,7 +290,29 @@
 	app.directive('jobDetailSectionTmpl',function(){
 		return{
 			restrict: 'E',
-			controller: function($scope) {	
+			require: 'ngModel',
+			scope: {
+				jobDetails : '=ngModel',
+				editMode:'=editMode'
+			},
+			controller: function($scope) {
+				$scope.submit=function(){
+					$scope.editMode=false;
+				}
+				$scope.$on('setEidtMode', function (event,eidtMode) {
+					console.log("on setEidtMode : "+eidtMode); // 'Data to send'
+					$scope.editMode = eidtMode
+				});
+				this.curItemIndex=0;
+				$scope.addItem=function(){
+						
+				};
+				$scope.editItem=function(index){
+						
+				};
+				$scope.deleteItem=function(index){
+						
+				};
 			},
 			templateUrl:'directives/templates/jobDetailSectionTmpl.html',
 			controllerAs: 'jobDetailSection'
@@ -298,17 +322,72 @@
 	app.directive('paymentSectionTmpl',function(){
 		return{
 			restrict: 'E',
-			controller: function($scope) {		
+			require: 'ngModel',
+			scope: {
+				clientDetail : '=ngModel',
+				editMode:'=editMode'
+			},
+			controller: function($scope) {	
+				$scope.submit=function(){
+					$scope.editMode=false;
+				}
+				$scope.$on('setEidtMode', function (event,eidtMode) {
+					console.log("on setEidtMode : "+eidtMode); // 'Data to send'
+					$scope.editMode = eidtMode
+				});
 			},
 			templateUrl:'directives/templates/paymentSectionTmpl.html',
 			controllerAs: 'paymentSection'
 		};
 	});
 	
-	app.directive('commentsSectionTmpl',function(){
+	app.directive('serviceHistorySectionTmpl',function(){
 		return{
 			restrict: 'E',
-			controller: function($scope) {		
+			require: 'ngModel',
+			scope: {
+				clientDetail : '=ngModel',
+				editMode:'=editMode'
+			},
+			controller: function($scope) {	
+				$scope.submit=function(){
+					//console.log($scope.clientDetail);
+					$scope.editMode=false;
+				}
+			},
+			templateUrl:'directives/templates/serviceHistorySectionTmpl.html',
+			controllerAs: 'serviceSection'
+		};
+	});
+	
+	app.directive('commentsSectionTmpl',function($filter){
+		return{
+			restrict: 'E',
+			require: 'ngModel',
+			scope: {
+				comments : '=ngModel',
+			},
+			controller: function($scope,UserService) {
+				$scope.newComment="";
+				$scope.UserService = UserService;
+				$scope.postComment=function(){
+					console.log($scope.newComment);
+					var comment = {
+									content:$scope.newComment, 
+									author:UserService.name, 
+									role:UserService.role, 
+									createDateTime:$filter('date')(new Date(), "yyyy-MM-dd HH:mm:ss")
+								};
+								
+					console.log(comment);
+					$scope.comments.push(comment);
+				};
+				$scope.deleteComment=function(index){
+					//$scope.comments = $filter('orderBy')($scope.comments, '-createDateTime');
+					//console.log($scope.comments);
+					//console.log("index : "+index);
+					//$scope.comments.splice(index,index+1);
+				};
 			},
 			templateUrl:'directives/templates/commentsSectionTmpl.html',
 			controllerAs: 'commentsSection'
@@ -320,7 +399,35 @@
 		return {
 			restrict: 'E',
 			templateUrl:'directives/modules/createClient.html',
-			scope: {}
+			controller: function($scope,$http,$location, $anchorScroll,MenuService) {
+				$scope.editMode = true;
+				$http.get('/github/ThatCleanGirl/development/sampleData/clientDetail-default.json?timestamp='+ new Date())
+					.then(function(result) {
+					$scope.clientDetail=result.data
+					console.log($scope.clientDetail);
+				}); 
+				$scope.Create=function(){
+					$scope.editMode = false;
+					$scope.$broadcast('setEidtMode',$scope.editMode);
+					$location.hash('top');
+					$anchorScroll();
+					
+				};
+				$scope.Reset=function(){
+					$http.get('/github/ThatCleanGirl/development/sampleData/clientDetail-default.json?timestamp='+ new Date())
+						.then(function(result) {
+						$scope.clientDetail=result.data					
+					});
+				};
+				$scope.Confirm=function(){
+					alert("Create new client successfully.");
+					MenuService.changeComponents(0);
+					$location.hash('top');
+					$anchorScroll();
+				};
+			},
+			templateUrl:'directives/modules/createClient.html',
+			controllerAs: 'newClientModule'
 		};
 	});
 	app.directive('moduleStaffList',function() {
