@@ -214,7 +214,7 @@
 		return {
 			restrict: 'E',
 			controller: function($scope,$http,MenuService,UserService) {
-				$http.get('/github/ThatCleanGirl/development/sampleData/clientList.json')
+				$http.get('sampleData/clientList.json?timestamp='+ new Date())
 				.then(function(result) {
 					console.log(result);
 					$scope.clientListData = result.data;
@@ -249,7 +249,7 @@
                     },
                     function( newValue ) {
 						newValue = "111";
-						$http.get('/github/ThatCleanGirl/development/sampleData/clientDetail-'+newValue+'.json?timestamp='+ new Date())
+						$http.get('sampleData/clientDetail-'+newValue+'.json?timestamp='+ new Date())
 						.then(function(result) {
 							$scope.clientDetail = result.data;
 							$scope.UserService = UserService;
@@ -271,7 +271,7 @@
 			require: 'ngModel',
 			scope: {
 				clientDetail : '=ngModel',
-				editMode:'=editMode'
+				editMode:'@editMode'
 			},
 			controller: function($scope) {				
 				$scope.submit=function(){
@@ -293,7 +293,7 @@
 			require: 'ngModel',
 			scope: {
 				jobDetails : '=ngModel',
-				editMode:'=editMode'
+				editMode:'@editMode'
 			},
 			controller: function($scope) {
 				$scope.submit=function(){
@@ -325,7 +325,7 @@
 			require: 'ngModel',
 			scope: {
 				clientDetail : '=ngModel',
-				editMode:'=editMode'
+				editMode:'@editMode'
 			},
 			controller: function($scope) {	
 				$scope.submit=function(){
@@ -347,7 +347,7 @@
 			require: 'ngModel',
 			scope: {
 				clientDetail : '=ngModel',
-				editMode:'=editMode'
+				editMode:'@editMode'
 			},
 			controller: function($scope) {	
 				$scope.submit=function(){
@@ -393,15 +393,13 @@
 			controllerAs: 'commentsSection'
 		};
 	});
-
-	
 	app.directive('moduleNewClient',function() {
 		return {
 			restrict: 'E',
 			templateUrl:'directives/modules/createClient.html',
 			controller: function($scope,$http,$location, $anchorScroll,MenuService) {
 				$scope.editMode = true;
-				$http.get('/github/ThatCleanGirl/development/sampleData/clientDetail-default.json?timestamp='+ new Date())
+				$http.get('sampleData/clientDetail-default.json?timestamp='+ new Date())
 					.then(function(result) {
 					$scope.clientDetail=result.data
 					console.log($scope.clientDetail);
@@ -414,7 +412,7 @@
 					
 				};
 				$scope.Reset=function(){
-					$http.get('/github/ThatCleanGirl/development/sampleData/clientDetail-default.json?timestamp='+ new Date())
+					$http.get('sampleData/clientDetail-default.json?timestamp='+ new Date())
 						.then(function(result) {
 						$scope.clientDetail=result.data					
 					});

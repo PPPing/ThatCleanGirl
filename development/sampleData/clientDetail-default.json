@@ -1,22 +1,22 @@
 {
-	"clientId": "111",
-	"clientName": "Sydney Park",
-	"driverLicense":"1231-3424",
-	"tel": "+61 2 9265 9333",
-	"birthday":"2014-01-01",
-	"address": "Sydney Park Road St Peters NSW 2044",
-	"startDate":"01-01-2014",
-	"price":"998",
+	"clientId": "default",
+	"clientName": "",
+	"driverLicense":"",
+	"tel": "",
+	"birthday":"",
+	"address": "",
+	"startDate":"",
+	"price":"",
 	"priceHistory":[],
-	"active":"Yes",
+	"active":"No",
 	"rotation":[
 	{
 		"rotationKey":"Week 1",
-		"rotationValue":"Sydney Park Road St Peters NSW 2044"
+		"rotationValue":""
 	},
 	{
 		"rotationKey":"Week 2",
-		"rotationValue":"Sydney Park Road St "
+		"rotationValue":""
 	},
 	{
 		"rotationKey":"Week 3",
@@ -27,10 +27,10 @@
 		"rotationValue":""
 	}
 	],
-	"remark":"1.test \n 2.test \n 3.test",
+	"remark":"",
 	"paymentType":"cash",
 	"invoiceNeeded":"Yes",
-	"invoiceTitle":"company",
+	"invoiceTitle":"",
 	"jobDetails":{
 		"frequency":"weekly",
 		"key":{
@@ -43,58 +43,29 @@
 			"hasPet":"Yes",
 			"keeping":"keptInDoor"
 		},
-		"attention":"test attention",
+		"attention":"",
 		"items":[
 			{
 				"name":"Formal lounge",
 				"amount":1,
-				"request":"Special Request afafadfadfasdfasd afadfasdfasdfasd a fadsfaf adfa afasdf afasdf asdf asdfasdf asdfasdfas fasdf afad"
+				"request":""
 			},
 			{
 				"name":"Formal dining",
 				"amount":1,
-				"request":"Special Request"
+				"request":""
 			},
 			{
 				"name":"Family room",
 				"amount":2,
-				"request":"Special Request"
+				"request":""
 			}
 		]
 	},
 	"serviceHistory":[
-		{
-		"serviceDate":"01-01-2014",
-		"paymentType":"cash",
-		"price":998,
-		"feedback":"Great"
-		},
-		{
-		"serviceDate":"12-31-2014",
-		"paymentType":"cheque",
-		"price":998,
-		"feedback":"No provide"
-		},
-		{
-		"serviceDate":"11-21-2013",
-		"paymentType":"debt",
-		"price":998,
-		"feedback":"Great"
-		}
 		
 	],
 	"comments":[
-		{
-			"content":"dafsdfasdfsdfsadf adfasdf  dadfasdfasdfsdf adfasdfasdf asdf ",
-			"author":"Jessica",
-			"role":"Manage",
-			"createDateTime":"2011-01-31 18:21:12"
-		},
-		{
-			"content":"afadfwerwefsd",
-			"author":"Anna",
-			"role":"Team Leader",
-			"createDateTime":"2011-01-31 18:21:12"
-		}
+
 	]
 }
