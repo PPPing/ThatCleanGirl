@@ -1,0 +1,32 @@
+Quote:
+1.development
+	Phase 1: ( Total 3 month 12000RMB )
+	
+		(6 weeks 4000RMB)
+		log-in and user access control system
+		client data management --- create,edit,delete,search
+		task notification system,
+		
+		(3 weeks 4000RMB)
+		monthly report generation
+		invoice generation and send email
+		
+		(3 weeks 4000RMB)
+		website security --- database backup, SSL Encryption,
+		website status monitoring and email notification,
+		quality assurance
+			
+	Phase 2:(further discuss)
+		staff management,
+		task schedule management,
+		responsive feature,
+		company website design,
+
+2.maintenance
+	1.domain name 
+	2.server
+	3.SSL (security issue)
+	3.SSL (security issue) 
+		
+
+
