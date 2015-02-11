@@ -242,7 +242,6 @@
 						isSubModule:true
 					}
 				];
-				
 				$scope.$watch(
                     function( $scope ) {
                         return $scope.moduleInfo.clientDetail_clientId;
@@ -271,9 +270,10 @@
 			require: 'ngModel',
 			scope: {
 				clientDetail : '=ngModel',
-				editMode:'@editMode'
+				editMode:'=editMode'
 			},
-			controller: function($scope) {				
+			controller: function($scope) {
+				console.log($scope.editMode);
 				$scope.submit=function(){
 					$scope.editMode=false;
 				}
@@ -293,7 +293,7 @@
 			require: 'ngModel',
 			scope: {
 				jobDetails : '=ngModel',
-				editMode:'@editMode'
+				editMode:'=editMode'
 			},
 			controller: function($scope) {
 				$scope.submit=function(){
@@ -325,7 +325,7 @@
 			require: 'ngModel',
 			scope: {
 				clientDetail : '=ngModel',
-				editMode:'@editMode'
+				editMode:'@=ditMode'
 			},
 			controller: function($scope) {	
 				$scope.submit=function(){
@@ -398,14 +398,14 @@
 			restrict: 'E',
 			templateUrl:'directives/modules/createClient.html',
 			controller: function($scope,$http,$location, $anchorScroll,MenuService) {
-				$scope.editMode = true;
+				$scope.hasSubmit = false;
 				$http.get('sampleData/clientDetail-default.json?timestamp='+ new Date())
 					.then(function(result) {
 					$scope.clientDetail=result.data
 					console.log($scope.clientDetail);
 				}); 
 				$scope.Create=function(){
-					$scope.editMode = false;
+					$scope.hasSubmit=true;
 					$scope.$broadcast('setEidtMode',$scope.editMode);
 					$location.hash('top');
 					$anchorScroll();
