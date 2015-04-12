@@ -1,6 +1,0 @@
-###### Boostrap ######
-Glyphicon
-
-Gird system
-
-######################
