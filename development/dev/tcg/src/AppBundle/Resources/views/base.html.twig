@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html ng-app="thatCleanGirl">
+<head>
+    <meta charset="UTF-8" />
+    <title>That Clean Girl</title>
+    <meta name="keywords" content="That Clean Girl">
+    <meta name="description" content="That Clean Girl">
+    <meta name="author" content="Zhong Ping" />
+
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    {% stylesheets 'bundles/app/css/*' filter='cssrewrite' %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+</head>
+<body>
+{% block body %}{% endblock %}
+{% javascripts '@AppBundle/Resources/public/js/*' %}
+<script src="{{ asset_url }}"></script>
+{% endjavascripts %}
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
