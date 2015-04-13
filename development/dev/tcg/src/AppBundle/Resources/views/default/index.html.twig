@@ -1,6 +1,20 @@
-{% extends 'base.html.twig' %}
+{% extends "AppBundle::base.html.twig" %}
 
 {% block body %}
-    Homepage.lalala
-    <div class="test">test css loading...</div>
+    <div id="top" class="header">
+        <div class="logo">LOGO</div>
+        <ul class="top-menu" ng-controller="TopMenuController as top">
+            <li class=" top-menu-item "
+                ng-repeat="component in top.components"
+                ng-click="changeComponents($index)"
+                ng-class="$index==getComponentIndex()?'active':''"
+                    >
+                <div class="top-menu-item-text"> {[{ component.name}]} </div>
+            </li>
+
+        </ul>
+        <ul class="right-corner">
+            <li class=" right-corner-item">Logout</li>
+        </ul>
+    </div>
 {% endblock %}
