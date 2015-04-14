@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html ng-app="thatCleanGirl">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>That Clean Girl</title>
     <meta name="keywords" content="That Clean Girl">
     <meta name="description" content="That Clean Girl">
-    <meta name="author" content="Zhong Ping" />
+    <meta name="author" content="Zhong Ping"/>
 
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
     {% stylesheets '@AppBundle/Resources/public/css/*' filter='cssrewrite' %}
-    <link rel="stylesheet" href="{{ asset_url }}" />
+    <link rel="stylesheet" href="{{ asset_url }}"/>
     {% endstylesheets %}
 </head>
 <body>
@@ -18,9 +18,9 @@
 <script type="text/javascript" src="{{ asset('bundles/app/js/jquery-2.1.1.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/app/js/angular.min.js') }}"></script>
 
-{% javascripts '@AppBundle/Resources/public/js/app.js' output='js/app.js' %}
-<script src="{{ asset_url }}"></script>
-{% endjavascripts %}
+{% block javascripts %}
+
+{% endblock %}
 
 </body>
 

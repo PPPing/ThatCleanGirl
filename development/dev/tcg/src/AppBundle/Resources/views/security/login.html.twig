@@ -1,0 +1,46 @@
+{% extends "AppBundle::base.html.twig" %}
+{% block body %}
+    {% if error %}
+        <div>{{ error.messageKey|trans(error.messageData) }}</div>
+    {% endif %}
+    <div class="login-bg">
+        <div class=" login-from-container">
+            <div class="login-from-header">
+                Staff Login
+            </div>
+            <div class="login-from-panel">
+                <form action="{{ path('_security_check') }}" method="post">
+                    <div class="login-from-row">
+                        <label class=" login-input-label" for="username">Username:</label>
+                        <input type="text" id="username" name="_username" placeholder="Email" value="{{ last_username }}"/>
+
+                    </div>
+                    <div class="login-from-row">
+                        <label class=" login-input-label" for="password">Password:</label>
+                        <input type="password" id="password" placeholder="Password" name="_password"/>
+
+                    </div>
+
+                    {#
+                        If you want to control the URL the user
+                        is redirected to on success (more details below)
+                        <input type="hidden" name="_target_path" value="/account" />
+                    #}
+                    <div class="login-from-row">
+                        <button type="submit">login</button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts '@AppBundle/Resources/public/js/test.js' output='js/test.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

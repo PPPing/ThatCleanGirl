@@ -18,3 +18,9 @@
         </ul>
     </div>
 {% endblock %}
+
+{% block javascripts %}
+    {% javascripts '@AppBundle/Resources/public/js/app.js' output='js/app.js' %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
