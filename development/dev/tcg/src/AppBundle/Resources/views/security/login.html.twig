@@ -4,15 +4,22 @@
         <div>{{ error.messageKey|trans(error.messageData) }}</div>
     {% endif %}
     <div class="login-bg">
+
+        <div class="login-logo">
+            LOGO
+        </div>
         <div class=" login-from-container">
+
             <div class="login-from-header">
                 Staff Login
             </div>
-            <div class="login-from-panel">
-                <form action="{{ path('_security_check') }}" method="post">
+
+            <form action="{{ path('_security_check') }}" method="post">
+                <div class="login-from-panel">
                     <div class="login-from-row">
                         <label class=" login-input-label" for="username">Username:</label>
-                        <input type="text" id="username" name="_username" placeholder="Email" value="{{ last_username }}"/>
+                        <input type="text" id="username" name="_username" placeholder="Email"
+                               value="{{ last_username }}"/>
 
                     </div>
                     <div class="login-from-row">
@@ -20,18 +27,22 @@
                         <input type="password" id="password" placeholder="Password" name="_password"/>
 
                     </div>
+                </div>
+                {#
+                    If you want to control the URL the user
+                    is redirected to on success (more details below)
+                    <input type="hidden" name="_target_path" value="/account" />
+                #}
+                <div class="login-from-row">
+                    <button type="submit" class="login-from-submit">login</button>
+                </div>
 
-                    {#
-                        If you want to control the URL the user
-                        is redirected to on success (more details below)
-                        <input type="hidden" name="_target_path" value="/account" />
-                    #}
-                    <div class="login-from-row">
-                        <button type="submit">login</button>
-                    </div>
+            </form>
 
-                </form>
+            <div class="login-forget-password">
+                Forgot your password?
             </div>
+
 
         </div>
 

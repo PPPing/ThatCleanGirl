@@ -43,22 +43,46 @@ table {
     left:50%;
     width:300px;
     margin-left: -151px;
+    margin-top: -100px;
 
+}
+.login-logo {
+    position: absolute;
+    top:200px;
+    left:50%;
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+    margin-left: -50px;
+    background-color:#ffad33;
+    color: #feffff;
+    font-weight: bold;
+    border-radius: 50px;
+    text-align: center;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1 );
 }
 .login-from-header {
     height:40px;
     line-height: 40px;
     padding: 0 10px;
-    background-color: #ff9900;
+    background-color: #ffad33;
     color:#feffff;
+    font-weight: bold;
+    font-size: 17px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
 }
 .login-from-panel{
     position: relative;
     width:100%;
-
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1 );
 }
 .login-from-row {
     position: relative;
+    border-top: 1px solid #e3e3e3;
+}
+.login-from-row:first-child {
+    border-top: 0;
 }
 .login-from-row input,.login-from-row input:-webkit-autofill{
     width: 100%;
@@ -74,6 +98,31 @@ table {
 }
 .login-input-label{
     display: none;
+}
+.login-from-submit {
+    margin-top: 30px;
+    height:40px;
+    width:100%;
+    display: block;
+    line-height: 40px;
+    cursor: pointer;
+    font-size: 18px;
+    text-align: center;
+    color: #feffff;
+    border: 1px solid #ffad33;
+    border-radius: 3px;
+    background-color: #ffad33;
+    box-shadow: 0px 2px 7px rgba(0, 0, 0, 0.1 );
+}
+.login-forget-password {
+    cursor: pointer;
+    margin-top:18px;
+    width: 100%;
+    height:40px;
+    font-size: 14px;
+    color:#ABABAB;
+    text-align: center;
+    text-decoration: underline;
 }
 /** login module end */
 
@@ -113,6 +162,10 @@ table {
 	height:40px;
 	padding:0 5px;
 	cursor:pointer;
+}
+.right-corner-item-link{
+    text-decoration:none;
+    color:#feffff;
 }
 .top-menu-item-text{
 	display:block;
