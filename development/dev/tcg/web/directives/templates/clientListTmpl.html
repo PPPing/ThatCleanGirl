@@ -1,0 +1,30 @@
+<div class="client-list module-container">
+	<div class="client-list-filter">
+		<div class="control-search">
+			<input class="control-search-input" type="text">
+			<div class="control-search-button">Search</div>
+		</div>
+	</div>
+	<table class="client-list-table table-hover">
+		<thead>
+			<tr>
+				<th>Client Name</th>
+				<th>TeL</th>
+				<th>Address</th>
+				<th>Frequency</th>
+				<th>Notification</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="client in clientListData" ng-click="clientListTmpl.viewClientDetail(client.clientId)">
+				<td>{{client.clientName}}</td>
+				<td>{{client.tel}}</td>
+				<td>{{client.address}}</td>
+				<td>{{client.jobDetail.frequency}}</td>
+				<td>
+					<span ng-repeat="nt in client.notifications" class="glyphicon glyphicon-{{nt.icon}}">&nbsp;</span>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

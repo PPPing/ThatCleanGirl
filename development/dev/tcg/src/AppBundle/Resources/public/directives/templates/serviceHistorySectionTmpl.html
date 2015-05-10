@@ -1,0 +1,30 @@
+<!-- Service history section -->
+<!-- Service history section -->
+<!-- Service history section -->
+<div class="module-section">
+	<div class="module-section-header">
+		<span class="module-section-header-square">
+		</span>
+		<span class="module-section-header-title">
+			Service H1istory
+		<span>
+	</div>
+	<table class="service-history-table table-hover">
+		<thead>
+			<tr>
+				<th>Service Date</th>
+				<th>Payment</th>
+				<th>Price</th>										
+				<th>Feedback</th>
+			</tr>
+		<thead>
+		<tbody>
+			<tr ng-repeat="serviceRecord in clientDetail.serviceHistory">
+				<td>{{serviceRecord.serviceDate}}</td>
+				<td>{{serviceRecord.paymentType}}</td>
+				<td>{{serviceRecord.price | currency:"USD$"}}</td>
+				<td>{{serviceRecord.feedback}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

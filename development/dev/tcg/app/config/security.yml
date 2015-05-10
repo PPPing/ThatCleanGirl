@@ -3,19 +3,22 @@
 security:
     # http://symfony.com/doc/current/book/security.html#encoding-the-user-s-password
     encoders:
-        AppBundle\Entity\User: plaintext
+        AppBundle\Entity\StaffInfo: plaintext
 
     # http://symfony.com/doc/current/book/security.html#hierarchical-roles
     #role_hierarchy:
         #ROLE_ADMIN:       ROLE_USER
         #ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+    role_hierarchy:
+         ROLE_ADMIN:       ROLE_USER
+         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
                 mysql_db_provider:
                     entity:
-                        class: AppBundle:User
-                        property: username
+                        class: AppBundle:StaffInfo
+                        #property: username
 
     # the main part of the security, where you can set up firewalls
     # for specific sections of your app
@@ -32,6 +35,7 @@ security:
         # secures part of the application
         secured_area:
             pattern:    ^/
+            provider: mysql_db_provider
             # it's important to notice that in this case _demo_security_check and _demo_login
             # are route names and that they are specified in the AcmeDemoBundle
             form_login:
@@ -49,3 +53,4 @@ security:
     # http://symfony.com/doc/current/cookbook/security/access_control.html
     access_control:
         #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/, roles: ROLE_USER}

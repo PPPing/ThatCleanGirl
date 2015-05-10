@@ -1,0 +1,64 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% block body %}
+    <div id="top" class="header">
+        <div class="logo">ADMIN</div>
+        <ul class="top-menu" ng-controller="TopMenuController as top">
+            <li class=" top-menu-item "
+                ng-repeat="component in top.components"
+                ng-click="changeComponents($index)"
+                ng-class="$index==getComponentIndex()?'active':''"
+                    >
+                <div class="top-menu-item-text"> {[{ component.name}]}</div>
+            </li>
+
+        </ul>
+        <ul class="right-corner" ng-controller="TestController as test">
+            <li class=" right-corner-item"><a class=" right-corner-item-link" href="{{ path('_security_logout') }} ">Logout</a>
+            </li>
+            <li class=" right-corner-item" ng-click=" test.testWebAPI()">Test WebAPI</li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div class="sider" ng-controller="SiderController as sider">
+            <div class="sider-user-info">
+                <div class="sider-user-photo">
+						<span class="sider-user-photo-circle">
+							<img src={{ userInfo.getPhoto() }}
+                                 class="sider-user-photo-image" title="Jessica">
+						</span>
+                </div>
+                <div class="sider-user-info-name">
+                    {{ userInfo.getUsername() }}
+                </div>
+                <div class="sider-user-info-role">
+                    {{ userInfo.getTitle() }}
+                </div>
+            </div>
+            <div class="sider-divider">
+            </div>
+            <ul class="sider-menu">
+                <li class="sider-menu-item" ng-repeat="module in getModules()"
+                    ng-class="$index==getModuleIndex()?'active':''"
+                    ng-click="changeModule($index)">
+                    <span class="sider-menu-item-icon">*</span>
+                    {[{ module.name }]}
+                </li>
+                <li class="sider-button-back" ng-show="modulesStackDepth()>1" ng-click="back()">
+                    Back
+                </li>
+            </ul>
+            {% if app.user and is_granted('ROLE_SUPER_ADMIN') %}
+            <div> ACL Testing</div>
+            {% endif %}
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts '@AppBundle/Resources/public/js/app.js' output='js/app.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

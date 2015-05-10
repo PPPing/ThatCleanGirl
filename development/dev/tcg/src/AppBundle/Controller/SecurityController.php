@@ -6,7 +6,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContext;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 
 class SecurityController extends Controller
@@ -39,6 +38,7 @@ class SecurityController extends Controller
      */
     public function loginCheckAction()
     {
+        throw new Exception("Test");
         // this controller will not be executed,
         // as the route is handled by the Security system
     }

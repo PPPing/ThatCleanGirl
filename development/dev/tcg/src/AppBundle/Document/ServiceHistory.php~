@@ -1,0 +1,76 @@
+<?php
+/// src/Acme/StoreBundle/Document/ServiceHistory.php
+namespace AppBundle\Document;
+
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+
+
+class ServiceStatus{
+    const Padding = 0;
+    const Processing = 1;
+    const Complete =2;
+    const Reviewed = 3;
+}
+
+/**
+ * @MongoDB\Document
+ */
+class ServiceHistory extends BaseDocument
+{
+    /**
+     * @MongoDB\Id
+     */
+    protected $id;
+
+    /**
+     * @MongoDB\Int
+     */
+    protected $status;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $clientId;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $serviceDate;
+
+    /**
+     * @MongoDB\Float
+     */
+    protected $price;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $paymentType;
+
+    /**
+     * @MongoDB\boolean
+     */
+    protected $invoiceNeeded;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $teamId;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $feedback;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $creatorId;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $createTime;
+
+    
+}

@@ -1,0 +1,14 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% block body %}
+    <form action="api/saveClientInfo" method="POST">
+        <input type="text" value="This is test post form" name="test2" />
+        <input type="submit" class="button" value="Submit" />
+    </form>
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts '@AppBundle/Resources/public/js/app.js' output='js/app.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
