@@ -17,11 +17,10 @@ class ServiceInfoRepository extends DocumentRepository
     public function findConfirmed($filters){
 
         $query = $this->createQueryBuilder()->field("isConfirmed")->equals(true);
-
         if($filters!=null){
             $query->field("status");
             if($filters['pending']=="true"){
-                $query->addOr($query->expr()->field("status")->equals(ServiceStatus::Pendding));
+                $query->addOr($query->expr()->field("status")->equals(ServiceStatus::Pending));
             }
             if($filters['processing']=="true"){
                 $query->addOr($query->expr()->field("status")->equals(ServiceStatus::Processing));
@@ -32,11 +31,11 @@ class ServiceInfoRepository extends DocumentRepository
             if($filters['reviewed']=="true"){
                 $query->addOr($query->expr()->field("status")->equals(ServiceStatus::Reviewed));
             }
-
+            $query->addOr($query->expr()->field("status")->equals(ServiceStatus::Cancelled));
+            if($filters['cancelled']=="true"){
+                $query->addOr($query->expr()->field("status")->equals(ServiceStatus::Cancelled));
+            }
         }
-        //$query->field("status");
-        //$query->addOr($query->expr()->field("status")->equals(ServiceStatus::Pendding));
-        //$query->addOr($query->expr()->field("status")->equals(ServiceStatus::Reviewed));
         $serviceInfo = $query->sort(array("status"=>'ASC'))
             ->sort(array("serviceDate"=>'ASC'))
             ->getQuery()
@@ -48,7 +47,7 @@ class ServiceInfoRepository extends DocumentRepository
     public function findUnconfirmed(){
 
         $serviceInfo = $this->createQueryBuilder()
-            ->field("status")->equals(ServiceStatus::Pendding)
+            ->field("status")->equals(ServiceStatus::Pending)
             ->field("isConfirmed")->equals(false)
             ->sort(array("serviceDate"=>'ASC'))
             ->getQuery()
@@ -58,7 +57,7 @@ class ServiceInfoRepository extends DocumentRepository
     }
 
     public function findPending($clientId){
-        $activeClients = $this->findBy(array("status"=> ServiceStatus::Pendding,"clientId"=>$clientId));
+        $activeClients = $this->findBy(array("status"=> ServiceStatus::Pending,"clientId"=>$clientId));
 
         return $activeClients;
     }
@@ -94,9 +93,13 @@ class ServiceInfoRepository extends DocumentRepository
         return $last;
     }
 
-
+    public function findAllService(){
+        $all = $this->findAll();
+        return $all;
+    }
 
     public function save($serviceInfo){
+        $serviceInfo->setModifyTime(new \DateTime('NOW'));
         $this->dm->persist($serviceInfo);
         $this->dm->flush();
     }

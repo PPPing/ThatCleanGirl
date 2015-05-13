@@ -7,10 +7,11 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
 class ServiceStatus{
-    const Pendding = 0;
+    const Pending = 0;
     const Processing = 1;
     const Completed =2;
     const Reviewed = 3;
+    const Cancelled = 4;
 }
 
 /**
@@ -88,6 +89,10 @@ class ServiceInfo extends BaseDocument
      */
     protected $createTime;
 
+    /**
+     * @MongoDB\Date
+     */
+    protected $modifyTime;
 
     /**
      * Get id
@@ -383,6 +388,28 @@ class ServiceInfo extends BaseDocument
     public function getCreateTime()
     {
         return $this->createTime;
+    }
+
+    /**
+     * Set modifyTime
+     *
+     * @param date $modifyTime
+     * @return self
+     */
+    public function setModifyTime($modifyTime)
+    {
+        $this->modifyTime = $modifyTime;
+        return $this;
+    }
+
+    /**
+     * Get modifyTime
+     *
+     * @return date $modifyTime
+     */
+    public function getModifyTime()
+    {
+        return $this->modifyTime;
     }
 
     public function loadFromArray(array $info)

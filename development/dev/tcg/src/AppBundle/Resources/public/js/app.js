@@ -348,7 +348,8 @@
                     pending:true,
                     processing:true,
                     completed:true,
-                    reviewed:true
+                    reviewed:true,
+                    cancelled:true
                 };
                 $scope.$watch(
                     function( $scope ) {
@@ -380,6 +381,7 @@
                       case 1 :  statusStr = "Processing";break;
                       case 2 :  statusStr = "Completed";break;
                       case 3 :  statusStr = "Reviewed";break;
+                      case 4 :  statusStr = "Cancelled";break;
                   };
                     return statusStr;
                 };

@@ -19,7 +19,7 @@ class CornJobController extends Controller
 
 
     /**
-     * @Route("/job/service_history", name="_job_service_history")
+     * @Route("/job/service_create_pending", name="_job_service_create_pending")
      */
     public function serviceHistory()
     {
