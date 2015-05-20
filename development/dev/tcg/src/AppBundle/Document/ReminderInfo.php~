@@ -1,0 +1,61 @@
+<?php
+/// src/Acme/StoreBundle/Document/JobDetail.php
+namespace AppBundle\Document;
+
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+/**
+ * @MongoDB\EmbeddedDocument
+ */
+class ReminderInfo extends BaseDocument
+{
+    /**
+     * @MongoDB\Date
+     */
+    protected $ovenDate="";
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $blindsDate="";
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $fridgeDate="";
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $wardrobesDate;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $rangeHoodDate;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $WindowsDate;
+    /**
+     * @MongoDB\Date
+     */
+    protected $pantryDate;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $carpetDate;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $kitchenDate;
+
+
+    public function __construct()
+    {
+
+    }
+
+}

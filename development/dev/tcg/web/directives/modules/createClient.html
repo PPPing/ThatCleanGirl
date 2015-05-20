@@ -1,7 +1,8 @@
 <div class="create-client module-container active">
 	<client-info-section-tmpl ng-model="clientDetail" data-edit-mode=true></client-info-section-tmpl>
 	<job-detail-section-tmpl ng-model="clientDetail.jobDetail" data-client-id="{{clientDetail.id}}" data-edit-mode=true></job-detail-section-tmpl>
-	<payment-section-tmpl ng-model="clientDetail" data-edit-mode=true></payment-section-tmpl>									
+	<payment-section-tmpl ng-model="clientDetail" data-edit-mode=true></payment-section-tmpl>
+    <reminder-info-section-tmpl ng-model="clientDetail.reminderInfo" data-client-id="{{clientDetail.id}}" data-edit-mode=true></reminder-info-section-tmpl>
 	<div ng-if="!editMode&& !hasSubmit;" class="row bottom-actions-section">
 		<span class="bottom-action-button" ng-click="Create()">Save</span>
 		<span class="bottom-action-button" ng-click="Reset()">Reset</span>

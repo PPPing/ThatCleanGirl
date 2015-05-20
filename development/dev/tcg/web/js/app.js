@@ -139,7 +139,37 @@
 		return UserService;
 	});
 	app.factory('MenuService',function() {
-        var components = [];
+        var components = [
+            /*{
+             id:"topMenu1",
+             name:"Client Management",
+             modules:[
+             {
+             id:"client-list",
+             name:"Client List",
+             url:"",
+             isSubModule:false
+             },
+             {
+             id:"new-client",
+             name:"New Client",
+             isSubModule:false
+             }
+             ]
+             },
+             {
+             id:"topMenu2",
+             name:"Staff Management",
+             modules:[
+             {
+             id:"staff-list",
+             name:"Staff List",
+             url:"",
+             isSubModule:false
+             }
+             ]
+             }*/
+        ];
 
         var curComponentIndex = 0;
         var curModuleIndex = 0;
@@ -460,6 +490,8 @@
                         $scope.editMode = false;
                     });
                 };
+
+
             },
             templateUrl:'directives/templates/serviceEditorTmpl.html',
             controllerAs: 'serviceEditor'
@@ -485,12 +517,10 @@
 		return {
 			restrict: 'E',
 			controller: function($scope,$http) {
-				var clientList = null;
-                $http.get('/api/getClientList?timestamp='+ new Date())
+				$http.get('/api/getClientList?timestamp='+ new Date())
 				.then(function(result) {
-                        clientList = result.data.slice(0);
-                        console.log(clientList);
-                        $scope.clientListData = clientList;
+					console.log(result.data);
+					$scope.clientListData = result.data;
 				});
 				this.viewClientDetail=function(clientId){
 					console.log(clientId);
@@ -498,25 +528,6 @@
 					$scope.moduleInfo.curSubModule="client-detail";
 					$scope.moduleInfo.clientDetail_clientId = clientId;
 				};
-                $scope.keyWord="";
-                $scope.filter=function(){
-                    //console.log($scope.keyWord);
-                    var regex = new RegExp( $scope.keyWord, 'i');
-                    var newClientList = [];
-                    angular.forEach(clientList, function (value, key) {
-                        var clientInfo = value;
-                        var content = clientInfo.clientName +" "
-                                    +clientInfo.tel +" "
-                                    +clientInfo.address +" "
-                                    +clientInfo.district +" "
-                                    +clientInfo.jobDetail.frequency +" "
-                                    +clientInfo.price;
-                        if(regex.test(content)){
-                            newClientList.push(value);
-                        }
-                    });
-                    $scope.clientListData = newClientList;
-                }
 			},
 			templateUrl:'directives/templates/clientListTmpl.html',
 			controllerAs: 'clientListTmpl'
@@ -764,52 +775,8 @@
 			controllerAs: 'paymentSection'
 		};
 	});
-
-    app.directive('reminderInfoSectionTmpl',function(){
-        return{
-            restrict: 'E',
-            require: 'ngModel',
-            scope: {
-                reminderInfo : '=ngModel',
-                editMode:'=editMode',
-                clientId:'@clientId'
-            },
-            controller: function($scope,$http) {
-
-                $scope.submit=function(){
-                    $scope.editMode=false;
-                    if($scope.clientId===null) {
-                        alert("Invalid Client Id.");
-                        return;
-                    }
-                    console.log("submit");
-                    console.log($scope.reminderInfo);
-                    var reminderInfo = angular.copy($scope.reminderInfo);
-                    console.log(reminderInfo);
-                    $http.post('api/updateClientReminderInfo', {"reminderInfo":reminderInfo,"clientId":$scope.clientId}).
-                        success(function(data, status, headers, config) {
-                            console.log("[Update] - reminderInfo - SUCCESS");
-                            console.log(config);
-                            console.log(data);
-                        }).
-                        error(function(data, status, headers, config) {
-                        });
-                };
-
-                $scope.$on('setEidtMode', function (event,eidtMode) {
-                    $scope.editMode = eidtMode;
-                    if($scope.editMode){
-                        $scope.submit();
-                    }
-                });
-
-            },
-            templateUrl:'directives/templates/reminderInfoSectionTmpl.html',
-            controllerAs: 'reminderSection'
-        };
-    });
-
-    app.directive('serviceHistorySectionTmpl',function(){
+	
+	app.directive('serviceHistorySectionTmpl',function(){
 		return{
 			restrict: 'E',
 			require: 'ngModel',

@@ -4,7 +4,6 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
-
 class FrequencyType{
     const  Weekly = "weekly";
     const  TwiceAWeek = "twiceAWeek";
@@ -42,12 +41,12 @@ class ClientInfo extends BaseDocument
     /**
      * @MongoDB\String
      */
-    protected $driverLicense;
+    protected $tel;
 
     /**
      * @MongoDB\String
      */
-    protected $tel;
+    protected $email;
 
     /**
      * @MongoDB\Date
@@ -60,6 +59,11 @@ class ClientInfo extends BaseDocument
     protected $address;
 
     /**
+     * @MongoDB\String
+     */
+    protected $district;
+
+    /**
      * @MongoDB\boolean
      */
     protected $isActive;
@@ -68,6 +72,16 @@ class ClientInfo extends BaseDocument
      * @MongoDB\Date
      */
     protected $startDate;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $serviceDate;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $serviceTime;
 
     /**
      * @MongoDB\float
@@ -103,6 +117,9 @@ class ClientInfo extends BaseDocument
     /** @MongoDB\EmbedOne(targetDocument="JobDetail") */
     protected $jobDetail;
 
+    /** @MongoDB\EmbedOne(targetDocument="ReminderInfo") */
+    protected $reminderInfo;
+
     /**
      * @MongoDB\String
      */
@@ -118,12 +135,46 @@ class ClientInfo extends BaseDocument
      */
     protected $modifyTime;
 
-    public function __construct()
-    {
-        //$this->priceHistory = new \Doctrine\Common\Collections\ArrayCollection();
+
+    function __construct() {
+        $this->clientId = null;
+        $this->clientName = null;
+        $this->tel="";
+        $this->email="";
+        $this->birthday=new \DateTime("1980-01-01");
+        $this->address = "";
+        $this->district="";
+        $this->isActive=false;
+        $this->startDate = new \DateTime('Now');
+        $this->serviceDate = new \DateTime('Now');
+        $this->serviceTime = "10:00:AM";
+        $this->price="998";
+
+        $r1=new \stdClass();
+        $r1->key = "week 1";
+        $r1->value = "";
+        $r2=new \stdClass();
+        $r2->key = "week 2";
+        $r2->value = "";
+        $r3=new \stdClass();
+        $r3->key = "week 3";
+        $r3->value = "";
+        $r4=new \stdClass();
+        $r4->key = "week 4";
+        $r4->value = "";
+        $this->rotations = array($r1,$r2,$r3,$r4);
+        $this->remark="";
+        $this->paymentType="cash";
+        $this->invoiceNeeded=false;
+        $this->invoiceTitle="";
+        $this->jobDetail = new JobDetail();
+        $this->reminderInfo = new ReminderInfo();
+        $this->creatorId = null;
+        $this->createTime = new \DateTime("NOW");
+        $this->modifyTime = new \DateTime("NOW");
     }
 
-    
+
     /**
      * Get id
      *
@@ -169,6 +220,27 @@ class ClientInfo extends BaseDocument
     }
 
     /**
+     * Get email
+     *
+     * @return string $email
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set email
+     * @param string $email
+     * @return self
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
      * Get clientName
      *
      * @return string $clientName
@@ -178,27 +250,6 @@ class ClientInfo extends BaseDocument
         return $this->clientName;
     }
 
-    /**
-     * Set driverLicense
-     *
-     * @param string $driverLicense
-     * @return self
-     */
-    public function setDriverLicense($driverLicense)
-    {
-        $this->driverLicense = $driverLicense;
-        return $this;
-    }
-
-    /**
-     * Get driverLicense
-     *
-     * @return string $driverLicense
-     */
-    public function getDriverLicense()
-    {
-        return $this->driverLicense;
-    }
 
     /**
      * Set tel
@@ -242,6 +293,28 @@ class ClientInfo extends BaseDocument
     public function getBirthday()
     {
         return $this->birthday;
+    }
+
+    /**
+     * Set district
+     *
+     * @param string $district
+     * @return self
+     */
+    public function setDistrict($district)
+    {
+        $this->district = $district;
+        return $this;
+    }
+
+    /**
+     * Get district
+     *
+     * @return string $district
+     */
+    public function getDistrict()
+    {
+        return $this->district;
     }
 
     /**
@@ -308,6 +381,50 @@ class ClientInfo extends BaseDocument
     public function getStartDate()
     {
         return $this->startDate;
+    }
+
+    /**
+     * Set serviceDate
+     *
+     * @param date $serviceDate
+     * @return self
+     */
+    public function setServiceDate($serviceDate)
+    {
+        $this->serviceDate = $serviceDate;
+        return $this;
+    }
+
+    /**
+     * Get serviceDate
+     *
+     * @return date $serviceDate
+     */
+    public function getServiceDate()
+    {
+        return $this->serviceDate;
+    }
+
+    /**
+     * Set serviceTime
+     *
+     * @param string $serviceTime
+     * @return self
+     */
+    public function setServiceTime($serviceTime)
+    {
+        $this->serviceTime = $serviceTime;
+        return $this;
+    }
+
+    /**
+     * Get serviceTime
+     *
+     * @return string $serviceTime
+     */
+    public function getServiceTime()
+    {
+        return $this->serviceTime;
     }
 
     /**
@@ -495,6 +612,28 @@ class ClientInfo extends BaseDocument
     }
 
     /**
+     * Set reminderInfo
+     *
+     * @param AppBundle\Document\ReminderInfo $reminderInfo
+     * @return self
+     */
+    public function setReminderInfo(\AppBundle\Document\ReminderInfo  $reminderInfo)
+    {
+        $this->reminderInfo = $reminderInfo;
+        return $this;
+    }
+
+    /**
+     * Get jobDetail
+     *
+     * @return AppBundle\Document\ReminderInfo $reminderInfo
+     */
+    public function getReminderInfo()
+    {
+        return $this->reminderInfo;
+    }
+
+    /**
      * Set creatorId
      *
      * @param string $creatorId
@@ -560,10 +699,6 @@ class ClientInfo extends BaseDocument
         return $this->modifyTime;
     }
 
-    public static function clientIdGenerator()
-    {
-        return "0000-0001";
-    }
 
     public function toString()
     {

@@ -5,7 +5,7 @@
  * Date: 2015/5/11
  * Time: 23:10
  */
-namespace AppBundle\Console\Command;
+namespace AppBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -31,7 +31,7 @@ class ServiceCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('tcg:service')
+            ->setName('AppBundle:service')
             ->setDescription('Process Service Information.')
             ->addArgument(
                 'type',

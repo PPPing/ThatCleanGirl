@@ -15,7 +15,6 @@ use Monolog\Handler\StreamHandler;
  */
 class ClientInfoRepository extends DocumentRepository
 {
-
     public function updateClientBasicInfo($clientInfo)
     {
         if(empty($clientInfo['id'])){
@@ -28,18 +27,18 @@ class ClientInfoRepository extends DocumentRepository
         }else{
             $clientName = $clientInfo['clientName'];
         }
-        if(empty($clientInfo['driverLicense'])){
-            $driverLicense="";
-        }else{
-            $driverLicense = $clientInfo['driverLicense'];
-        }
         if(empty($clientInfo['tel'])){
             $tel="";
         }else{
             $tel = $clientInfo['tel'];
         }
+        if(empty($clientInfo['tel'])){
+            $email="";
+        }else{
+            $email = $clientInfo['email'];
+        }
         if(empty($clientInfo['birthday'])){
-            $birthday=new DateTime("1980-01-01");
+            $birthday=new \DateTime("1980-01-01");
         }else{
             $birthday = date_create_from_format('Y-m-d\TH:i:sT', $clientInfo['birthday']);
         }
@@ -48,28 +47,38 @@ class ClientInfoRepository extends DocumentRepository
         }else{
             $address = $clientInfo['address'];
         }
+        if(empty($clientInfo['district'])){
+            $district="";
+        }else{
+            $district = $clientInfo['district'];
+        }
 
         if(empty($clientInfo['isActive'])){
-
             $isActive = false;
-
         }else{
             $isActive = $clientInfo['isActive'];
-
             if($isActive===true || $isActive =='true') {
                 $isActive = true;
             }
             else{
                 $isActive = false;
             }
-           //
         }
 
         if(empty($clientInfo['startDate'])){
-            $startDate = new DateTime("NOW");
+            $startDate = new \DateTime("NOW");
         }else{
             $startDate = date_create_from_format('Y-m-d\TH:i:sT', $clientInfo['startDate']);
-            //$startDate = $clientInfo['startDate'];
+        }
+        if(empty($clientInfo['serviceDate'])){
+            $serviceDate = new \DateTime("NOW");
+        }else{
+            $serviceDate = date_create_from_format('Y-m-d\TH:i:sT', $clientInfo['serviceDate']);
+        }
+        if(empty($clientInfo['serviceTime'])){
+            $serviceTime='10:00';
+        }else{
+            $serviceTime = $clientInfo['serviceTime'];
         }
         if(empty($clientInfo['price'])){
             $price=998;
@@ -77,16 +86,16 @@ class ClientInfoRepository extends DocumentRepository
             $price = $clientInfo['price'];
         }
         if(empty($clientInfo['rotations'])){
-            $r1=new stdClass();
+            $r1=new \stdClass();
             $r1->key = "week 1";
             $r1->value = "";
-            $r2=new stdClass();
+            $r2=new \stdClass();
             $r2->key = "week 2";
             $r2->value = "";
-            $r3=new stdClass();
+            $r3=new \stdClass();
             $r3->key = "week 3";
             $r3->value = "";
-            $r4=new stdClass();
+            $r4=new \stdClass();
             $r4->key = "week 4";
             $r4->value = "";
 
@@ -106,13 +115,16 @@ class ClientInfoRepository extends DocumentRepository
             ->field('id')->equals($id)
             // Update found job
             ->field('clientName')->set($clientName)
-            ->field('driverLicense')->set($driverLicense)
             ->field('clientName')->set($clientName)
             ->field('tel')->set($tel)
+            ->field('email')->set($email)
             ->field('birthday')->set($birthday)
             ->field('address')->set($address)
+            ->field('district')->set($district)
             ->field('isActive')->set($isActive)
             ->field('startDate')->set($startDate)
+            ->field('serviceDate')->set($serviceDate)
+            ->field('serviceTime')->set($serviceTime)
             ->field('price')->set($price)
             ->field('rotations')->set($rotations)
             ->field('remark')->set($remark)
@@ -124,10 +136,6 @@ class ClientInfoRepository extends DocumentRepository
     }
 
     public function updateClientJobDetail($id,$jobDetail){
-        //create a log channel
-        $log = new Logger('BaseDocument');
-        $log->pushHandler(new StreamHandler('C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/your.log', Logger::DEBUG));
-
         if($jobDetail["key"]["has"] === true || $jobDetail["key"]["has"] === "true"){
             $jobDetail["key"]["has"] = true;
         }else{
@@ -138,13 +146,26 @@ class ClientInfoRepository extends DocumentRepository
         }else{
             $jobDetail["pet"]["has"] = false;
         }
-        $log->addDebug(json_encode($jobDetail,JSON_PRETTY_PRINT));
+        //$log->addDebug(json_encode($jobDetail,JSON_PRETTY_PRINT));
         $clientInfo = $this->createQueryBuilder()
             ->findAndUpdate()
             ->returnNew()
             ->field('id')->equals($id)
             // Update found job
             ->field('jobDetail')->set($jobDetail)
+            ->field('modifyTime')->set(new \MongoDate())
+            ->getQuery()
+            ->execute();
+        return $clientInfo;
+    }
+    public function updateClientReminderInfo($id,$reminderInfo){
+
+        $clientInfo = $this->createQueryBuilder()
+            ->findAndUpdate()
+            ->returnNew()
+            ->field('id')->equals($id)
+            // Update found job
+            ->field('reminderInfo')->set($reminderInfo)
             ->field('modifyTime')->set(new \MongoDate())
             ->getQuery()
             ->execute();

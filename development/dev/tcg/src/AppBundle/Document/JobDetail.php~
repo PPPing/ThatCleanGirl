@@ -28,7 +28,29 @@ class JobDetail extends BaseDocument
     protected $items = array();
     public function __construct()
     {
+        $this->frequency = "weekly";
+        $this->attention = "";
+        $this->key = new JobDetailKey();
+        $this->pet = new JobDetailPet();
 
+        $jobItem = new JobDetailItem();
+        $jobItem->setName("Formal lounge");
+        $jobItem->setAmount(1);
+        $jobItem->setRequest("");
+
+        $jobItem1 = new JobDetailItem();
+        $jobItem1->setName("Formal dining");
+        $jobItem1->setAmount(1);
+        $jobItem1->setRequest("");
+
+        $jobItem2 = new JobDetailItem();
+        $jobItem2->setName("Family room");
+        $jobItem2->setAmount(1);
+        $jobItem2->setRequest("");
+
+        $this->addItem($jobItem);
+        $this->addItem($jobItem1);
+        $this->addItem($jobItem2);
     }
     
     /**

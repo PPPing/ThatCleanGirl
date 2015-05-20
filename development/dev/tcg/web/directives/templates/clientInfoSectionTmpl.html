@@ -21,10 +21,10 @@
 					</div>
 				</div>
 				<div class="col-xs-6 form-group">
-					<label for="driverLicense" class="col-xs-4 form-control-label">Driver License</label>
+					<label for="email" class="col-xs-4 form-control-label">Email</label>
 					<div class="col-xs-6">
-						<input ng-if="editMode" type="text" ng-model="clientDetail.driverLicense" class="form-control" value="{{clientDetail.driverLicense}}" required>
-						<div ng-if="!editMode" ng-bind="clientDetail.driverLicense">{{clientDetail.driverLicense}}</div>
+						<input ng-if="editMode" type="text" ng-model="clientDetail.email" class="form-control" value="{{clientDetail.email}}" required>
+						<div ng-if="!editMode" ng-bind="clientDetail.email">{{clientDetail.email}}</div>
 					</div>
 				</div>
 		</div>
@@ -45,16 +45,35 @@
 			</div>
 		</div>
 		<div class="row form-row">
-			<div class="col-xs-12 form-group">
-				<label for="address" class="col-xs-2 form-control-label">Address</label>
-				<div class="col-xs-9">
-					<input ng-if="editMode" type="text" ng-model="clientDetail.address" class="form-control" value="{{clientDetail.address}}" required>
-					<div ng-if="!editMode" ng-bind="clientDetail.address"></div>
-				</div>
-			</div>								
+            <div class="col-xs-6 form-group">
+                <label for="address" class="col-xs-4 form-control-label">Address</label>
+                <div class="col-xs-8">
+                    <input ng-if="editMode" type="text" ng-model="clientDetail.address" class="form-control" value="{{clientDetail.address}}" required>
+                    <div ng-if="!editMode" ng-bind="clientDetail.address"></div>
+                </div>
+            </div>
+            <div class="col-xs-6 form-group">
+                <label for="district" class="col-xs-4 form-control-label">District</label>
+                <div class="col-xs-6">
+                    <input ng-if="editMode" type="text" ng-model="clientDetail.district" class="form-control" value="{{clientDetail.district}}" required>
+                    <div ng-if="!editMode" ng-bind="clientDetail.district"></div>
+                </div>
+            </div>
 		</div>
 		<div class="row form-divider">
 		</div>
+        <div class="row form-row">
+            <div class="col-xs-6 form-group">
+                <label for="active" class="col-xs-4 form-control-label">Active</label>
+                <div class="col-xs-8">
+                    <div ng-if="editMode" class="btn-group">
+                        <label class="btn btn-default btn-xs" ng-class="{'btn-warning':clientDetail.isActive}" ng-model="clientDetail.isActive" btn-radio=true uncheckable>Yes</label>
+                        <label class="btn btn-default btn-xs" ng-model="clientDetail.isActive" btn-radio=false uncheckable>No</label>
+                    </div>
+                    <div ng-if="!editMode" name="test">{{ clientDetail.isActive | parseBoolean}}</div><!--ng-bind="clientDetail.isActive"-->
+                </div>
+            </div>
+        </div>
 		<div class="row form-row">
 			<div class="col-xs-6 form-group">
 				<label for="startDate" class="col-xs-4 form-control-label">Start Date</label>
@@ -71,18 +90,23 @@
 				</div>
 			</div>
 		</div>
-		<div class="row form-row">
-			<div class="col-xs-6 form-group">
-				<label for="active" class="col-xs-4 form-control-label">Active</label>
-				<div class="col-xs-8">
-                        <div ng-if="editMode" class="btn-group">
-                            <label class="btn btn-default btn-xs" ng-class="{'btn-warning':clientDetail.isActive}" ng-model="clientDetail.isActive" btn-radio=true uncheckable>Yes</label>
-                            <label class="btn btn-default btn-xs" ng-model="clientDetail.isActive" btn-radio=false uncheckable>No</label>
-                        </div>
-					<div ng-if="!editMode" name="test">{{ clientDetail.isActive | parseBoolean}}</div><!--ng-bind="clientDetail.isActive"-->
-				</div>
-			</div>
-		</div>
+        <div class="row form-row">
+            <div class="col-xs-6 form-group">
+                <label for="serviceDate" class="col-xs-4 form-control-label">Service Date</label>
+                <div class="col-xs-8">
+                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.serviceDate"></plugin-date-picker>
+                    <div ng-if="!editMode" ng-bind="clientDetail.serviceDate | date:'dd/MM/yyyy' "></div>
+                </div>
+            </div>
+            <div class="col-xs-6 form-group">
+                <label for="serviceTime" class="col-xs-4 form-control-label">ServiceTime</label>
+                <div class="col-xs-6">
+                    <plugin-time-picker ng-if="editMode"  ng-model ="clientDetail.serviceTime"></plugin-time-picker>
+                    <div ng-if="!editMode" ng-bind="clientDetail.serviceTime"></div>
+                </div>
+            </div>
+        </div>
+
 		<div class="row form-row">
 			<div class="col-xs-12 form-group">
 				<label for="rotation" class="col-xs-2 form-control-label">Rotation</label>

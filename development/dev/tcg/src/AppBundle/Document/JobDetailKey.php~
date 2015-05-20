@@ -4,6 +4,12 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
+class KeyKeepingType{
+    const KeptByUs = "keptByUs";
+    const Original = "original";
+    const Kitchen ="kitchen";
+}
+
 /**
  * @MongoDB\EmbeddedDocument
  */
@@ -29,7 +35,13 @@ class JobDetailKey extends BaseDocument
      * */
     protected $alarmOut;
 
-
+    public function __construct()
+    {
+        $this->has = false;
+        $this->keeping = KeyKeepingType::KeptByUs;
+        $this->alarmIn="09:00:AM";
+        $this->alarmOut="05:00:PM";
+    }
     /**
      * Set has
      *

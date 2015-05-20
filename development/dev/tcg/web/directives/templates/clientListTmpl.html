@@ -1,29 +1,31 @@
 <div class="client-list module-container">
 	<div class="client-list-filter">
 		<div class="control-search">
-			<input class="control-search-input" type="text">
+			<input class="control-search-input" type="text" ng-model="keyWord" ng-change="filter()">
 			<div class="control-search-button">Search</div>
 		</div>
 	</div>
 	<table class="client-list-table table-hover">
 		<thead>
 			<tr>
+                <th>Active</th>
 				<th>Client Name</th>
 				<th>TeL</th>
 				<th>Address</th>
+                <th>District</th>
 				<th>Frequency</th>
-				<th>Notification</th>
+                <th>Price</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr ng-repeat="client in clientListData" ng-click="clientListTmpl.viewClientDetail(client.clientId)">
-				<td>{{client.clientName}}</td>
+                <td>{{client.isActive?'Yes':'No'}}</td>
+                <td>{{client.clientName}}</td>
 				<td>{{client.tel}}</td>
 				<td>{{client.address}}</td>
+                <td>{{client.district}}</td>
 				<td>{{client.jobDetail.frequency}}</td>
-				<td>
-					<span ng-repeat="nt in client.notifications" class="glyphicon glyphicon-{{nt.icon}}">&nbsp;</span>
-				</td>
+                <td>{{client.price | currency:'USD$' }}</td>
 			</tr>
 		</tbody>
 	</table>

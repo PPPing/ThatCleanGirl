@@ -19,7 +19,7 @@
 				<label for="frequency" class="col-xs-2 form-control-label">Frequency</label>
 				<div class="col-xs-4">
 					<div ng-if="!editMode" name="frequency">{{jobDetail.frequency}}</div>
-					<select ng-if="editMode" ng-model="jobDetail.frequency">
+					<select ng-if="editMode" ng-model="jobDetail.frequency" class="form-control">
 						<option value="weekly">weekly</option>
 						<option value="twiceAWeek">twice a week</option>
 						<option value="fortnightly">fortnightly</option>
@@ -64,10 +64,6 @@
 					</div>
 					</div>
 				</div>
-				<!--<div ng-if="editMode" class="col-xs-4 form-control-radios">
-					<input type="radio" name="key" ng-model="jobDetail.key.has" class="form-control" value="No">No
-					<input type="radio" name="key" ng-model="jobDetail.key.has" class="form-control" value="Yes">Yes
-				</div>-->
 
                 <div ng-if="editMode" class="col-xs-4 btn-group">
                     <label class="btn btn-default btn-xs" ng-class="{'btn-warning':jobDetail.key.has}" ng-model="jobDetail.key.has" btn-radio=true uncheckable>Yes</label>
@@ -90,16 +86,16 @@
 					<div class="row" >						
 						<div class="col-xs-10 form-group-sub">
 							<label for="alarmIn" class="col-xs-4 form-control-label">Alarm In</label>
-							<div class="col-xs-8">	
-								<input type="text" name="alarmIn" class="form-control" ng-model="jobDetail.key.alarmIn" placeholder="HH:mm:ss">
+							<div class="col-xs-8">
+                                <plugin-time-picker ng-model ="jobDetail.key.alarmIn"></plugin-time-picker>
 							</div>
 						</div>
 					</div>
 					<div class="row" >
 						<div class="col-xs-10 form-group-sub">
 							<label for="alarmOut" class="col-xs-4 form-control-label">Alarm Out</label>
-							<div class="col-xs-8">	
-								<input type="text" name="alarmOut" class="form-control" ng-model="jobDetail.key.alarmOut" placeholder="HH:mm:ss">
+							<div class="col-xs-8">
+                                <plugin-time-picker ng-model ="jobDetail.key.alarmOut"></plugin-time-picker>
 							</div>
 						</div>
 					</div>

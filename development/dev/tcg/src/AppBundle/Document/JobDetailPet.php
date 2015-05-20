@@ -4,6 +4,12 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
+class PetKeepingType{
+    const DoesNotMatter = "doesNotMatter";
+    const KeptInDoor = "keptInDoor";
+    const KeptOutDoor ="keptOutDoor";
+}
+
 /**
  * @MongoDB\EmbeddedDocument
  */
@@ -19,6 +25,11 @@ class JobDetailPet extends BaseDocument
      * */
     protected $keeping;
 
+    public function __construct()
+    {
+        $this->has = false;
+        $this->keeping = PetKeepingType::DoesNotMatter;
+    }
 
     /**
      * Set has

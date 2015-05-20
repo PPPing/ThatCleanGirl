@@ -24,7 +24,7 @@ class CornJobController extends Controller
     public function serviceHistory()
     {
         $log = new Logger('serviceHistory');
-        $log->pushHandler(new StreamHandler('C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/serviceHistory.log', Logger::DEBUG));
+        $log->pushHandler(new StreamHandler($this->container->getParameter('log_dir') .'serviceHistory.log', Logger::DEBUG));
 
         $clientList = $this->get('doctrine_mongodb')
             ->getManager()
@@ -107,7 +107,7 @@ class CornJobController extends Controller
     public function addServiceInfo()
     {
         $log = new Logger('serviceHistory');
-        $log->pushHandler(new StreamHandler('C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/serviceHistory.log', Logger::DEBUG));
+        $log->pushHandler(new StreamHandler($this->container->getParameter('log_dir') .'serviceHistory.log', Logger::DEBUG));
 
         $service = new ServiceInfo();
 
@@ -138,7 +138,7 @@ class CornJobController extends Controller
     {
         $filters = $request->request->get('filters');
         $log = new Logger('serviceHistory');
-        $log->pushHandler(new StreamHandler('C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/serviceHistory.log', Logger::DEBUG));
+        $log->pushHandler(new StreamHandler($this->container->getParameter('log_dir') .'serviceHistory.log', Logger::DEBUG));
 
         $log->addDebug(json_encode($filters));
 
@@ -164,7 +164,7 @@ class CornJobController extends Controller
     public function serviceUnconfirmedList()
     {
         $log = new Logger('serviceHistory');
-        $log->pushHandler(new StreamHandler('C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/serviceHistory.log', Logger::DEBUG));
+        $log->pushHandler(new StreamHandler($this->container->getParameter('log_dir') .'serviceHistory.log', Logger::DEBUG));
 
         $serviceDao = $this->get('doctrine_mongodb')
             ->getManager()
@@ -189,7 +189,7 @@ class CornJobController extends Controller
     {
 
         $log = new Logger('serviceHistory');
-        $log->pushHandler(new StreamHandler('C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/serviceHistory.log', Logger::DEBUG));
+        $log->pushHandler(new StreamHandler($this->container->getParameter('log_dir') .'serviceHistory.log', Logger::DEBUG));
 
         $serviceInfoArray = $request->request->get('serviceInfo');
 

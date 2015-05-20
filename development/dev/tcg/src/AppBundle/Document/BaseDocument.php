@@ -36,11 +36,6 @@ class BaseDocument implements JsonSerializable
 
     public function jsonSerialize()
     {
-
-
-// create a log channel
-        //$log = new Logger('BaseDocument');
-       // $log->pushHandler(new StreamHandler('C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/your.log', Logger::WARNING));
         $jsonData = [];
         $methods = get_class_methods($this);
 
@@ -76,6 +71,15 @@ class BaseDocument implements JsonSerializable
             }
         }
         return $jsonData;
+    }
+    public  static function endsWith($haystack, $needle)
+    {
+        $length = strlen($needle);
+        if ($length == 0) {
+            return true;
+        }
+
+        return (substr($haystack, -$length) === $needle);
     }
 
 

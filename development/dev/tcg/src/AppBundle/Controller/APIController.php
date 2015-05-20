@@ -5,6 +5,7 @@ use AppBundle\Document\JobDetail;
 use AppBundle\Document\JobDetailKey;
 use AppBundle\Document\JobDetailPet;
 use AppBundle\Document\JobDetailItem;
+use AppBundle\Document\ReminderInfo;
 use \stdClass;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -14,6 +15,8 @@ use AppBundle\Document\ClientInfo;
 use AppBundle\Document\ClientComment;
 use Symfony\Component\HttpFoundation\Request;
 use \DateTime;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 class APIController extends Controller
 {
 
@@ -141,7 +144,9 @@ class APIController extends Controller
     public function updateClientInfo(Request $request)
     {
         $clientInfo = $request->request->get('clientInfo');
-
+        $log = new Logger('serviceHistory');
+        $log->pushHandler(new StreamHandler($this->container->getParameter('log_dir') .'serviceHistory.log', Logger::DEBUG));
+        $log->addDebug(json_encode($clientInfo,JSON_PRETTY_PRINT));
         $clientInfo =  $this->get('doctrine_mongodb')
             ->getManager()
             ->getRepository('AppBundle:ClientInfo')
@@ -168,6 +173,32 @@ class APIController extends Controller
             ->updateClientJobDetail($clientId,$jobDetail);
 
         $response =  new Response(json_encode($jobDetail));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
+    /**
+     * @Route("/api/updateClientReminderInfo", name="_api_updateClientReminderInfo")
+     *
+     */
+    public function updateClientReminderInfo(Request $request)
+    {
+        $reminderInfoArray = $request->request->get('reminderInfo');
+
+        $clientId = $request->request->get('clientId');
+        $log = new Logger('serviceHistory');
+        $log->pushHandler(new StreamHandler($this->container->getParameter('log_dir') .'serviceHistory.log', Logger::DEBUG));
+        $log->addDebug(json_encode($reminderInfoArray,JSON_PRETTY_PRINT));
+        $reminderInfo = new ReminderInfo();
+        if($reminderInfoArray!=null){
+            $reminderInfo->loadFromArray($reminderInfoArray);
+        }
+        $result =  $this->get('doctrine_mongodb')
+            ->getManager()
+            ->getRepository('AppBundle:ClientInfo')
+            ->updateClientReminderInfo($clientId,$reminderInfo);
+
+        $response =  new Response(json_encode($reminderInfo));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
@@ -291,81 +322,8 @@ class APIController extends Controller
             ->generateClientId();
 
         $clientInfo = new ClientInfo();
-        $clientInfo->setCreatorId($userInfo->getId());
-        $clientInfo->setCreateTime(new DateTime("NOW"));
-
         $clientInfo->setClientId($clientId);
-        $clientInfo->setClientName("");
-        $clientInfo->setDriverLicense("000-000");
-        $clientInfo->setTel("");
-        $clientInfo->setBirthday(new DateTime("1980-01-01"));
-        $clientInfo->setAddress("");
-        $clientInfo->setIsActive(false);
-
-        $clientInfo->setStartDate(new DateTime('Now'));
-        $clientInfo->setPrice(998);
-
-        $r1=new stdClass();
-        $r1->key = "week 1";
-        $r1->value = "";
-        $r2=new stdClass();
-        $r2->key = "week 2";
-        $r2->value = "";
-        $r3=new stdClass();
-        $r3->key = "week 3";
-        $r3->value = "";
-        $r4=new stdClass();
-        $r4->key = "week 4";
-        $r4->value = "";
-
-        $clientInfo->setRotations(array($r1,$r2,$r3,$r4));
-        $clientInfo->setRemark("");
-        $clientInfo->setPaymentType("cash");
-        $clientInfo->setInvoiceNeeded(true);
-        $clientInfo->setInvoiceTitle("");
-
-        $jobDetail = new JobDetail();
-
-        $jobDetail->setFrequency("weekly");
-        $jobDetail->setAttention("");
-
-        $key = new JobDetailKey();
-        $key->setHas(true);
-        $key->setKeeping("keptByUs");
-        $key->setAlarmIn("8:00 AM");
-        $key->setAlarmOut("6:00 PM");
-
-        $jobDetail->setKey($key);
-
-        $pet = new JobDetailPet();
-        $pet->setHas(true);
-        $pet->setKeeping("keptInDoor");
-        $jobDetail->setPet($pet);
-
-        $jobItem = new JobDetailItem();
-        $jobItem->setName("Formal lounge");
-        $jobItem->setAmount(1);
-        $jobItem->setRequest("");
-
-        $jobItem1 = new JobDetailItem();
-        $jobItem1->setName("Formal dining");
-        $jobItem1->setAmount(1);
-        $jobItem1->setRequest("");
-
-        $jobItem2 = new JobDetailItem();
-        $jobItem2->setName("Family room");
-        $jobItem2->setAmount(1);
-        $jobItem2->setRequest("");
-
-        $jobDetail->addItem($jobItem);
-        $jobDetail->addItem($jobItem1);
-        $jobDetail->addItem($jobItem2);
-
-        $clientInfo->setJobDetail($jobDetail);
-
         $clientInfo->setCreatorId($userInfo->getId());
-        $clientInfo->setCreateTime(new DateTime("NOW"));
-        $clientInfo->setModifyTime(new DateTime("NOW"));
 
         $dm = $this->get('doctrine_mongodb')->getManager();
         $dm->persist($clientInfo);

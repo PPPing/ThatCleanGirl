@@ -420,39 +420,25 @@ class ServiceInfo extends BaseDocument
         }else{
             $this->id = $info['id'];
         }
-
-        $log = new Logger('serviceHistory');
-        $log->pushHandler(new StreamHandler('C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/serviceHistory.log', Logger::DEBUG));
-
         $methods = get_class_methods($this);
 
         foreach ($methods as $method) {
             if (strpos($method, 'set') === 0) {
                 $key = lcfirst(substr($method, 3));
-                $value = $info[$key];
-                if( $this->endsWith($key, 'date')===true ){
-                    $value = date_create_from_format('Y-m-d\TH:i:sT', $value);
-                }else if($value==="false"){
-                    $value=false;
-                }else if($value==="true") {
-                    $value=true;
+                if(isset($info[$key])) {
+                    $value = $info[$key];
+                    if ($this->endsWith($key, 'date') === true) {
+                        $value = date_create_from_format('Y-m-d\TH:i:sT', $value);
+                    } else if ($value === "false") {
+                        $value = false;
+                    } else if ($value === "true") {
+                        $value = true;
+                    }
+                    $this->$method($value);
                 }
-                $this->$method($value);
             }
         }
-        //$log->addDebug(json_encode($this,JSON_PRETTY_PRINT));
         return $this;
-
-    }
-
-   public  static function endsWith($haystack, $needle)
-    {
-        $length = strlen($needle);
-        if ($length == 0) {
-            return true;
-        }
-
-        return (substr($haystack, -$length) === $needle);
     }
 
 }

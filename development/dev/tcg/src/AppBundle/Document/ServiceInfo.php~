@@ -7,10 +7,11 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
 class ServiceStatus{
-    const Pendding = 0;
+    const Pending = 0;
     const Processing = 1;
     const Completed =2;
     const Reviewed = 3;
+    const Cancelled = 4;
 }
 
 /**
@@ -389,6 +390,28 @@ class ServiceInfo extends BaseDocument
         return $this->createTime;
     }
 
+    /**
+     * Set modifyTime
+     *
+     * @param date $modifyTime
+     * @return self
+     */
+    public function setModifyTime($modifyTime)
+    {
+        $this->modifyTime = $modifyTime;
+        return $this;
+    }
+
+    /**
+     * Get modifyTime
+     *
+     * @return date $modifyTime
+     */
+    public function getModifyTime()
+    {
+        return $this->modifyTime;
+    }
+
     public function loadFromArray(array $info)
     {
 
@@ -397,10 +420,6 @@ class ServiceInfo extends BaseDocument
         }else{
             $this->id = $info['id'];
         }
-
-        $log = new Logger('serviceHistory');
-        $log->pushHandler(new StreamHandler('C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/serviceHistory.log', Logger::DEBUG));
-
         $methods = get_class_methods($this);
 
         foreach ($methods as $method) {
@@ -417,9 +436,7 @@ class ServiceInfo extends BaseDocument
                 $this->$method($value);
             }
         }
-        //$log->addDebug(json_encode($this,JSON_PRETTY_PRINT));
         return $this;
-
     }
 
    public  static function endsWith($haystack, $needle)
