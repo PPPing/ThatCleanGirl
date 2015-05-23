@@ -1,0 +1,17 @@
+<div class="module-section">
+    <div class="module-section-header">
+		<span class="module-section-header-square">
+		</span>
+		<span class="module-section-header-title">
+			Services Calendar
+		</span>
+    </div>
+    <div class="module-section-body">
+        <div class="btn-group">
+            <button class="btn btn-success" ng-click="changeView('agendaDay', 'myCalendar1')">AgendaDay</button>
+            <button class="btn btn-success" ng-click="changeView('agendaWeek', 'myCalendar1')">AgendaWeek</button>
+            <button class="btn btn-success" ng-click="changeView('month', 'myCalendar1')">Month</button>
+        </div>
+        <div class="calendar" ng-model="eventSources" calendar="serviceCalendar1" ui-calendar="uiConfig.calendar"></div>
+    </div>
+</div>

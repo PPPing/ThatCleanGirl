@@ -23,12 +23,12 @@ class JobDetailPet extends BaseDocument
     /**
      * @MongoDB\string
      * */
-    protected $keeping;
+    protected $notes;
 
     public function __construct()
     {
         $this->has = false;
-        $this->keeping = PetKeepingType::DoesNotMatter;
+        $this->notes = PetKeepingType::DoesNotMatter;
     }
 
     /**
@@ -54,25 +54,25 @@ class JobDetailPet extends BaseDocument
     }
 
     /**
-     * Set keeping
+     * Set notes
      *
-     * @param string $keeping
+     * @param string $notes
      * @return self
      */
-    public function setKeeping($keeping)
+    public function setNotes($notes)
     {
-        $this->keeping = $keeping;
+        $this->notes = $notes;
         return $this;
     }
 
     /**
-     * Get keeping
+     * Get notes
      *
-     * @return string $keeping
+     * @return string $notes
      */
-    public function getKeeping()
+    public function getNotes()
     {
-        return $this->keeping;
+        return $this->notes;
     }
     /**
      * @var $id

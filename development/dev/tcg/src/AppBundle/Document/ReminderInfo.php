@@ -52,6 +52,10 @@ class ReminderInfo extends BaseDocument
      */
     protected $kitchenDate;
 
+    /**
+     * @MongoDB\String
+     */
+    protected $others;
 
     public function __construct()
     {
@@ -261,7 +265,27 @@ class ReminderInfo extends BaseDocument
     {
         return $this->kitchenDate;
     }
+    /**
+     * Set others
+     *
+     * @param string $others
+     * @return self
+     */
+    public function setOthers($others)
+    {
+        $this->others = $others;
+        return $this;
+    }
 
+    /**
+     * Get others
+     *
+     * @return string $others
+     */
+    public function getOthers()
+    {
+        return $this->others;
+    }
     /**
      * Get id
      *
@@ -298,4 +322,6 @@ class ReminderInfo extends BaseDocument
         }
         return $this;
     }
+
+
 }

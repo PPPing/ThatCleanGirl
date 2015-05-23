@@ -3,6 +3,7 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Doctrine\ORM\Mapping\Id;
 
 class FrequencyType{
     const  Weekly = "weekly";
@@ -61,7 +62,7 @@ class ClientInfo extends BaseDocument
     /**
      * @MongoDB\String
      */
-    protected $district;
+    protected $suburb;
 
     /**
      * @MongoDB\boolean
@@ -72,6 +73,10 @@ class ClientInfo extends BaseDocument
      * @MongoDB\Date
      */
     protected $startDate;
+    /**
+     * @MongoDB\float
+     */
+    protected $startPrice;
 
     /**
      * @MongoDB\Date
@@ -91,13 +96,11 @@ class ClientInfo extends BaseDocument
     /** @MongoDB\EmbedMany(targetDocument="PriceHistory") */
     protected $priceHistory = array();
 
-    /** @MongoDB\collection*/
-    protected $rotations =  array();
 
     /**
      * @MongoDB\String
      */
-    protected $remark;
+    protected $notes;
 
     /**
      * @MongoDB\String
@@ -135,6 +138,12 @@ class ClientInfo extends BaseDocument
      */
     protected $modifyTime;
 
+    /**
+     * @MongoDB\boolean
+     */
+    protected $available ;
+
+
 
     function __construct() {
         $this->clientId = null;
@@ -143,27 +152,16 @@ class ClientInfo extends BaseDocument
         $this->email="";
         $this->birthday=new \DateTime("1980-01-01");
         $this->address = "";
-        $this->district="";
+        $this->suburb="";
         $this->isActive=false;
         $this->startDate = new \DateTime('Now');
         $this->serviceDate = new \DateTime('Now');
         $this->serviceTime = "10:00:AM";
-        $this->price="998";
+       // $this->price=0;
+        //$this->startPrice=0;
 
-        $r1=new \stdClass();
-        $r1->key = "week 1";
-        $r1->value = "";
-        $r2=new \stdClass();
-        $r2->key = "week 2";
-        $r2->value = "";
-        $r3=new \stdClass();
-        $r3->key = "week 3";
-        $r3->value = "";
-        $r4=new \stdClass();
-        $r4->key = "week 4";
-        $r4->value = "";
-        $this->rotations = array($r1,$r2,$r3,$r4);
-        $this->remark="";
+
+        $this->notes="";
         $this->paymentType="cash";
         $this->invoiceNeeded=false;
         $this->invoiceTitle="";
@@ -172,6 +170,7 @@ class ClientInfo extends BaseDocument
         $this->creatorId = null;
         $this->createTime = new \DateTime("NOW");
         $this->modifyTime = new \DateTime("NOW");
+        $this->available=false;
     }
 
 
@@ -296,25 +295,25 @@ class ClientInfo extends BaseDocument
     }
 
     /**
-     * Set district
+     * Set suburb
      *
-     * @param string $district
+     * @param string $suburb
      * @return self
      */
-    public function setDistrict($district)
+    public function setSuburb($suburb)
     {
-        $this->district = $district;
+        $this->suburb = $suburb;
         return $this;
     }
 
     /**
-     * Get district
+     * Get suburb
      *
      * @return string $district
      */
-    public function getDistrict()
+    public function getSuburb()
     {
-        return $this->district;
+        return $this->suburb;
     }
 
     /**
@@ -393,6 +392,28 @@ class ClientInfo extends BaseDocument
     {
         $this->serviceDate = $serviceDate;
         return $this;
+    }
+
+    /**
+     * Set startPrice
+     *
+     * @param float $startPrice
+     * @return self
+     */
+    public function setStartPrice($startPrice)
+    {
+        $this->startPrice = $startPrice;
+        return $this;
+    }
+
+    /**
+     * Get startPrice
+     *
+     * @return float $startPrice
+     */
+    public function getStartPrice()
+    {
+        return $this->startPrice;
     }
 
     /**
@@ -479,48 +500,27 @@ class ClientInfo extends BaseDocument
         return $this->priceHistory;
     }
 
+
     /**
-     * Set rotations
+     * Set notes
      *
-     * @param hash $rotations
+     * @param string $notes
      * @return self
      */
-    public function setRotations($rotations)
+    public function setNotes($notes)
     {
-        $this->rotations = $rotations;
+        $this->notes = $notes;
         return $this;
     }
 
     /**
-     * Get rotations
+     * Get notes
      *
-     * @return hash $rotations
+     * @return string $notes
      */
-    public function getRotations()
+    public function getNotes()
     {
-        return $this->rotations;
-    }
-
-    /**
-     * Set remark
-     *
-     * @param string $remark
-     * @return self
-     */
-    public function setRemark($remark)
-    {
-        $this->remark = $remark;
-        return $this;
-    }
-
-    /**
-     * Get remark
-     *
-     * @return string $remark
-     */
-    public function getRemark()
-    {
-        return $this->remark;
+        return $this->notes;
     }
 
     /**
@@ -698,7 +698,27 @@ class ClientInfo extends BaseDocument
     {
         return $this->modifyTime;
     }
+    /**
+     * Set available
+     *
+     * @param boolean $available
+     * @return self
+     */
+    public function setAvailable($available)
+    {
+        $this->available = $available;
+        return $this;
+    }
 
+    /**
+     * Get available
+     *
+     * @return boolean $available
+     */
+    public function getAvailable()
+    {
+        return $this->available;
+    }
 
     public function toString()
     {
@@ -709,6 +729,5 @@ class ClientInfo extends BaseDocument
 
         return $serializer->serialize($this, 'json');
     }
-
 
 }

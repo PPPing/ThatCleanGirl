@@ -20,13 +20,6 @@
 					<div ng-if="!editMode" ng-bind="clientDetail.clientName"></div>
 					</div>
 				</div>
-				<div class="col-xs-6 form-group">
-					<label for="email" class="col-xs-4 form-control-label">Email</label>
-					<div class="col-xs-6">
-						<input ng-if="editMode" type="text" ng-model="clientDetail.email" class="form-control" value="{{clientDetail.email}}" required>
-						<div ng-if="!editMode" ng-bind="clientDetail.email">{{clientDetail.email}}</div>
-					</div>
-				</div>
 		</div>
 		<div class="row form-row">
 			<div class="col-xs-6 form-group">
@@ -36,30 +29,40 @@
 					<div ng-if="!editMode" ng-bind="clientDetail.tel"></div>
 				</div>
 			</div>
-			<div class="col-xs-6 form-group">
-				<label for="birthday" class="col-xs-4 form-control-label">Birthday</label>
-				<div class="col-xs-6">
-                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.birthday"></plugin-date-picker>
-                    <div ng-if="!editMode" ng-bind="clientDetail.birthday  | date:'dd/MM/yyyy' "></div>
-				</div>
-			</div>
-		</div>
-		<div class="row form-row">
             <div class="col-xs-6 form-group">
                 <label for="address" class="col-xs-4 form-control-label">Address</label>
-                <div class="col-xs-8">
+                <div class="col-xs-6">
                     <input ng-if="editMode" type="text" ng-model="clientDetail.address" class="form-control" value="{{clientDetail.address}}" required>
                     <div ng-if="!editMode" ng-bind="clientDetail.address"></div>
                 </div>
             </div>
+
+		</div>
+		<div class="row form-row">
             <div class="col-xs-6 form-group">
-                <label for="district" class="col-xs-4 form-control-label">District</label>
+                <label for="email" class="col-xs-4 form-control-label">Email</label>
+                <div class="col-xs-8">
+                    <input ng-if="editMode" type="text" ng-model="clientDetail.email" class="form-control" value="{{clientDetail.email}}" required>
+                    <div ng-if="!editMode" ng-bind="clientDetail.email">{{clientDetail.email}}</div>
+                </div>
+            </div>
+            <div class="col-xs-6 form-group">
+                <label for="district" class="col-xs-4 form-control-label">Suburb</label>
                 <div class="col-xs-6">
-                    <input ng-if="editMode" type="text" ng-model="clientDetail.district" class="form-control" value="{{clientDetail.district}}" required>
-                    <div ng-if="!editMode" ng-bind="clientDetail.district"></div>
+                    <input ng-if="editMode" type="text" ng-model="clientDetail.suburb" class="form-control" value="{{clientDetail.suburb}}" required>
+                    <div ng-if="!editMode" ng-bind="clientDetail.suburb"></div>
                 </div>
             </div>
 		</div>
+        <div class="row form-row">
+            <div class="col-xs-6 form-group">
+                <label for="birthday" class="col-xs-4 form-control-label">Birthday</label>
+                <div class="col-xs-8">
+                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.birthday"></plugin-date-picker>
+                    <div ng-if="!editMode" ng-bind="clientDetail.birthday  | date:'dd/MM/yyyy' "></div>
+                </div>
+            </div>
+        </div>
 		<div class="row form-divider">
 		</div>
         <div class="row form-row">
@@ -83,10 +86,10 @@
                 </div>
 			</div>
 			<div class="col-xs-6 form-group">
-				<label for="price" class="col-xs-4 form-control-label">Price</label>
+				<label for="price" class="col-xs-4 form-control-label">Start Price</label>
 				<div class="col-xs-6">					
-					<input ng-if="editMode" type="text" ng-model="clientDetail.price" class="form-control" ng-value="{{clientDetail.price}}" required>
-					<div ng-if="!editMode" ng-bind="clientDetail.price | currency:'USD$'"></div>	
+					<input ng-if="editMode" type="text" ng-model="clientDetail.startPrice" class="form-control" ng-value="{{clientDetail.startPrice}}" required>
+					<div ng-if="!editMode" ng-bind="clientDetail.startPrice | currency:'USD$'"></div>
 				</div>
 			</div>
 		</div>
@@ -98,6 +101,8 @@
                     <div ng-if="!editMode" ng-bind="clientDetail.serviceDate | date:'dd/MM/yyyy' "></div>
                 </div>
             </div>
+        </div>
+        <div class="row form-row">
             <div class="col-xs-6 form-group">
                 <label for="serviceTime" class="col-xs-4 form-control-label">ServiceTime</label>
                 <div class="col-xs-6">
@@ -105,36 +110,22 @@
                     <div ng-if="!editMode" ng-bind="clientDetail.serviceTime"></div>
                 </div>
             </div>
+            <div class="col-xs-6 form-group">
+                <label for="price" class="col-xs-4 form-control-label">Current Price</label>
+                <div class="col-xs-6">
+                    <input ng-if="editMode" type="text" ng-model="clientDetail.price" class="form-control" ng-value="{{clientDetail.price}}" required>
+                    <div ng-if="!editMode" ng-bind="clientDetail.price | currency:'USD$'"></div>
+                </div>
+            </div>
         </div>
+
 
 		<div class="row form-row">
 			<div class="col-xs-12 form-group">
-				<label for="rotation" class="col-xs-2 form-control-label">Rotation</label>
-				<div ng-if="editMode" class="col-xs-10">
-					<d-form-control-rotation-group bindModel="clientDetail.rotations"></d-form-control-rotation-group>
-                    <div class="col-xs-12 form-control-item-list" ng-repeat="item in clientDetail.rotations">
-                        <label for="rotation_{{item.key}}" class="col-xs-2 form-control-label">{{item.key}}</label>
-                        <div class="col-xs-8">
-                            <input id="rotation_{{item.key}}" ng-model="item.value" class="form-control" type="text" ng-value="item.value">
-                        </div>
-                    </div>
-				</div>
-				<div ng-if="!editMode"  class="col-xs-10">
-					<div class="col-xs-12 form-control-item-list" ng-repeat="item in clientDetail.rotations" ng-show="item.value!=''">
-						<label for="rotation_{{item.key}}" class="col-xs-2 form-control-label">{{item.key}}</label>
-						<div class="col-xs-8">
-							<div  name="rotation_{{item.key}}" type="text">{{item.value}}</div>
-						</div>
-					</div>										
-				</div>
-			</div>
-		</div>
-		<div class="row form-row">
-			<div class="col-xs-12 form-group">
-				<label for="remark" class="col-xs-2 form-control-label">Remark</label>
+				<label for="remark" class="col-xs-2 form-control-label">Notes</label>
 				<div class="col-xs-9">
-					<textarea ng-if="editMode" type="text" ng-model="clientDetail.remark" class="form-control" rows=3>{{clientDetail.remark}}</textarea>
-					<div ng-if="!editMode" ng-model="clientDetail.remark" d-multiline ></div>
+					<textarea ng-if="editMode" type="text" ng-model="clientDetail.notes" class="form-control" rows=3>{{clientDetail.notes}}</textarea>
+					<div ng-if="!editMode" ng-model="clientDetail.notes" d-multiline ></div>
 				</div>
 			</div>								
 		</div>

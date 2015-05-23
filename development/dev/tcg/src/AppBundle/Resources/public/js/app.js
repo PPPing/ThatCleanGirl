@@ -1,5 +1,5 @@
 (function(){
-	var app = angular.module('thatCleanGirl', ['pluginDirectives']).config(function($interpolateProvider,$httpProvider){
+	var app = angular.module('thatCleanGirl', ['pluginDirectives','ui.calendar']).config(function($interpolateProvider,$httpProvider){
         $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
 
         $httpProvider.defaults.headers.post['Content-Type'] =
@@ -152,6 +152,21 @@
             modulesStack.push(modulesInfoNode);
             //console.log(modulesStack);
         };
+
+        var changeAlert = function(){
+            var moduleStackNode = modulesStack[modulesStack.length-1];
+            //console.log(moduleStackNode);
+            var curModule = moduleStackNode.modules[moduleStackNode.curModuleIndex];
+            console.log(curModule);
+
+            if(curModule.changeAlart===true){
+                if(!confirm(curModule.alartMsg)){
+                    return false;
+                }
+            }
+            return true;
+        }
+
         if (components.length > 0) {
             pushModulesStack(curModuleIndex, components[curComponentIndex].modules);
         }
@@ -188,13 +203,18 @@
 				return modulesStack.length;
 			},
 			changeComponents:function(index){
-				curComponentIndex = index;
-				curModuleIndex=0;
-				modulesStack=[];
-				pushModulesStack(0,components[curComponentIndex].modules);
+                if(changeAlert()){
+                    curComponentIndex = index;
+                    curModuleIndex=0;
+                    modulesStack=[];
+                    pushModulesStack(0,components[curComponentIndex].modules);
+                }
 			},
 			changeModule:function(index){
-				modulesStack[modulesStack.length-1].curModuleIndex = index;
+                if(changeAlert()){
+                    modulesStack[modulesStack.length-1].curModuleIndex = index;
+                }
+
 			},
 			pushModulesStack:function(modules){
 				pushModulesStack(0,modules);
@@ -284,7 +304,66 @@
             controllerAs: 'dashboardMain'
         };
     });
+    app.directive('serviceCalendar',function($compile) {
+        return {
+            restrict: 'E',
+            scope: {
+            },
+            controller:function($scope,$compile,uiCalendarConfig) {
+                console.log(uiCalendarConfig);
+                var date = new Date();
+                var d = date.getDate();
+                var m = date.getMonth();
+                var y = date.getFullYear();
 
+                $scope.changeView = function(view) {
+                    uiCalendarConfig.calendars[calendarId].fullCalendar('changeView',view);
+                };
+                $scope.renderCalender = function() {
+                    if(uiCalendarConfig.calendars[calendarId]){
+                        console.log('renderCalender : ' + calendarId);
+                        uiCalendarConfig.calendars[calendarId].fullCalendar('render');
+                    }
+                };
+                $scope.eventRender = function( event, element, view ) {
+                    element.attr({'tooltip': event.title,
+                        'tooltip-append-to-body': true});
+                    $compile(element)($scope);
+                };
+                var events = [
+                    {title: 'All Day Event',start: new Date(y, m, 1)},
+                    {title: 'Long Event',start: new Date(y, m, d - 5),end: new Date(y, m, d - 2)},
+                    {id: 999,title: 'Repeating Event',start: new Date(y, m, d - 3, 16, 0),allDay: false},
+                    {id: 999,title: 'Repeating Event',start: new Date(y, m, d + 4, 16, 0),allDay: false},
+                    {title: 'Birthday Party',start: new Date(y, m, d + 1, 19, 0),end: new Date(y, m, d + 1, 22, 30),allDay: false}
+                ];
+                //config object
+                $scope.uiConfig = {
+                    calendar:{
+                        height: 450,
+                        editable: true,
+                        defaultView:'agendaWeek',
+                        header:{
+                            left: 'title',
+                            center: '',
+                            right: 'today prev,next'
+                        },
+                        //eventClick: $scope.alertOnEventClick,
+                        //eventDrop: $scope.alertOnDrop,
+                        //eventResize: $scope.alertOnResize,
+                        eventRender: $scope.eventRender
+                    }
+                };
+                $scope.eventSources = {
+                    events:  events,
+                    color: 'yellow',   // an option!
+                    textColor: 'black' // an option!
+                };
+            },
+            templateUrl:'directives/templates/serviceCalendarTmpl.html',
+            controllerAs: 'serviceCalendarC'
+        };
+    });
     app.directive('serviceUnconfirmedTmpl',function(){
         return {
             restrict: 'E',
@@ -568,22 +647,26 @@
 			controller: function($scope,$http,$element,MenuService,ValidationService) {
 				console.log($scope.editMode);
 				$scope.submit=function() {
-
                     if(!ValidationService.check($element)){
                         alert("Please input all required information.");
                         return;
                     }
-
 					$scope.editMode=false;
-                    console.log("submit");
+                    //console.log("submit");
                     //console.log($scope.clientDetail);
                     var clientInfo = angular.copy($scope.clientDetail);
                     $http.post('api/updateClientInfo', {"clientInfo":clientInfo}).
                         success(function(data, status, headers, config) {
+                            //console.log(headers);
+                           // console.log(config);
                             console.log("[Update] - ClientInfo - SUCCESS");
-                            console.log(data);
+                            //console.log(data);
                         }).
                         error(function(data, status, headers, config) {
+                           // console.log(headers);
+                            //console.log(config);
+                            //console.log("[Update] - ClientInfo - Error");
+                            //console.log(data);
                         });
 				};
 
@@ -692,15 +775,14 @@
                         alert("Invalid Client Id.");
                         return;
                     }
-                    console.log("submit");
+                   // console.log("submit");
                     var jobDetail = angular.copy($scope.jobDetail);
                     //console.log(jobDetail);
                     $http.post('api/updateClientJobDetail', {"jobDetail":jobDetail,"clientId":$scope.clientId}).
                         success(function(data, status, headers, config) {
-
                             console.log("[Update] - JobDetail - SUCCESS");
-                            console.log(config);
-                            console.log(data);
+                            //console.log(config);
+                            //console.log(data);
                             //console.log(headers);
                            // console.log(config);
                         }).
@@ -731,14 +813,11 @@
 				editMode:'=editMode'
 			},
 			controller: function($scope,$http) {
-
                 $scope.submit=function(){
-
                     if($scope.clientDetail.invoiceNeeded ==true && $scope.clientDetail.invoiceTitle==""){
                         alert("Please input Company Titile..");
                         return;
                     }
-
                     $scope.editMode=false;
                     console.log("submit");
                     console.log($scope.clientDetail);
@@ -746,7 +825,7 @@
                     $http.post('api/updateClientPaymentInfo', {"clientInfo":clientInfo}).
                         success(function(data, status, headers, config) {
                             console.log("[Update] - PaymentInfo - SUCCESS");
-                            console.log(data);
+                           // console.log(data);
                         }).
                         error(function(data, status, headers, config) {
                         });
@@ -782,15 +861,15 @@
                         alert("Invalid Client Id.");
                         return;
                     }
-                    console.log("submit");
-                    console.log($scope.reminderInfo);
+                    //console.log("submit");
+                    //console.log($scope.reminderInfo);
                     var reminderInfo = angular.copy($scope.reminderInfo);
-                    console.log(reminderInfo);
+                    //console.log(reminderInfo);
                     $http.post('api/updateClientReminderInfo', {"reminderInfo":reminderInfo,"clientId":$scope.clientId}).
                         success(function(data, status, headers, config) {
                             console.log("[Update] - reminderInfo - SUCCESS");
-                            console.log(config);
-                            console.log(data);
+                            //console.log(config);
+                           // console.log(data);
                         }).
                         error(function(data, status, headers, config) {
                         });
@@ -909,7 +988,8 @@
 			controllerAs: 'commentsSection'
 		};
 	});
-	app.directive('moduleNewClient',function() {
+
+    app.directive('moduleNewClient',function() {
 		return {
 			restrict: 'E',
 			templateUrl:'directives/modules/createClient.html',
@@ -945,7 +1025,8 @@
 			controllerAs: 'newClientModule'
 		};
 	});
-	app.directive('moduleStaffList',function() {
+
+    app.directive('moduleStaffList',function() {
 		return {
 			restrict: 'E',
 			template: '<div>module Staff List</div>',

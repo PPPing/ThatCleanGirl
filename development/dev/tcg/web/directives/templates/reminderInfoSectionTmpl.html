@@ -71,7 +71,7 @@
                 </div>
             </div>
             <div class="col-xs-6 form-group">
-                <label for="carpet" class="col-xs-4 form-control-label">Carpets Shampooing</label>
+                <label for="carpet" class="col-xs-4 form-control-label">Carpets clean</label>
                 <div class="col-xs-7">
                     <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="reminderInfo.carpetDate"></plugin-date-picker>
                     <div ng-if="!editMode" ng-bind="reminderInfo.carpetDate | date:'dd/MM/yyyy' "></div>
@@ -84,6 +84,16 @@
                 <div class="col-xs-7">
                     <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="reminderInfo.kitchenDate"></plugin-date-picker>
                     <div ng-if="!editMode" ng-bind="reminderInfo.kitchenDate | date:'dd/MM/yyyy' "></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row form-row">
+            <div class="col-xs-12 form-group">
+                <label for="Others" class="col-xs-2 form-control-label">Others</label>
+                <div class="col-xs-9">
+                    <textarea ng-if="editMode" type="text" ng-model="reminderInfo.others" class="form-control" rows=2>{{reminderInfo.others}}</textarea>
+                    <div ng-if="!editMode" ng-model="reminderInfo.others" d-multiline ></div>
                 </div>
             </div>
         </div>

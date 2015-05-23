@@ -51,6 +51,8 @@ class APIController extends Controller
         $new_client->name = "New Client";
         $new_client->url = "";
         $new_client->isSubModule = false;
+        $new_client->changeAlart = true;
+        $new_client->alartMsg = "All your non-saved information will lost.";
 
         array_push($client->modules,$dashboard,$client_list,$new_client);
 
@@ -115,7 +117,7 @@ class APIController extends Controller
         $clientList = $this->get('doctrine_mongodb')
             ->getManager()
             ->getRepository('AppBundle:ClientInfo')
-            ->findAll();
+            ->findAllAvailableClient();
        // print_r(json_encode($clientList,JSON_PRETTY_PRINT));
         $response =  new Response(json_encode($clientList,JSON_PRETTY_PRINT));
         $response->headers->set('Content-Type', 'application/json');
@@ -324,101 +326,6 @@ class APIController extends Controller
         $clientInfo = new ClientInfo();
         $clientInfo->setClientId($clientId);
         $clientInfo->setCreatorId($userInfo->getId());
-
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $dm->persist($clientInfo);
-        $dm->flush();
-        $response =  new Response(json_encode($clientInfo,JSON_PRETTY_PRINT));
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
-    }
-
-
-    /**
-     * @Route("/api/test_create_client_info", name="_api_test_create_client_info")
-     */
-    public function testCreateClientInfo()
-    {
-        $clientId =  $this->get('doctrine_mongodb')
-            ->getManager()
-            ->getRepository('AppBundle:ClientInfo')
-            ->generateClientId();
-        $clientInfo = new ClientInfo();
-
-        $clientInfo->setClientId($clientId);
-        $clientInfo->setClientName("TestClient");
-        $clientInfo->setDriverLicense("D001231");
-        $clientInfo->setTel("000-1223-2123");
-        $clientInfo->setBirthday(new DateTime("2001-01-21"));
-
-        $clientInfo->setAddress("adfadf adfadfa adfadf a dfadfasd");
-        $clientInfo->setIsActive(false);
-
-        $clientInfo->setStartDate(new DateTime('Now'));
-        $clientInfo->setPrice(998);
-
-        $r1=new stdClass();
-        $r1->key = "week 1";
-        $r1->value = "adfadfa dfa dfasd adf a";
-        $r2=new stdClass();
-        $r2->key = "week 2";
-        $r2->value = "adfadfa dfa dfasd adf a";
-        $r3=new stdClass();
-        $r3->key = "week 3";
-        $r3->value = "adfadfa dfa dfasd adf a";
-        $r4=new stdClass();
-        $r4->key = "week 3";
-        $r4->value = "adfadfa dfa dfasd adf a";
-
-        $clientInfo->setRotations(array($r1,$r2,$r3,$r4));
-        $clientInfo->setRemark("adfafadasdfa");
-
-        $clientInfo->setPaymentType("cash");
-        $clientInfo->setInvoiceNeeded(true);
-        $clientInfo->setInvoiceTitle("adf company");
-
-
-        $jobDetail = new JobDetail();
-
-        $jobDetail->setFrequency("weekly");
-        $jobDetail->setAttention("adfadf dfad adfa asfas asfa ");
-
-        $key = new JobDetailKey();
-        $key->setHas(true);
-        $key->setKeeping("keptInDoor");
-        $key->setAlarmIn("8:00 AM");
-        $key->setAlarmOut("6:00 PM");
-
-        $jobDetail->setKey($key);
-
-        $pet = new JobDetailPet();
-        $pet->setHas(true);
-        $pet->setKeeping("keptInDoor");
-        $jobDetail->setPet($pet);
-
-        $jobItem = new JobDetailItem();
-        $jobItem->setName("Formal lounge");
-        $jobItem->setAmount(1);
-        $jobItem->setRequest("adfadf asdfas  asdfafa  adfa ");
-
-        $jobItem1 = new JobDetailItem();
-        $jobItem1->setName("Formal lounge");
-        $jobItem1->setAmount(1);
-        $jobItem1->setRequest("adfadf asdfas  asdfafa  adfa ");
-
-        $jobItem2 = new JobDetailItem();
-        $jobItem2->setName("Formal lounge");
-        $jobItem2->setAmount(1);
-
-        $jobItem2->setRequest("adfadf asdfas  asdfafa  adfa ");
-
-        //$jobDetail->setItems(array($jobItem,$jobItem1,$jobItem2));
-        $jobDetail->addItem($jobItem);
-        $jobDetail->addItem($jobItem1);
-        $jobDetail->addItem($jobItem2);
-
-
-        $clientInfo->setJobDetail($jobDetail);
 
         $dm = $this->get('doctrine_mongodb')->getManager();
         $dm->persist($clientInfo);

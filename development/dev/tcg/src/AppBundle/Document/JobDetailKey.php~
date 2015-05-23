@@ -23,8 +23,12 @@ class JobDetailKey extends BaseDocument
     /**
      * @MongoDB\string
      * */
-    protected $keeping;
+    protected $notes;
 
+    /**
+     * @MongoDB\Boolean
+     */
+    protected $hasAlarm;
     /**
      * @MongoDB\string
      * */
@@ -38,7 +42,8 @@ class JobDetailKey extends BaseDocument
     public function __construct()
     {
         $this->has = false;
-        $this->keeping = KeyKeepingType::KeptByUs;
+        $this->notes = KeyKeepingType::KeptByUs;
+        $this->hasAlarm = false;
         $this->alarmIn="09:00:AM";
         $this->alarmOut="05:00:PM";
     }
@@ -65,27 +70,48 @@ class JobDetailKey extends BaseDocument
     }
 
     /**
-     * Set keeping
+     * Set notes
      *
-     * @param string $keeping
+     * @param string $notes
      * @return self
      */
-    public function setKeeping($keeping)
+    public function setNotes($notes)
     {
-        $this->keeping = $keeping;
+        $this->notes = $notes;
         return $this;
     }
 
     /**
-     * Get keeping
+     * Get notes
      *
-     * @return string $keeping
+     * @return string $notes
      */
-    public function getKeeping()
+    public function getNotes()
     {
-        return $this->keeping;
+        return $this->notes;
     }
 
+    /**
+     * Set hasAlarm
+     *
+     * @param boolean $hasAlarm
+     * @return self
+     */
+    public function setHasAlarm($hasAlarm)
+    {
+        $this->hasAlarm = $hasAlarm;
+        return $this;
+    }
+
+    /**
+     * Get hasAlarm
+     *
+     * @return boolean $hasAlarm
+     */
+    public function getHasAlarm()
+    {
+        return $this->hasAlarm;
+    }
     /**
      * Set alarmIn
      *
@@ -144,4 +170,5 @@ class JobDetailKey extends BaseDocument
     {
         return $this->id;
     }
+
 }

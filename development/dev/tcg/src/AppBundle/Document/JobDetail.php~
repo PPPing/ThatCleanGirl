@@ -22,14 +22,31 @@ class JobDetail extends BaseDocument
     /**
      * @MongoDB\String
      */
-    protected $attention;
+    protected $important;
+
+    /** @MongoDB\collection*/
+    protected $rotations =  array();
 
     /** @MongoDB\EmbedMany(targetDocument="JobDetailItem") */
     protected $items = array();
     public function __construct()
     {
         $this->frequency = "weekly";
-        $this->attention = "";
+        $this->important = "";
+        $r1=new \stdClass();
+        $r1->key = "week 1";
+        $r1->value = "";
+        $r2=new \stdClass();
+        $r2->key = "week 2";
+        $r2->value = "";
+        $r3=new \stdClass();
+        $r3->key = "week 3";
+        $r3->value = "";
+        $r4=new \stdClass();
+        $r4->key = "week 4";
+        $r4->value = "";
+        $this->rotations = array($r1,$r2,$r3,$r4);
+
         $this->key = new JobDetailKey();
         $this->pet = new JobDetailPet();
 
@@ -38,19 +55,14 @@ class JobDetail extends BaseDocument
         $jobItem->setAmount(1);
         $jobItem->setRequest("");
 
+
         $jobItem1 = new JobDetailItem();
-        $jobItem1->setName("Formal dining");
+        $jobItem1->setName("Family room");
         $jobItem1->setAmount(1);
         $jobItem1->setRequest("");
 
-        $jobItem2 = new JobDetailItem();
-        $jobItem2->setName("Family room");
-        $jobItem2->setAmount(1);
-        $jobItem2->setRequest("");
-
         $this->addItem($jobItem);
         $this->addItem($jobItem1);
-        $this->addItem($jobItem2);
     }
     
     /**
@@ -120,28 +132,26 @@ class JobDetail extends BaseDocument
     }
 
     /**
-     * Set attention
+     * Set important
      *
-     * @param string $attention
+     * @param string $important
      * @return self
      */
-    public function setAttention($attention)
+    public function setImportant($important)
     {
-        $this->attention = $attention;
+        $this->important = $important;
         return $this;
     }
 
     /**
-     * Get attention
+     * Get important
      *
-     * @return string $attention
+     * @return string $important
      */
-    public function getAttention()
+    public function getImportant()
     {
-        return $this->attention;
+        return $this->important;
     }
-
-
 
     /**
      * @var $id
@@ -188,5 +198,28 @@ class JobDetail extends BaseDocument
     public function getItems()
     {
         return $this->items;
+    }
+
+
+    /**
+     * Set rotations
+     *
+     * @param hash $rotations
+     * @return self
+     */
+    public function setRotations($rotations)
+    {
+        $this->rotations = $rotations;
+        return $this;
+    }
+
+    /**
+     * Get rotations
+     *
+     * @return hash $rotations
+     */
+    public function getRotations()
+    {
+        return $this->rotations;
     }
 }

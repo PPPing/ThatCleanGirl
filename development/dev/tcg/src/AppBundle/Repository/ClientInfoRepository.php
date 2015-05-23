@@ -47,10 +47,10 @@ class ClientInfoRepository extends DocumentRepository
         }else{
             $address = $clientInfo['address'];
         }
-        if(empty($clientInfo['district'])){
-            $district="";
+        if(empty($clientInfo['suburb'])){
+            $suburb="";
         }else{
-            $district = $clientInfo['district'];
+            $suburb = $clientInfo['suburb'];
         }
 
         if(empty($clientInfo['isActive'])){
@@ -69,6 +69,11 @@ class ClientInfoRepository extends DocumentRepository
             $startDate = new \DateTime("NOW");
         }else{
             $startDate = date_create_from_format('Y-m-d\TH:i:sT', $clientInfo['startDate']);
+        }
+        if(empty($clientInfo['startPrice'])){
+            $startPrice=0;
+        }else{
+            $startPrice = $clientInfo['startPrice'];
         }
         if(empty($clientInfo['serviceDate'])){
             $serviceDate = new \DateTime("NOW");
@@ -103,10 +108,10 @@ class ClientInfoRepository extends DocumentRepository
         }else{
             $rotations = $clientInfo['rotations'];
         }
-        if(empty($clientInfo['remark'])){
-            $remark ="";
+        if(empty($clientInfo['notes'])){
+            $notes ="";
         }else{
-            $remark = $clientInfo['remark'];
+            $notes = $clientInfo['notes'];
         }
 
         $clientInfo = $this->createQueryBuilder()
@@ -120,15 +125,17 @@ class ClientInfoRepository extends DocumentRepository
             ->field('email')->set($email)
             ->field('birthday')->set($birthday)
             ->field('address')->set($address)
-            ->field('district')->set($district)
+            ->field('suburb')->set($suburb)
             ->field('isActive')->set($isActive)
             ->field('startDate')->set($startDate)
+            ->field('startPrice')->set($startPrice)
             ->field('serviceDate')->set($serviceDate)
             ->field('serviceTime')->set($serviceTime)
             ->field('price')->set($price)
             ->field('rotations')->set($rotations)
-            ->field('remark')->set($remark)
+            ->field('notes')->set($notes)
             ->field('modifyTime')->set(new \MongoDate())
+            ->field('available')->set(true)
             ->getQuery()
             ->execute();
         return $clientInfo;
@@ -140,6 +147,11 @@ class ClientInfoRepository extends DocumentRepository
             $jobDetail["key"]["has"] = true;
         }else{
             $jobDetail["key"]["has"] = false;
+        }
+        if($jobDetail["key"]["hasAlarm"] === true || $jobDetail["key"]["hasAlarm"] === "true"){
+            $jobDetail["key"]["hasAlarm"] = true;
+        }else{
+            $jobDetail["key"]["hasAlarm"] = false;
         }
         if($jobDetail["pet"]["has"] === true||$jobDetail["pet"]["has"] === "true"){
             $jobDetail["pet"]["has"] = true;
@@ -154,6 +166,7 @@ class ClientInfoRepository extends DocumentRepository
             // Update found job
             ->field('jobDetail')->set($jobDetail)
             ->field('modifyTime')->set(new \MongoDate())
+            ->field('available')->set(true)
             ->getQuery()
             ->execute();
         return $clientInfo;
@@ -167,6 +180,7 @@ class ClientInfoRepository extends DocumentRepository
             // Update found job
             ->field('reminderInfo')->set($reminderInfo)
             ->field('modifyTime')->set(new \MongoDate())
+            ->field('available')->set(true)
             ->getQuery()
             ->execute();
         return $clientInfo;
@@ -212,6 +226,7 @@ class ClientInfoRepository extends DocumentRepository
             ->field('invoiceNeeded')->set($invoiceNeeded)
             ->field('invoiceTitle')->set($invoiceTitle)
             ->field('modifyTime')->set(new \MongoDate())
+            ->field('available')->set(true)
             ->getQuery()
             ->execute();
         return $clientInfo;
@@ -230,8 +245,14 @@ class ClientInfoRepository extends DocumentRepository
 
     }
 
+    public function findAllAvailableClient(){
+        $activeClients = $this->findBy(array("available"=>true));
+
+        return $activeClients;
+    }
+
     public function findAllActiveClient(){
-        $activeClients = $this->findBy(array("isActive"=>true));
+        $activeClients = $this->findBy(array("available"=>true,"isActive"=>true));
 
         return $activeClients;
     }

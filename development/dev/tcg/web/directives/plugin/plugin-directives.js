@@ -2,7 +2,7 @@
  * Created by Mr.Clock on 2015/5/5.
  */
 (function() {
-    var app = angular.module('pluginDirectives',['ui.bootstrap']);
+    var app = angular.module('pluginDirectives',['ui.calendar','ui.bootstrap']);
 
     app.directive('pluginDatePicker',function() {
         return {
@@ -38,7 +38,6 @@
                         $scope.dateObject = $scope.dateStr;
                     }
                 );
-
                 $scope.$watch(
                     function( $scope ) {
                         return $scope.dateObject;
@@ -46,7 +45,7 @@
                     function( newValue ) {
                         if(newValue!=null){
                             $scope.dateStr = $filter('date')(newValue, "yyyy-MM-ddTHH:mm:ssZ");
-                            console.log($scope.dateStr);
+                            //console.log($scope.dateStr);
                         }
                     }
                 );
@@ -115,5 +114,4 @@
             controllerAs: 'timePickerC'
         };
     });
-
 })();
