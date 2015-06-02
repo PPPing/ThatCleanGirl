@@ -8,7 +8,7 @@
 		<span class="module-section-header-title">
 			Payment
 		</span>
-		<div class="module-section-button-group">
+		<div ng-show="saveSection" class="module-section-button-group">
 			<span ng-show="!editMode" class="module-section-button glyphicon glyphicon-edit" ng-click="editMode=true"></span>
 			<span ng-show="editMode" class="module-section-button glyphicon glyphicon-ok" ng-click="submit()"></span>
 		</div>

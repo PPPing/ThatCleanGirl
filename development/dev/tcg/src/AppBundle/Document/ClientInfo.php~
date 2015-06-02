@@ -156,7 +156,7 @@ class ClientInfo extends BaseDocument
         $this->isActive=false;
         $this->startDate = new \DateTime('Now');
         $this->serviceDate = new \DateTime('Now');
-        $this->serviceTime = "10:00:AM";
+        $this->serviceTime = "10:00";
        // $this->price=0;
         //$this->startPrice=0;
 

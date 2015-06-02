@@ -8,7 +8,7 @@
 		<span class="module-section-header-title">
 			Job Details
 		</span>
-		<div class="module-section-button-group">
+		<div ng-show="saveSection" class="module-section-button-group">
 			<span ng-show="!editMode" class="module-section-button glyphicon glyphicon-edit" ng-click="editMode=true"></span>
 			<span ng-show="editMode" class="module-section-button glyphicon glyphicon-ok" ng-click="submit()"></span>
 		</div>
@@ -142,10 +142,6 @@
                     <label class="btn btn-default btn-xs" ng-class="{'btn-warning':jobDetail.pet.has}" ng-model="jobDetail.pet.has" btn-radio=true uncheckable>Yes</label>
                     <label class="btn btn-default btn-xs" ng-model="jobDetail.pet.has" btn-radio=false uncheckable>No</label>
                 </div>
-				<!--<div ng-if="editMode" class="col-xs-4 form-control-radios">
-					<input type="radio" name="pets" ng-model="jobDetails.pets.hasPet" class="form-control" value="No">No
-					<input type="radio" name="pets" ng-model="jobDetails.pets.hasPet" class="form-control" value="Yes">Yes
-				</div>-->
 				<div ng-if="editMode&&jobDetail.pet.has==true" class="col-xs-6 form-group form-group-sub-divider">
 					<div class="row" >
 						<div class="col-xs-10 form-group-sub">
@@ -219,7 +215,7 @@
 							{{item.request}}
 						</div>						
 					</li>
-					<li class=" row job-add-item-buton" ng-click="openEditor(-1)">
+					<li ng-if="editMode" class=" row job-add-item-buton" ng-click="openEditor(-1)">
 						Add New Item								
 					</li>					
 				</ul>

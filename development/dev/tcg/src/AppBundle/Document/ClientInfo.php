@@ -1,9 +1,11 @@
 <?php
 /// src/Acme/StoreBundle/Document/ClientInfo.php
 namespace AppBundle\Document;
-
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Doctrine\ORM\Mapping\Id;
+use Symfony\Component\Form\Exception\InvalidArgumentException;
 
 class FrequencyType{
     const  Weekly = "weekly";
@@ -93,10 +95,6 @@ class ClientInfo extends BaseDocument
      */
     protected $price;
 
-    /** @MongoDB\EmbedMany(targetDocument="PriceHistory") */
-    protected $priceHistory = array();
-
-
     /**
      * @MongoDB\String
      */
@@ -143,8 +141,6 @@ class ClientInfo extends BaseDocument
      */
     protected $available ;
 
-
-
     function __construct() {
         $this->clientId = null;
         $this->clientName = null;
@@ -156,10 +152,7 @@ class ClientInfo extends BaseDocument
         $this->isActive=false;
         $this->startDate = new \DateTime('Now');
         $this->serviceDate = new \DateTime('Now');
-        $this->serviceTime = "10:00:AM";
-       // $this->price=0;
-        //$this->startPrice=0;
-
+        $this->serviceTime = "10:00";
 
         $this->notes="";
         $this->paymentType="cash";
@@ -173,6 +166,47 @@ class ClientInfo extends BaseDocument
         $this->available=false;
     }
 
+    public function loadFromArray(array $info){
+
+        $methods = get_class_methods($this);
+        $log = new Logger('Service');
+        $log->pushHandler(new StreamHandler( 'C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/' .'Service.log', Logger::DEBUG));
+
+        if(empty($info['id'])) {
+            throw new InvalidArgumentException('clientInfo.id');
+        }else{
+            $this->id= $info['id'];
+        }
+
+        foreach ($methods as $method) {
+            if (strpos($method, 'set') === 0) {
+                $key = lcfirst(substr($method, 3));
+                if(isset($info[$key])) {
+                    $value = $info[$key];
+                    $log->addDebug("[KEY]  ".json_encode($key,JSON_PRETTY_PRINT));
+                    //$log->addDebug("[VALUE]  ".json_encode($value,JSON_PRETTY_PRINT));
+                    if ($this->endsWith($key, 'date') === true || $key==='birthday') {
+                        $value = date_create_from_format('Y-m-d\TH:i:sT', $value);
+                    } else if ($value === "false") {
+                        $value = false;
+                    } else if ($value === "true") {
+                        $value = true;
+                    } else if($key == 'jobDetail') {
+                        //continue;
+                        $jobDetail = new JobDetail();
+                        $jobDetail->loadFromArray($value);
+                        $value = $jobDetail;
+                    }else if($key == 'reminderInfo') {
+                        //continue;
+                        $reminderInfo = new ReminderInfo();
+                        $reminderInfo->loadFromArray($value);
+                        $value = $reminderInfo;
+                    }
+                    $this->$method($value);
+                }
+            }
+        }
+    }
 
     /**
      * Get id
@@ -468,36 +502,6 @@ class ClientInfo extends BaseDocument
     public function getPrice()
     {
         return $this->price;
-    }
-
-    /**
-     * Add priceHistory
-     *
-     * @param AppBundle\Document\PriceHistory $priceHistory
-     */
-    public function addPriceHistory(\AppBundle\Document\PriceHistory $priceHistory)
-    {
-        $this->priceHistory[] = $priceHistory;
-    }
-
-    /**
-     * Remove priceHistory
-     *
-     * @param AppBundle\Document\PriceHistory $priceHistory
-     */
-    public function removePriceHistory(\AppBundle\Document\PriceHistory $priceHistory)
-    {
-        $this->priceHistory->removeElement($priceHistory);
-    }
-
-    /**
-     * Get priceHistory
-     *
-     * @return \Doctrine\Common\Collections\Collection $priceHistory
-     */
-    public function getPriceHistory()
-    {
-        return $this->priceHistory;
     }
 
 

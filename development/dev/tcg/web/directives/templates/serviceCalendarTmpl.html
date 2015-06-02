@@ -7,11 +7,26 @@
 		</span>
     </div>
     <div class="module-section-body">
-        <div class="btn-group">
-            <button class="btn btn-success" ng-click="changeView('agendaDay', 'myCalendar1')">AgendaDay</button>
-            <button class="btn btn-success" ng-click="changeView('agendaWeek', 'myCalendar1')">AgendaWeek</button>
-            <button class="btn btn-success" ng-click="changeView('month', 'myCalendar1')">Month</button>
+        <div class="row service-list-row">
+            <div class="col-xs-6 form-group">
+                <div class="btn-group">
+                    <label class="btn btn-default btn-sm" ><strong>Filters</strong></label>
+                    <label class="btn btn-default btn-sm" ng-repeat='team in teamList' ng-class="{'btn-warning':filters[team.id]}" ng-model="filters[team.id]" btn-checkbox>{{team.name}}</label>
+                    <!--<label class="btn btn-default btn-sm" ng-class="{'btn-warning':filters.all}" ng-model="filters.all" btn-checkbox>All</label>
+                    <label class="btn btn-default btn-sm" ng-class="{'btn-warning':filters.teamA}" ng-model="filters.teamA" btn-checkbox>Team A</label>
+                    <label class="btn btn-default btn-sm" ng-class="{'btn-warning':filters.teamB}" ng-model="filters.teamB" btn-checkbox>Team B</label>
+                    <label class="btn btn-default btn-sm" ng-class="{'btn-warning':filters.teamC}" ng-model="filters.teamC" btn-checkbox>Team C</label>
+                    <label class="btn btn-default btn-sm" ng-class="{'btn-warning':filters.unconfirmed}" ng-model="filters.unconfirmed" btn-checkbox>Unconfirmed</label>-->
+                </div>
+            </div>
         </div>
-        <div class="calendar" ng-model="eventSources" calendar="serviceCalendar1" ui-calendar="uiConfig.calendar"></div>
+        <div class="btn-group">
+            <label class="btn btn-default btn-sm" ><strong>Calendar View</strong></label>
+            <button class="btn btn-default btn-sm"  ng-class="{'btn-success':view=='agendaDay'}" ng-click="changeView('agendaDay', 'myCalendar1')"> Day </button>
+            <button class="btn btn-default btn-sm" ng-class="{'btn-success':view=='agendaWeek'}" ng-click="changeView('agendaWeek', 'myCalendar1')">Week</button>
+            <button class="btn btn-default btn-sm" ng-class="{'btn-success':view=='month'}" ng-click="changeView('month', 'myCalendar1')">Month</button>
+        </div>
+
+        <div class="calendar" ng-model="eventSources" calendar="serviceCalendar1"  calendar-watch-event="calenderWatcher" ui-calendar="uiConfig.calendar"></div>
     </div>
 </div>

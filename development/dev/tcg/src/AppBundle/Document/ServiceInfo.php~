@@ -45,14 +45,24 @@ class ServiceInfo extends BaseDocument
     protected $clientName;
 
     /**
-     * @MongoDB\Date
+     * @MongoDB\String
      */
-    protected $serviceDate;
+    protected $tel;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $email;
 
     /**
      * @MongoDB\String
      */
     protected $address;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $suburb;
 
     /**
      * @MongoDB\Float
@@ -72,12 +82,34 @@ class ServiceInfo extends BaseDocument
     /**
      * @MongoDB\String
      */
+    protected $invoiceTitle;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $serviceDate;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $serviceStartTime;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $serviceEndTime;
+    /**
+     * @MongoDB\String
+     */
     protected $teamId;
 
     /**
      * @MongoDB\String
      */
-    protected $feedback;
+    protected $notes;
+
+    /** @MongoDB\EmbedOne(targetDocument="JobDetail") */
+    protected $jobDetail;
 
     /**
      * @MongoDB\String
@@ -103,6 +135,36 @@ class ServiceInfo extends BaseDocument
     {
         return $this->id;
     }
+
+    public function loadFromArray(array $info)
+    {
+
+       if(empty($info['id'])){
+            throw new InvalidArgumentException("clientInfo : Id");
+        }else{
+            $this->id = $info['id'];
+        }
+        $methods = get_class_methods($this);
+
+        foreach ($methods as $method) {
+            if (strpos($method, 'set') === 0) {
+                $key = lcfirst(substr($method, 3));
+                if(isset($info[$key])) {
+                    $value = $info[$key];
+                    if ($this->endsWith($key, 'date') === true) {
+                        $value = date_create_from_format('Y-m-d\TH:i:sT', $value);
+                    } else if ($value === "false") {
+                        $value = false;
+                    } else if ($value === "true") {
+                        $value = true;
+                    }
+                    $this->$method($value);
+                }
+            }
+        }
+        return $this;
+    }
+
 
     /**
      * Set status
@@ -193,25 +255,47 @@ class ServiceInfo extends BaseDocument
     }
 
     /**
-     * Set serviceDate
+     * Set tel
      *
-     * @param date $serviceDate
+     * @param string $tel
      * @return self
      */
-    public function setServiceDate($serviceDate)
+    public function setTel($tel)
     {
-        $this->serviceDate = $serviceDate;
+        $this->tel = $tel;
         return $this;
     }
 
     /**
-     * Get serviceDate
+     * Get tel
      *
-     * @return date $serviceDate
+     * @return string $tel
      */
-    public function getServiceDate()
+    public function getTel()
     {
-        return $this->serviceDate;
+        return $this->tel;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     * @return self
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string $email
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 
     /**
@@ -234,6 +318,28 @@ class ServiceInfo extends BaseDocument
     public function getAddress()
     {
         return $this->address;
+    }
+
+    /**
+     * Set suburb
+     *
+     * @param string $suburb
+     * @return self
+     */
+    public function setSuburb($suburb)
+    {
+        $this->suburb = $suburb;
+        return $this;
+    }
+
+    /**
+     * Get suburb
+     *
+     * @return string $suburb
+     */
+    public function getSuburb()
+    {
+        return $this->suburb;
     }
 
     /**
@@ -303,6 +409,94 @@ class ServiceInfo extends BaseDocument
     }
 
     /**
+     * Set invoiceTitle
+     *
+     * @param string $invoiceTitle
+     * @return self
+     */
+    public function setInvoiceTitle($invoiceTitle)
+    {
+        $this->invoiceTitle = $invoiceTitle;
+        return $this;
+    }
+
+    /**
+     * Get invoiceTitle
+     *
+     * @return string $invoiceTitle
+     */
+    public function getInvoiceTitle()
+    {
+        return $this->invoiceTitle;
+    }
+
+    /**
+     * Set serviceDate
+     *
+     * @param date $serviceDate
+     * @return self
+     */
+    public function setServiceDate($serviceDate)
+    {
+        $this->serviceDate = $serviceDate;
+        return $this;
+    }
+
+    /**
+     * Get serviceDate
+     *
+     * @return date $serviceDate
+     */
+    public function getServiceDate()
+    {
+        return $this->serviceDate;
+    }
+
+    /**
+     * Set serviceStartTime
+     *
+     * @param string $serviceStartTime
+     * @return self
+     */
+    public function setServiceStartTime($serviceStartTime)
+    {
+        $this->serviceStartTime = $serviceStartTime;
+        return $this;
+    }
+
+    /**
+     * Get serviceStartTime
+     *
+     * @return string $serviceStartTime
+     */
+    public function getServiceStartTime()
+    {
+        return $this->serviceStartTime;
+    }
+
+    /**
+     * Set serviceEndTime
+     *
+     * @param string $serviceEndTime
+     * @return self
+     */
+    public function setServiceEndTime($serviceEndTime)
+    {
+        $this->serviceEndTime = $serviceEndTime;
+        return $this;
+    }
+
+    /**
+     * Get serviceEndTime
+     *
+     * @return string $serviceEndTime
+     */
+    public function getServiceEndTime()
+    {
+        return $this->serviceEndTime;
+    }
+
+    /**
      * Set teamId
      *
      * @param string $teamId
@@ -325,25 +519,47 @@ class ServiceInfo extends BaseDocument
     }
 
     /**
-     * Set feedback
+     * Set notes
      *
-     * @param string $feedback
+     * @param string $notes
      * @return self
      */
-    public function setFeedback($feedback)
+    public function setNotes($notes)
     {
-        $this->feedback = $feedback;
+        $this->notes = $notes;
         return $this;
     }
 
     /**
-     * Get feedback
+     * Get notes
      *
-     * @return string $feedback
+     * @return string $notes
      */
-    public function getFeedback()
+    public function getNotes()
     {
-        return $this->feedback;
+        return $this->notes;
+    }
+
+    /**
+     * Set jobDetail
+     *
+     * @param AppBundle\Document\JobDetail $jobDetail
+     * @return self
+     */
+    public function setJobDetail(\AppBundle\Document\JobDetail $jobDetail)
+    {
+        $this->jobDetail = $jobDetail;
+        return $this;
+    }
+
+    /**
+     * Get jobDetail
+     *
+     * @return AppBundle\Document\JobDetail $jobDetail
+     */
+    public function getJobDetail()
+    {
+        return $this->jobDetail;
     }
 
     /**
@@ -411,34 +627,4 @@ class ServiceInfo extends BaseDocument
     {
         return $this->modifyTime;
     }
-
-    public function loadFromArray(array $info)
-    {
-
-       if(empty($info['id'])){
-            throw new InvalidArgumentException("clientInfo : Id");
-        }else{
-            $this->id = $info['id'];
-        }
-        $methods = get_class_methods($this);
-
-        foreach ($methods as $method) {
-            if (strpos($method, 'set') === 0) {
-                $key = lcfirst(substr($method, 3));
-                if(isset($info[$key])) {
-                    $value = $info[$key];
-                    if ($this->endsWith($key, 'date') === true) {
-                        $value = date_create_from_format('Y-m-d\TH:i:sT', $value);
-                    } else if ($value === "false") {
-                        $value = false;
-                    } else if ($value === "true") {
-                        $value = true;
-                    }
-                    $this->$method($value);
-                }
-            }
-        }
-        return $this;
-    }
-
 }

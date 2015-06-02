@@ -43,102 +43,168 @@ class ServiceCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        try{
-        $this->clientDao = $this->getContainer()->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:ClientInfo');
-        $this->serviceDao = $this->getContainer()->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:ServiceInfo');
-        $this->logger = new Logger('ServiceCommand');
-        $this->logger->pushHandler(new StreamHandler($this->getContainer()->getParameter('log_dir').'ServiceCommand.log'));
+        try {
+            $this->clientDao = $this->getContainer()->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:ClientInfo');
+            $this->serviceDao = $this->getContainer()->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:ServiceInfo');
+            $this->logger = new Logger('ServiceCommand');
+            $this->logger->pushHandler(new StreamHandler($this->getContainer()->getParameter('log_dir') . 'ServiceCommand.log'));
+            $type = $input->getArgument('type');
+            $text = 'Type - ' . $type . ' Started';
+            if ($type === 'create') {
+                $output->writeln($text);
+                //$this->CreatePendingServices();
+                $this->CreateServices();
+                $text = 'Type - ' . $type . ' Finish';
+            } else if ($type === 'update') {
+                $output->writeln($text);
+                $this->UpdateServiceStatus();
+                $text = 'Type - ' . $type . ' Finish';
+            } else if ($type === 'all') {
+                $this->ProcessServices();
+            } else {
+                $text = 'Type is missing.';
+            }
 
-        $type = $input->getArgument('type');
-            $text = 'Type - '.$type.' Started';
-        if ($type==='create') {
             $output->writeln($text);
-            $this->CreatePendingServices();
-            $text = 'Type - '.$type.' Finish';
-        } else if ($type==='update') {
-            $output->writeln($text);
-            $this->UpdateServiceStatus();
-            $text = 'Type - '.$type.' Finish';
-        } else if ($type==='all') {
-            $this->ProcessServices();
-        }else {
-            $text = 'Type is missing.';
-        }
-
-        $output->writeln($text);
-        }catch (Exception $e){
+        } catch (Exception $e) {
             $this->logger->addError($e->getMessage());
-            $this->logger->addError($e->getFile() ." ".$e->getLine());
+            $this->logger->addError($e->getFile() . " " . $e->getLine());
             $this->logger->addError($e->getCode());
             $this->logger->addError($e->getTraceAsString());
         }
     }
 
-    private function ProcessServices(){
+    private function CreateServices(){
+        $clientList = $this->clientDao->findAllActiveClient();
+        $nextService = "";
+        foreach($clientList as $client){
+            $this->logger->addDebug($client->getClientId() ." :" . $client->getClientName());
+            continue;
+            $frequencyType = $client->getJobDetail()->getFrequency();
+            if($frequencyType === FrequencyType::WhenNeed){
+                continue;
+            }else{
+                $clientId = $client->getClientId();
+                $pendingServices = $this->serviceDao ->findPending($clientId);
+
+                $this->logger->addDebug($client->getClientId() ." : ". $client->getClientName());
+
+                if($pendingServices==null){
+                    $this->logger->addDebug($client->getClientId() ." : no pending service");
+                    $lastCompletedService = $this->serviceDao->findLastCompleteService($clientId);
+
+                    if ($lastCompletedService == null) {
+
+                        $lastServiceDate = $client->getStartDate();
+
+                        $lastServiceTeamId = "";
+                    } else {
+                        $lastServiceDate = $lastCompletedService->getServiceDate();
+                        $lastServiceTeamId = $lastCompletedService ->getTeamId();
+                    }
+                    $nextServiceDate = clone $lastServiceDate;
+
+                    if($frequencyType === FrequencyType::Weekly) {
+                        $nextServiceDate = $nextServiceDate->modify("+1 week");
+                    }else if($frequencyType === FrequencyType::Fortnightly) {
+                        $nextServiceDate = $nextServiceDate->modify("+2 week");
+                    }else if($frequencyType === FrequencyType::Monthly) {
+                        $nextServiceDate = $nextServiceDate->modify("+4 week");
+                    }else if($frequencyType === FrequencyType::TwiceAWeek) {
+                        $nextServiceDate = null;//$nextServiceDate->modify("+3 day");
+                    }else if($frequencyType ===FrequencyType::WhenNeed){
+                        continue;
+                    }
+
+                    $nextService = new ServiceInfo();
+                    $nextService->setStatus(ServiceStatus::Pending);
+                    $nextService->setIsConfirmed(false);
+                    $nextService->setClientId($clientId);
+                    $nextService->setClientName($client->getClientName());
+                    $nextService->setServiceDate($nextServiceDate);
+                    $nextService->setAddress($client->getAddress());
+                    $nextService->setPrice($client->getPrice());
+                    $nextService->setPaymentType($client->getPaymentType());
+                    $nextService->setInvoiceNeeded($client->getInvoiceNeeded());
+                    $nextService->setTeamId($lastServiceTeamId);
+                    $nextService->setCreatorId("auto");
+                    $nextService->setCreateTime(new DateTime("Now"));
+                    $nextService->setFeedback("");
+
+                    //$this->logger->addDebug(json_decode($nextService,JSON_PRETTY_PRINT));
+                    $this->serviceDao->save($nextService);
+                }
+            }
+        }
+    }
+
+    private function ProcessServices()
+    {
         $this->CreatePendingServices();
         $this->UpdateServiceStatus();
 
     }
 
-    private function UpdateServiceStatus(){
+    private function UpdateServiceStatus()
+    {
         $allServices = $this->serviceDao->findAllService();
 
-        if($allServices===null){
+        if ($allServices === null) {
             $this->logger->addDebug("no service");
         }
 
-        foreach($allServices as $serviceInfo){
+        foreach ($allServices as $serviceInfo) {
             $defaultTimeZone = date_default_timezone_get();
-            $this->logger->addDebug('[Default TimeZone]'.$defaultTimeZone);
+            $this->logger->addDebug('[Default TimeZone]' . $defaultTimeZone);
             $todayDate = new DateTime('NOW');
             $todayDate->setTimezone(new \DateTimeZone($defaultTimeZone));
-            $todayDate = (int) $todayDate->format('Ymd');
+            $todayDate = (int)$todayDate->format('Ymd');
 
             $serviceDate = $serviceInfo->getServiceDate();
             $serviceDate->setTimezone(new \DateTimeZone($defaultTimeZone));
-            $serviceDate = (int) $serviceDate->format('Ymd');
+            $serviceDate = (int)$serviceDate->format('Ymd');
             //$todayDate=20150515;
-            $this->logger->addDebug('[DATE]'.$todayDate.' : '.$serviceDate);
-            if($todayDate === $serviceDate){
-                $curStatus =  $serviceInfo->getStatus();
-                if($curStatus === ServiceStatus::Pending){
-                    if($serviceInfo->getIsConfirmed()===true){
-                        $this->logger->addDebug('[CCC]'.$serviceInfo->getId().' : Set Service to Processing');
+            $this->logger->addDebug('[DATE]' . $todayDate . ' : ' . $serviceDate);
+            if ($todayDate === $serviceDate) {
+                $curStatus = $serviceInfo->getStatus();
+                if ($curStatus === ServiceStatus::Pending) {
+                    if ($serviceInfo->getIsConfirmed() === true) {
+                        $this->logger->addDebug('[CCC]' . $serviceInfo->getId() . ' : Set Service to Processing');
                         $serviceInfo->setStatus(ServiceStatus::Processing);
-                    }else{
+                    } else {
                         //Send Notification to remind user to confirm the service
-                        $this->logger->addDebug('[AAA]'.$serviceInfo->getId().' : Send Notification to remind user to confirm the service');
+                        $this->logger->addDebug('[AAA]' . $serviceInfo->getId() . ' : Send Notification to remind user to confirm the service');
                         //$serviceInfo->setStatus(ServiceStatus::Processing);
                         continue;
                     }
-                }else if($curStatus === ServiceStatus::Completed) {
+                } else if ($curStatus === ServiceStatus::Completed) {
                     //Send Notification remind user to write a feedback or comment for the service.
-                    $this->logger->addDebug($serviceInfo->getId().' : Send Notification remind user to write a feedback or comment for the service.');
+                    $this->logger->addDebug($serviceInfo->getId() . ' : Send Notification remind user to write a feedback or comment for the service.');
                     continue;
-                }else{
+                } else {
                     continue;
                 }
-            }else if( ($todayDate+1)=== $serviceDate ){
-               if($serviceInfo->getStatus() === ServiceStatus::Pending && $serviceInfo->getIsConfirmed()===false){
+            } else if (($todayDate + 1) === $serviceDate) {
+                if ($serviceInfo->getStatus() === ServiceStatus::Pending && $serviceInfo->getIsConfirmed() === false) {
                     //Send Notification to remind user to confirm the service
-                    $this->logger->addDebug($serviceInfo->getId().' : Send Notification to remind user to confirm the service.');
+                    $this->logger->addDebug($serviceInfo->getId() . ' : Send Notification to remind user to confirm the service.');
                     continue;
                 }
-            }else if($todayDate > $serviceDate){
-                $this->logger->addDebug($serviceInfo->getId().' : today > serviceDate');
-                if($serviceInfo->getStatus() === ServiceStatus::Pending && $serviceInfo->getIsConfirmed()===false){
-                        //Send Notification to inform the user canceled
-                    $this->logger->addDebug($serviceInfo->getId().' : Send Notification to inform the user canceled.');
+            } else if ($todayDate > $serviceDate) {
+                $this->logger->addDebug($serviceInfo->getId() . ' : today > serviceDate');
+                if ($serviceInfo->getStatus() === ServiceStatus::Pending && $serviceInfo->getIsConfirmed() === false) {
+                    //Send Notification to inform the user canceled
+                    $this->logger->addDebug($serviceInfo->getId() . ' : Send Notification to inform the user canceled.');
                     $serviceInfo->setStatus(ServiceStatus::Cancelled);
-                }else if($serviceInfo->getStatus() === ServiceStatus::Completed){
-                    $this->logger->addDebug($serviceInfo->getId().' : Send Notification remind user to write a feedback or comment for the service..');
+                } else if ($serviceInfo->getStatus() === ServiceStatus::Completed) {
+                    $this->logger->addDebug($serviceInfo->getId() . ' : Send Notification remind user to write a feedback or comment for the service..');
                     //Send Notification remind user to write a feedback or comment for the service.
                     continue;
-                }else if($serviceInfo->getStatus() === ServiceStatus::Processing){
-                    $this->logger->addDebug($serviceInfo->getId().' : Send Notification remind user to processing is completed');
+                } else if ($serviceInfo->getStatus() === ServiceStatus::Processing) {
+                    $this->logger->addDebug($serviceInfo->getId() . ' : Send Notification remind user to processing is completed');
                     $serviceInfo->setStatus(ServiceStatus::Completed);
                 }
-            }else{
+            } else {
                 continue;
             }
 
@@ -148,65 +214,66 @@ class ServiceCommand extends ContainerAwareCommand
 
     }
 
-    private function CreatePendingServices(){
-            $clientList = $this->clientDao->findAllActiveClient();
-            $nextService = "";
-            foreach($clientList as $client){
-                $frequencyType = $client->getJobDetail()->getFrequency();
-                if($frequencyType === FrequencyType::WhenNeed){
-                    continue;
-                }else{
-                    $clientId = $client->getClientId();
-                    $pendingServices = $this->serviceDao ->findPending($clientId);
+    private function CreatePendingServices()
+    {
+        $clientList = $this->clientDao->findAllActiveClient();
+        $nextService = "";
+        foreach ($clientList as $client) {
+            $frequencyType = $client->getJobDetail()->getFrequency();
+            if ($frequencyType === FrequencyType::WhenNeed) {
+                continue;
+            } else {
+                $clientId = $client->getClientId();
+                $pendingServices = $this->serviceDao->findPending($clientId);
 
-                    $this->logger->addDebug($client->getClientId() ." : ". $client->getClientName());
+                $this->logger->addDebug($client->getClientId() . " : " . $client->getClientName());
 
-                    if($pendingServices==null){
-                        $this->logger->addDebug($client->getClientId() ." : no pending service");
-                        $lastCompletedService = $this->serviceDao->findLastCompleteService($clientId);
+                if ($pendingServices == null) {
+                    $this->logger->addDebug($client->getClientId() . " : no pending service");
+                    $lastCompletedService = $this->serviceDao->findLastCompleteService($clientId);
 
-                        if ($lastCompletedService == null) {
+                    if ($lastCompletedService == null) {
 
-                            $lastServiceDate = $client->getStartDate();
+                        $lastServiceDate = $client->getStartDate();
 
-                            $lastServiceTeamId = "";
-                        } else {
-                            $lastServiceDate = $lastCompletedService->getServiceDate();
-                            $lastServiceTeamId = $lastCompletedService ->getTeamId();
-                        }
-                        $nextServiceDate = clone $lastServiceDate;
-
-                        if($frequencyType === FrequencyType::Weekly) {
-                            $nextServiceDate = $nextServiceDate->modify("+1 week");
-                        }else if($frequencyType === FrequencyType::Fortnightly) {
-                            $nextServiceDate = $nextServiceDate->modify("+2 week");
-                        }else if($frequencyType === FrequencyType::Monthly) {
-                            $nextServiceDate = $nextServiceDate->modify("+4 week");
-                        }else if($frequencyType === FrequencyType::TwiceAWeek) {
-                            $nextServiceDate = null;//$nextServiceDate->modify("+3 day");
-                        }else if($frequencyType ===FrequencyType::WhenNeed){
-                            continue;
-                        }
-
-                        $nextService = new ServiceInfo();
-                        $nextService->setStatus(ServiceStatus::Pending);
-                        $nextService->setIsConfirmed(false);
-                        $nextService->setClientId($clientId);
-                        $nextService->setClientName($client->getClientName());
-                        $nextService->setServiceDate($nextServiceDate);
-                        $nextService->setAddress($client->getAddress());
-                        $nextService->setPrice($client->getPrice());
-                        $nextService->setPaymentType($client->getPaymentType());
-                        $nextService->setInvoiceNeeded($client->getInvoiceNeeded());
-                        $nextService->setTeamId($lastServiceTeamId);
-                        $nextService->setCreatorId("auto");
-                        $nextService->setCreateTime(new DateTime("Now"));
-                        $nextService->setFeedback("");
-
-                        //$this->logger->addDebug(json_decode($nextService,JSON_PRETTY_PRINT));
-                        $this->serviceDao->save($nextService);
+                        $lastServiceTeamId = "";
+                    } else {
+                        $lastServiceDate = $lastCompletedService->getServiceDate();
+                        $lastServiceTeamId = $lastCompletedService->getTeamId();
                     }
+                    $nextServiceDate = clone $lastServiceDate;
+
+                    if ($frequencyType === FrequencyType::Weekly) {
+                        $nextServiceDate = $nextServiceDate->modify("+1 week");
+                    } else if ($frequencyType === FrequencyType::Fortnightly) {
+                        $nextServiceDate = $nextServiceDate->modify("+2 week");
+                    } else if ($frequencyType === FrequencyType::Monthly) {
+                        $nextServiceDate = $nextServiceDate->modify("+4 week");
+                    } else if ($frequencyType === FrequencyType::TwiceAWeek) {
+                        $nextServiceDate = null;//$nextServiceDate->modify("+3 day");
+                    } else if ($frequencyType === FrequencyType::WhenNeed) {
+                        continue;
+                    }
+
+                    $nextService = new ServiceInfo();
+                    $nextService->setStatus(ServiceStatus::Pending);
+                    $nextService->setIsConfirmed(false);
+                    $nextService->setClientId($clientId);
+                    $nextService->setClientName($client->getClientName());
+                    $nextService->setServiceDate($nextServiceDate);
+                    $nextService->setAddress($client->getAddress());
+                    $nextService->setPrice($client->getPrice());
+                    $nextService->setPaymentType($client->getPaymentType());
+                    $nextService->setInvoiceNeeded($client->getInvoiceNeeded());
+                    $nextService->setTeamId($lastServiceTeamId);
+                    $nextService->setCreatorId("auto");
+                    $nextService->setCreateTime(new DateTime("Now"));
+                    $nextService->setFeedback("");
+
+                    //$this->logger->addDebug(json_decode($nextService,JSON_PRETTY_PRINT));
+                    $this->serviceDao->save($nextService);
                 }
             }
+        }
     }
 }

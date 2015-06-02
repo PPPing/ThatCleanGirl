@@ -16,8 +16,6 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 class CornJobController extends Controller
 {
-
-
     /**
      * @Route("/job/service_create_pending", name="_job_service_create_pending")
      */
@@ -130,7 +128,6 @@ class CornJobController extends Controller
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
-
     /**
      * @Route("/job/serviceConfirmed", name="_api_service_Confirmed")
      */

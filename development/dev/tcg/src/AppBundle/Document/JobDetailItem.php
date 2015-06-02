@@ -10,6 +10,11 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 class JobDetailItem extends BaseDocument
 {
     /**
+     * @MongoDB\Id
+     */
+    protected $id;
+
+    /**
      * @MongoDB\string
      */
     public $name;
@@ -24,6 +29,37 @@ class JobDetailItem extends BaseDocument
      * */
     public $request;
 
+    public function loadFromArray(array $info){
+        $methods = get_class_methods($this);
+        foreach ($methods as $method) {
+            if (strpos($method, 'set') === 0) {
+                $key = lcfirst(substr($method, 3));
+                if(isset($info[$key])) {
+                    $value = $info[$key];
+                    $this->$method($value);
+                }
+            }
+        }
+    }
+
+    /**
+     * Get id
+     *
+     * @return id $id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    /**
+     * Set id
+     *
+     * @return self
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 
     /**
      * Set name
@@ -89,20 +125,5 @@ class JobDetailItem extends BaseDocument
     public function getRequest()
     {
         return $this->request;
-    }
-    /**
-     * @var $id
-     */
-    protected $id;
-
-
-    /**
-     * Get id
-     *
-     * @return id $id
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 }

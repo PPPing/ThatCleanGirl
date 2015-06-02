@@ -31,6 +31,26 @@ class JobDetailPet extends BaseDocument
         $this->notes = PetKeepingType::DoesNotMatter;
     }
 
+
+    public function loadFromArray(array $info){
+        $methods = get_class_methods($this);
+        foreach ($methods as $method) {
+            if (strpos($method, 'set') === 0) {
+                $key = lcfirst(substr($method, 3));
+                if(isset($info[$key])) {
+                    $value = $info[$key];
+                    if ($this->endsWith($key, 'date') === true) {
+                        $value = date_create_from_format('Y-m-d\TH:i:sT', $value);
+                    } else if ($value === "false") {
+                        $value = false;
+                    } else if ($value === "true") {
+                        $value = true;
+                    }
+                    $this->$method($value);
+                }
+            }
+        }
+    }
     /**
      * Set has
      *
@@ -73,20 +93,5 @@ class JobDetailPet extends BaseDocument
     public function getNotes()
     {
         return $this->notes;
-    }
-    /**
-     * @var $id
-     */
-    protected $id;
-
-
-    /**
-     * Get id
-     *
-     * @return id $id
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 }

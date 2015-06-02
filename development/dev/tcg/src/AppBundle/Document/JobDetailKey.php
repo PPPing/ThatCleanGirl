@@ -44,8 +44,27 @@ class JobDetailKey extends BaseDocument
         $this->has = false;
         $this->notes = KeyKeepingType::KeptByUs;
         $this->hasAlarm = false;
-        $this->alarmIn="09:00:AM";
-        $this->alarmOut="05:00:PM";
+        $this->alarmIn="09:00";
+        $this->alarmOut="17:00";
+    }
+    public function loadFromArray(array $info){
+        $methods = get_class_methods($this);
+        foreach ($methods as $method) {
+            if (strpos($method, 'set') === 0) {
+                $key = lcfirst(substr($method, 3));
+                if(isset($info[$key])) {
+                    $value = $info[$key];
+                    if ($this->endsWith($key, 'date') === true) {
+                        $value = date_create_from_format('Y-m-d\TH:i:sT', $value);
+                    } else if ($value === "false") {
+                        $value = false;
+                    } else if ($value === "true") {
+                        $value = true;
+                    }
+                    $this->$method($value);
+                }
+            }
+        }
     }
     /**
      * Set has
@@ -155,20 +174,4 @@ class JobDetailKey extends BaseDocument
     {
         return $this->alarmOut;
     }
-    /**
-     * @var $id
-     */
-    protected $id;
-
-
-    /**
-     * Get id
-     *
-     * @return id $id
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
 }

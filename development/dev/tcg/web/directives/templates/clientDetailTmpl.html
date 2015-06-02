@@ -1,8 +1,8 @@
 <div class="client-detail module-container">
-	<client-info-section-tmpl ng-model="clientDetail" data-edit-mode=false></client-info-section-tmpl>
-    <job-detail-section-tmpl ng-model="clientDetail.jobDetail" data-client-id="{{clientDetail.id}}" data-edit-mode=false></job-detail-section-tmpl>
-    <reminder-info-section-tmpl ng-model="clientDetail.reminderInfo" data-client-id="{{clientDetail.id}}" data-edit-mode=false></reminder-info-section-tmpl>
-    <payment-section-tmpl ng-model="clientDetail" data-edit-mode=false></payment-section-tmpl>
-	<service-history-section-tmpl ng-model="clientDetail.clientId" data-readonly=false></service-history-section-tmpl>
+	<client-info-section-tmpl ng-model="clientDetail" data-edit-mode=false data-save-section=true></client-info-section-tmpl>
+    <job-detail-section-tmpl ng-model="clientDetail.jobDetail" data-client-id="{{clientDetail.id}}" data-edit-mode=false data-save-section=true></job-detail-section-tmpl>
+    <reminder-info-section-tmpl ng-model="clientDetail.reminderInfo" data-client-id="{{clientDetail.id}}" data-edit-mode=false data-save-section=true></reminder-info-section-tmpl>
+    <payment-section-tmpl ng-model="clientDetail" data-edit-mode=false data-save-section=true></payment-section-tmpl>
+	<service-history-section-tmpl ng-model="clientDetail.clientId" data-readonly=true ></service-history-section-tmpl>
 	<comments-section-tmpl ng-model="clientDetail.clientId"></comments-section-tmpl>
 </div>

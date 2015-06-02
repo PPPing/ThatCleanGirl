@@ -6,7 +6,7 @@
 			Client Info - {{clientDetail.clientId}}
 		</span>
         <span class="glyphicon glyphicon-trash" ng-click="delete()"></span>
-		<div class="module-section-button-group">
+		<div ng-show="saveSection" class="module-section-button-group">
 			<span ng-show="!editMode" class="module-section-button glyphicon glyphicon-edit" ng-click="editMode=true"></span>
 			<span ng-show="editMode" class="module-section-button glyphicon glyphicon-ok" ng-click="submit()"></span>
 		</div>		
@@ -58,7 +58,7 @@
             <div class="col-xs-6 form-group">
                 <label for="birthday" class="col-xs-4 form-control-label">Birthday</label>
                 <div class="col-xs-8">
-                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.birthday"></plugin-date-picker>
+                    <plugin-date-picker ng-if="editMode" placeholder="EEEE, MMM d, yy" ng-model ="clientDetail.birthday" data-date-format="dd/MM/yyyy"></plugin-date-picker>
                     <div ng-if="!editMode" ng-bind="clientDetail.birthday  | date:'dd/MM/yyyy' "></div>
                 </div>
             </div>
@@ -81,8 +81,8 @@
 			<div class="col-xs-6 form-group">
 				<label for="startDate" class="col-xs-4 form-control-label">Start Date</label>
 				<div class="col-xs-8">
-                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.startDate"></plugin-date-picker>
-					<div ng-if="!editMode" ng-bind="clientDetail.startDate | date:'dd/MM/yyyy' "></div>
+                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.startDate" data-date-format="EEEE, MMM d, yyyy"></plugin-date-picker>
+					<div ng-if="!editMode" ng-bind="clientDetail.startDate | date:'EEEE, MMM d, yy' "></div>
                 </div>
 			</div>
 			<div class="col-xs-6 form-group">
@@ -97,8 +97,8 @@
             <div class="col-xs-6 form-group">
                 <label for="serviceDate" class="col-xs-4 form-control-label">Service Date</label>
                 <div class="col-xs-8">
-                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.serviceDate"></plugin-date-picker>
-                    <div ng-if="!editMode" ng-bind="clientDetail.serviceDate | date:'dd/MM/yyyy' "></div>
+                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.serviceDate" data-date-format="EEEE, MMM d, yyyy"></plugin-date-picker>
+                    <div ng-if="!editMode" ng-bind="clientDetail.serviceDate | date:'EEEE, MMM d, yy' "></div>
                 </div>
             </div>
         </div>

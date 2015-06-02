@@ -44,8 +44,8 @@ class JobDetailKey extends BaseDocument
         $this->has = false;
         $this->notes = KeyKeepingType::KeptByUs;
         $this->hasAlarm = false;
-        $this->alarmIn="09:00:AM";
-        $this->alarmOut="05:00:PM";
+        $this->alarmIn="09:00";
+        $this->alarmOut="17:00";
     }
     /**
      * Set has
@@ -170,5 +170,4 @@ class JobDetailKey extends BaseDocument
     {
         return $this->id;
     }
-
 }

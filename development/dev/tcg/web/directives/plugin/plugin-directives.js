@@ -8,11 +8,10 @@
         return {
             restrict: 'E',
             scope: {
-                dateStr : '=ngModel'
+                dateStr : '=ngModel',
+                format:'@dateFormat'
             },
             controller: function($scope,$filter) {
-
-
                 $scope.open = function($event) {
                     $event.preventDefault();
                     $event.stopPropagation();
@@ -26,9 +25,8 @@
                 };
 
                 //$scope.formats = ['dd/MM/yyyy','dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-                $scope.format = 'dd/MM/yyyy';
+                //$scope.format = 'dd/MM/yyyy';
                 $scope.dateObject = $scope.dateStr;
-
 
                 $scope.$watch(
                     function( $scope ) {
@@ -86,13 +84,15 @@
                             if (newValue[1]) {
                                 min = newValue[1];
                             }
-                            if (newValue[2]) {
-                                am = newValue[2];
-                            }
+                        }
+                        var num_hour = parseInt(hour);
+                        if(num_hour>12){
+                            num_hour-=12;
+                            hour = (num_hour<10?'0':'')+num_hour.toString();
+                            am="PM";
                         }
                         $scope.hour = hour;
                         $scope.min = min;
-                        $scope.am = am;
                         if( am =='AM'){
                             $scope.isAM=true;
                         }else{
@@ -102,11 +102,13 @@
                 );
                 $scope.toggleAM=function(){
                     $scope.isAM = ! $scope.isAM;
-                    $scope.am = $scope.isAM?$scope.amOptions[0]:$scope.amOptions[1];
                     $scope.change();
                 };
                 $scope.change=function(){
-                    $scope.timeStr = $scope.hour+":"+ $scope.min+":"+$scope.am;
+                    if(!$scope.isAM){
+                        $scope.hour = parseInt( $scope.hour)+12;
+                    }
+                    $scope.timeStr = $scope.hour+":"+ $scope.min;
                     console.log($scope.timeStr);
                 };
             },

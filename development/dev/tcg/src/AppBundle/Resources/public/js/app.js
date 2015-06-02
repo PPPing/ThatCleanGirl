@@ -309,14 +309,66 @@
             restrict: 'E',
             scope: {
             },
-            controller:function($scope,$compile,uiCalendarConfig) {
+            controller:function($scope,$compile,$http,$modal,uiCalendarConfig) {
                 console.log(uiCalendarConfig);
                 var date = new Date();
                 var d = date.getDate();
                 var m = date.getMonth();
                 var y = date.getFullYear();
 
+                $scope.teamList = [
+                    {
+                        id:'teamA',
+                        name:'TeamA'
+                    },
+                    {
+                        id:'teamB',
+                        name:'TeamB'
+                    },
+                    {
+                        id:'teamC',
+                        name:'TeamC'
+                    }
+                ];
+                $scope.filtersMask = 0
+                $scope.filters={};
+                $scope.filtersValue={};
+                var initFilters = function() {
+                    angular.forEach($scope.teamList, function (value, key) {
+                        $scope.filters[value.id] = true;
+                        $scope.filtersValue[value.id] = Math.pow(10, key);
+                        $scope.filtersMask += $scope.filtersValue[value.id];
+                       // console.log(key +' : '+$scope.filtersMask);
+                    });
+                };
+                initFilters();
+
+                $scope.$watch(
+                    function( $scope ) {
+                        $scope.filtersMask = 0;
+                        angular.forEach($scope.filters, function (value, key) {
+                            if(value===true){
+                                $scope.filtersMask += $scope.filtersValue[key];
+                            }
+                        });
+                        return $scope.filtersMask;
+                    },
+                    function( newValue ) {
+                        //console.log(newValue);
+                        $scope.refetchEvents();
+                    }
+                );
+
+                var calendarId = "serviceCalendar1";
+                $scope.refetchEvents = function(){
+                    if(uiCalendarConfig.calendars[calendarId]){
+                        uiCalendarConfig.calendars[calendarId].fullCalendar('refetchEvents');
+                    }
+                };
+
+                $scope.view = "agendaWeek";
                 $scope.changeView = function(view) {
+                    $scope.view = view;
                     uiCalendarConfig.calendars[calendarId].fullCalendar('changeView',view);
                 };
                 $scope.renderCalender = function() {
@@ -330,38 +382,304 @@
                         'tooltip-append-to-body': true});
                     $compile(element)($scope);
                 };
-                var events = [
-                    {title: 'All Day Event',start: new Date(y, m, 1)},
-                    {title: 'Long Event',start: new Date(y, m, d - 5),end: new Date(y, m, d - 2)},
-                    {id: 999,title: 'Repeating Event',start: new Date(y, m, d - 3, 16, 0),allDay: false},
-                    {id: 999,title: 'Repeating Event',start: new Date(y, m, d + 4, 16, 0),allDay: false},
-                    {title: 'Birthday Party',start: new Date(y, m, d + 1, 19, 0),end: new Date(y, m, d + 1, 22, 30),allDay: false}
-                ];
+                /* alert on eventClick */
+                $scope.alertOnEventClick = function( data, jsEvent, view){
+                    console.log(data.title + ' was clicked ');
+                    console.log(data);
+                    $scope.openEditor(data);
+                };
+                /* alert on Drop */
+                $scope.alertOnDrop = function(event, delta, revertFunc, jsEvent, ui, view){
+                   // $scope.alertMessage = ('Event Droped to make dayDelta ' + delta);
+                    console.log('Event Droped to make dayDelta ' + delta);
+                };
+                /* alert on Resize */
+                $scope.alertOnResize = function(event, delta, revertFunc, jsEvent, ui, view ){
+                   // $scope.alertMessage = ('Event Resized to make dayDelta ' + delta);
+                    console.log('Event Resized to make dayDelta ' + delta);
+                };
+
+                var serviceInfoTest = {
+                    clientId:'3349-8413',
+                    clientName:'Test Client',
+                    tel:'12310213123',
+                    address:'address',
+                    email:'test@email.com',
+                    suburb:'suburb',
+                    paymentType:'cash',
+                    price:998,
+                    invoiceNeeded:true,
+                    invoiceTitle:'invoiceTitle',
+                    serviceDate:'2015-05-30T08:59:48+0000',
+                    serviceStartTime:'10:00',
+                    serviceEndTime:'12:00',
+                    notes:'adfasdfasdf',
+                    teamId:'TeamA',
+                    jobDetail:{
+                        frequency: "weekly",
+                        key:{
+                            alarmIn: "09:00:AM",
+                            alarmOut: "05:00:PM",
+                            has: false,
+                            hasAlarm: false,
+                            notes: "keptByUs"
+                        },
+                        pet:{
+                            has: false,
+                            notes: "doesNotMatter"
+                        },
+                        items:[
+                            {amount: 1,name: "Formal lounge", request: ""},
+                            {amount: 1,name: "Formal adfasdf", request: "adfasdf"}
+                        ]
+                    }
+                };
+
+                var updateEvent = function(event){
+                    var serviceInfo = event.serviceInfo;
+                    event.title = "";
+                    if(!serviceInfo.isConfirmed){
+                        event.color = '#d9534f';
+                        event.title = 'Unconfirmed\n';
+                    }else{
+                        if(serviceInfo.teamId==='teamA'){
+                            event.color = '#337ab7';
+                        }else if(serviceInfo.teamId==='teamB'){
+                            event.color = '#5cb85c';
+                        }else if(serviceInfo.teamId==='teamC'){
+                            event.color = '#f0ad4e';
+                        }
+                    }
+                    event.title += serviceInfo.clientName+'\n'+ serviceInfo.teamId;
+                    event.textColor='#333';
+                    return event;
+                }
+
+                var eventDataTransform = function(data){
+                    //console.log(data);
+                    var event={};
+                    event.start = new Date(data.serviceDate);
+                    var startTime = data.serviceStartTime.split(":");
+                    event.start.setHours(startTime[0]);
+                    event.start.setMinutes(startTime[1]);
+
+                    event.end = new Date(data.serviceDate);
+                    var endTime = data.serviceEndTime.split(":");
+                    event.end.setHours(endTime[0]);
+                    event.end.setMinutes(endTime[1]);
+
+                    event.allDay=false;
+                    event.serviceInfo = data;
+                    //console.log(event);
+                    event.color= '#e7d836';
+                    event.textColor= 'black';
+
+                    event = updateEvent(event);
+                    return event;
+                };
+                var eventDataUpdate = function(event, data){
+                    event.title = data.clientName;
+                    event.start = new Date(data.serviceDate);
+                    var startTime = data.serviceStartTime.split(":");
+                    event.start.setHours(startTime[0]);
+                    event.start.setMinutes(startTime[1]);
+
+                    event.end = new Date(data.serviceDate);
+                    var endTime = data.serviceEndTime.split(":");
+                    event.end.setHours(endTime[0]);
+                    event.end.setMinutes(endTime[1]);
+                    event = updateEvent(event);
+                    return event;
+                }
                 //config object
                 $scope.uiConfig = {
                     calendar:{
-                        height: 450,
-                        editable: true,
+                        height: 700,
+                        editable: false,
                         defaultView:'agendaWeek',
                         header:{
                             left: 'title',
                             center: '',
                             right: 'today prev,next'
                         },
-                        //eventClick: $scope.alertOnEventClick,
-                        //eventDrop: $scope.alertOnDrop,
-                        //eventResize: $scope.alertOnResize,
+                        eventClick: $scope.alertOnEventClick,
                         eventRender: $scope.eventRender
                     }
                 };
-                $scope.eventSources = {
-                    events:  events,
-                    color: 'yellow',   // an option!
-                    textColor: 'black' // an option!
+
+                $scope.serviceList=null;
+                $scope.serviceEvents = function(start, end, timezone, callback) {
+                    if($scope.serviceList===null){
+                        $http.get('/api/service/all?timestamp='+ new Date())
+                            .then(function(result) {
+                                //console.log(result.data);
+                                $scope.serviceList = result.data;
+                                var events = [];
+                                angular.forEach(result.data, function (value, key) {
+                                   //console.log($scope.filters[value.teamId]);
+                                   if($scope.filters[value.teamId]===true || value.isConfirmed===false){
+                                        events.push(eventDataTransform(value));
+                                   }
+                                });
+                                callback(events);
+                            });
+                    }else{
+                        var events = [];
+                        angular.forEach($scope.serviceList, function (value, key) {
+                            console.log($scope.filters[value.teamId]);
+                            if($scope.filters[value.teamId]===true || value.isConfirmed===false){
+                                events.push(eventDataTransform(value));
+                            }
+                        });
+                        callback(events);
+                    }
                 };
+                $scope.serviceEventSources = {
+                    events:  $scope.serviceEvents,
+                    color: '#e7d836',   // an option!
+                    textColor: 'black' // an option!
+                    // eventDataTransform:eventDataTransform
+                };
+                $scope.eventSources = [ $scope.serviceEventSources];
+                $scope.curEvent = null;
+                var saveServiceInfo = function(serviceinfo ,callback){
+                    $http.post('api/service/save', {"serviceInfo":serviceinfo}).
+                        success(function(data, status, headers, config) {
+                            if(data==="SUCCESS"){
+                                if (callback && typeof(callback) === "function") {
+                                    // execute the callback, passing parameters as necessary
+                                    callback();
+                                }
+                            }
+                        }).
+                        error(function(data, status, headers, config) {
+                            console.log(data);
+                            console.log(config);
+                            console.log(headers);
+                        });
+                };
+                $scope.openEditor = function (event) {
+                    $scope.curEvent = event;
+                    console.log($scope.curEvent);
+                    var modalInstance = $modal.open({
+                        animation: true,
+                        templateUrl: 'directives/templates/serviceEditorTmpl.html',
+                        controller: function($scope,$modalInstance,serviceInfo){
+                           $scope.serviceInfo = serviceInfo;
+                           console.log($scope.serviceInfo);
+                            $scope.serviceInfo.clientId = "1038-5986";
+                            $scope.editMode=!$scope.serviceInfo.isConfirmed;
+
+                            $scope.Confirm = function(){
+                                $scope.serviceInfo.isConfirmed=true;
+                                if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
+                                    alert("Please input all required information.");
+                                }
+                                var serviceInfo = angular.copy($scope.serviceInfo);
+                                saveServiceInfo(serviceInfo,function(){
+                                    $modalInstance.close($scope.serviceInfo);
+                                });
+                            };
+                            $scope.Edit = function(){
+                                $scope.editMode = true;
+                            };
+                            $scope.Save = function(){
+                                $scope.editMode = false;
+                                var serviceInfo = angular.copy($scope.serviceInfo);
+                                saveServiceInfo(serviceInfo,function(){
+                                    $modalInstance.close($scope.serviceInfo);
+                                });
+                            };
+                        },
+                        resolve: {
+                            serviceInfo: function () {
+                                return $scope.curEvent.serviceInfo;
+                            }
+                        }
+                    });
+                    modalInstance.result.then(function (serviceInfo) {
+                        //console.log(serviceInfo);
+                        $scope.curEvent = eventDataUpdate($scope.curEvent,serviceInfo);
+                        console.log( $scope.curEvent);
+                        uiCalendarConfig.calendars[calendarId].fullCalendar('updateEvent',$scope.curEvent);
+                    }, function () {
+                        //console.log('Modal dismissed at: ' + new Date());
+                    });
+                };
+
             },
             templateUrl:'directives/templates/serviceCalendarTmpl.html',
             controllerAs: 'serviceCalendarC'
+        };
+    });
+
+    app.directive('serviceEditorTmpl',function(){
+        return {
+            restrict: 'E',
+            require: 'ngModel',
+            scope: {
+               serviceInfo:'=ngModel'
+            },
+            controller: function($scope,$http,$element,MenuService,ValidationService){
+                /* $scope.editMode=false;
+                $scope.serviceInfo={};
+                var clientDetailModules=[
+                    {
+                        id:"service-editor",
+                        name:"Service",
+                        isSubModule:true
+                    }
+                ];
+
+               c
+
+                function saveService( info ,callback){
+                    $http.post('job/saveService', {"serviceInfo":$scope.serviceInfo}).
+                        success(function(data, status, headers, config) {
+                            if(data==="SUCCESS"){
+                                if (callback && typeof(callback) === "function") {
+                                    // execute the callback, passing parameters as necessary
+                                    callback();
+                                }
+                            }
+                        }).
+                        error(function(data, status, headers, config) {
+                        });
+                }
+                $scope.Confirm = function(){
+                    console.log($scope.serviceInfo);
+                    console.log($scope.serviceInfo.serviceDate);
+                    console.log($scope.serviceInfo.teamId);
+                    $scope.serviceInfo.isConfirmed=true;
+                    if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
+                        alert("Please input all required information.");
+                    }
+                    saveService($scope.serviceInfo,function(){
+                        MenuService.popModulesStack();
+                        //console.log("Confirmed");
+                    });
+                };
+                $scope.Edit=function(){
+                    console.log("edit");
+                    $scope.editMode = true;
+                };
+                $scope.Save = function(){
+                    console.log($scope.serviceInfo);
+                    console.log($scope.serviceInfo.serviceDate);
+                    console.log($scope.serviceInfo.teamId);
+                    if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
+                        alert("Please input all required information.");
+                    }
+
+                    saveService($scope.serviceInfo,function(){
+                        //MenuService.popModulesStack();
+                        console.log("save");
+                        $scope.editMode = false;
+                    });
+                };*/
+            },
+            templateUrl:'directives/templates/serviceEditorTmpl.html',
+            controllerAs: 'serviceEditor'
         };
     });
     app.directive('serviceUnconfirmedTmpl',function(){
@@ -459,92 +777,6 @@
         };
     });
 
-    app.directive('serviceEditorTmpl',function(){
-        return {
-            restrict: 'E',
-            controller: function($scope,$http,$element,MenuService,UserService,ValidationService){
-                console.log("ServiceEditorTmpl");
-                $scope.editMode=false;
-                $scope.serviceInfo={};
-                var clientDetailModules=[
-                    {
-                        id:"service-editor",
-                        name:"Service",
-                        isSubModule:true
-                    }
-                ];
-                $scope.$watch(
-                    function( $scope ) {
-                        return $scope.moduleInfo.serviceInfo;
-                    },
-                    function( newValue ) {
-                        $scope.serviceInfo = newValue;
-                        console.log( $scope.serviceInfo);
-                        loadClientInfo($scope.serviceInfo.clientId);
-                        $scope.UserService = UserService;
-                        MenuService.pushModulesStack(clientDetailModules);
-
-                    }
-                );
-
-                function loadClientInfo(clientId){
-                    $http.get('/api/getClientInfo/'+clientId+'?timestamp='+ new Date())
-                        .then(function(result) {
-                            console.log(result.data);
-                            $scope.clientInfo = result.data;
-                        });
-                }
-
-                function saveService( info ,callback){
-                    $http.post('job/saveService', {"serviceInfo":$scope.serviceInfo}).
-                        success(function(data, status, headers, config) {
-                            if(data==="SUCCESS"){
-                                if (callback && typeof(callback) === "function") {
-                                    // execute the callback, passing parameters as necessary
-                                    callback();
-                                }
-                            }
-                        }).
-                        error(function(data, status, headers, config) {
-                        });
-                }
-                $scope.Confirm = function(){
-                    console.log($scope.serviceInfo);
-                    console.log($scope.serviceInfo.serviceDate);
-                    console.log($scope.serviceInfo.teamId);
-                    $scope.serviceInfo.isConfirmed=true;
-                    if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
-                        alert("Please input all required information.");
-                    }
-                    saveService($scope.serviceInfo,function(){
-                        MenuService.popModulesStack();
-                        //console.log("Confirmed");
-                    });
-                };
-                $scope.Edit=function(){
-                    console.log("edit");
-                    $scope.editMode = true;
-                };
-                $scope.Save = function(){
-                    console.log($scope.serviceInfo);
-                    console.log($scope.serviceInfo.serviceDate);
-                    console.log($scope.serviceInfo.teamId);
-                    if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
-                        alert("Please input all required information.");
-                    }
-
-                    saveService($scope.serviceInfo,function(){
-                        //MenuService.popModulesStack();
-                        console.log("save");
-                        $scope.editMode = false;
-                    });
-                };
-            },
-            templateUrl:'directives/templates/serviceEditorTmpl.html',
-            controllerAs: 'serviceEditor'
-        };
-    });
-
     app.directive('moduleClientList',function() {
 		return {
 			restrict: 'E',
@@ -565,7 +797,7 @@
 			restrict: 'E',
 			controller: function($scope,$http) {
 				var clientList = null;
-                $http.get('/api/getClientList?timestamp='+ new Date())
+                $http.get('/api/client/getClientList?timestamp='+ new Date())
 				.then(function(result) {
                         clientList = result.data.slice(0);
                         console.log(clientList);
@@ -620,7 +852,7 @@
                     function( newValue ) {
 						//newValue = "111";
                         console.log(newValue);
-						$http.get('api/getClientInfo/'+newValue)
+						$http.get('api/client/getClientInfo/'+newValue)
 						.then(function(result) {
                                 console.log(result);
 							$scope.clientDetail = result.data;
@@ -642,49 +874,47 @@
 			require: 'ngModel',
 			scope: {
 				clientDetail : '=ngModel',
+                saveSection:'=saveSection',
 				editMode:'=editMode'
 			},
 			controller: function($scope,$http,$element,MenuService,ValidationService) {
-				console.log($scope.editMode);
+                //console.log($scope.editMode);
+                //console.log($scope.saveSection);
+                //$scope.editMode=true;
 				$scope.submit=function() {
                     if(!ValidationService.check($element)){
                         alert("Please input all required information.");
                         return;
                     }
-					$scope.editMode=false;
-                    //console.log("submit");
-                    //console.log($scope.clientDetail);
                     var clientInfo = angular.copy($scope.clientDetail);
-                    $http.post('api/updateClientInfo', {"clientInfo":clientInfo}).
+                    $http.post('api/client/updateClientInfo', {"clientInfo":clientInfo}).
                         success(function(data, status, headers, config) {
-                            //console.log(headers);
-                           // console.log(config);
-                            console.log("[Update] - ClientInfo - SUCCESS");
-                            //console.log(data);
+                            console.log("[Update] - Client Info - SUCCESS");
+                            alert("[SUCCESS] Client Info saved.");
+                            $scope.editMode=false;
                         }).
                         error(function(data, status, headers, config) {
-                           // console.log(headers);
-                            //console.log(config);
-                            //console.log("[Update] - ClientInfo - Error");
-                            //console.log(data);
+                            alert("[ERROR] Save Client Info Error.");
                         });
 				};
 
-                $scope.delete=function(){
-                    console.log('api/deleteClientInfo/'+$scope.clientDetail.clientId);
-                    $http.get('api/deleteClientInfo/'+$scope.clientDetail.clientId)
-                        .then(function(result) {
-                            console.log(result);
-                            MenuService.changeComponents(0);
-                        });
-                };
-				$scope.$on('setEidtMode', function (event,eidtMode) {
-					console.log("on setEidtMode : "+eidtMode); // 'Data to send'
-					$scope.editMode = eidtMode;
-                    if($scope.editMode){
-                        $scope.submit();
+                $scope.delete=function() {
+                    if (confirm("Are sure want to DELETE this client?")) {
+                        console.log('api/client/deleteClientInfo/' + $scope.clientDetail.clientId);
+                        $http.get('api/client/deleteClientInfo/' + $scope.clientDetail.clientId)
+                            .then(function (result) {
+                                console.log(result);
+                                MenuService.popModulesStack();
+                            });
                     }
-				});
+                };
+                $scope.$on('setEditMode', function (event,editMode) {
+                    //console.log("clientInfoSectionTmpl on setEditMode : "+editMode); // 'Data to send'
+                    $scope.editMode = editMode;
+                    if($scope.editMode){
+                        //$scope.submit();
+                    }
+                });
 			},
 			templateUrl:'directives/templates/clientInfoSectionTmpl.html',
 			controllerAs: 'clientInfoSection'
@@ -698,6 +928,7 @@
 			scope: {
 				jobDetail : '=ngModel',
 				editMode:'=editMode',
+                saveSection:'=saveSection',
                 clientId:'@clientId'
 			},
 			controller: function($scope,$http,$modal) {
@@ -770,7 +1001,7 @@
                     $scope.jobDetail.items.splice($index, 1);
                 };
                 $scope.submit=function(){
-                    $scope.editMode=false;
+
                     if($scope.clientId===null) {
                         alert("Invalid Client Id.");
                         return;
@@ -778,23 +1009,22 @@
                    // console.log("submit");
                     var jobDetail = angular.copy($scope.jobDetail);
                     //console.log(jobDetail);
-                    $http.post('api/updateClientJobDetail', {"jobDetail":jobDetail,"clientId":$scope.clientId}).
+                    $http.post('api/client/updateClientJobDetail', {"jobDetail":jobDetail,"clientId":$scope.clientId}).
                         success(function(data, status, headers, config) {
                             console.log("[Update] - JobDetail - SUCCESS");
-                            //console.log(config);
-                            //console.log(data);
-                            //console.log(headers);
-                           // console.log(config);
+                            alert("[SUCCESS] Job Details saved.");
+                            $scope.editMode=false;
                         }).
                         error(function(data, status, headers, config) {
-                    });
+                            alert("[ERROR] Save Job Details Error..");
+                        });
                 };
 
-				$scope.$on('setEidtMode', function (event,eidtMode) {
-					//console.log("on setEidtMode : "+eidtMode); // 'Data to send'
-					$scope.editMode = eidtMode;
+				$scope.$on('setEditMode', function (event,editMode) {
+					//console.log("jobDetailSectionTmpl on setEditMode : "+editMode); // 'Data to send'
+					$scope.editMode = editMode;
                     if($scope.editMode){
-                        $scope.submit();
+                        //$scope.submit();
                     }
 				});
 
@@ -810,7 +1040,8 @@
 			require: 'ngModel',
 			scope: {
 				clientDetail : '=ngModel',
-				editMode:'=editMode'
+				editMode:'=editMode',
+                saveSection:'=saveSection'
 			},
 			controller: function($scope,$http) {
                 $scope.submit=function(){
@@ -822,20 +1053,22 @@
                     console.log("submit");
                     console.log($scope.clientDetail);
                     var clientInfo = angular.copy($scope.clientDetail);
-                    $http.post('api/updateClientPaymentInfo', {"clientInfo":clientInfo}).
+                    $http.post('api/client/updateClientPaymentInfo', {"clientInfo":clientInfo}).
                         success(function(data, status, headers, config) {
-                            console.log("[Update] - PaymentInfo - SUCCESS");
-                           // console.log(data);
+                            console.log("[Update] - Payment Info - SUCCESS");
+                            alert("[SUCCESS] Payment Info saved.");
+                            $scope.editMode=false;
                         }).
                         error(function(data, status, headers, config) {
+                            alert("[ERROR] Save Payment Info Error.");
                         });
                 };
 
-				$scope.$on('setEidtMode', function (event,eidtMode) {
-					console.log("on setEidtMode : "+eidtMode); // 'Data to send'
-					$scope.editMode = eidtMode;
+				$scope.$on('setEditMode', function (event,editMode) {
+					//console.log("paymentSectionTmpl on setEditMode : "+editMode); // 'Data to send'
+					$scope.editMode = editMode;
                     if($scope.editMode){
-                        $scope.submit();
+                        //$scope.submit();
                     }
 				});
 			},
@@ -851,7 +1084,8 @@
             scope: {
                 reminderInfo : '=ngModel',
                 editMode:'=editMode',
-                clientId:'@clientId'
+                clientId:'@clientId',
+                saveSection:'=saveSection'
             },
             controller: function($scope,$http) {
 
@@ -865,20 +1099,22 @@
                     //console.log($scope.reminderInfo);
                     var reminderInfo = angular.copy($scope.reminderInfo);
                     //console.log(reminderInfo);
-                    $http.post('api/updateClientReminderInfo', {"reminderInfo":reminderInfo,"clientId":$scope.clientId}).
+                    $http.post('api/client/updateClientReminderInfo', {"reminderInfo":reminderInfo,"clientId":$scope.clientId}).
                         success(function(data, status, headers, config) {
                             console.log("[Update] - reminderInfo - SUCCESS");
-                            //console.log(config);
-                           // console.log(data);
+                            alert("[SUCCESS] reminder Info saved.");
+                            $scope.editMode=false;
                         }).
                         error(function(data, status, headers, config) {
+                            alert("[ERROR] Save reminder Info Error.");
                         });
                 };
 
-                $scope.$on('setEidtMode', function (event,eidtMode) {
-                    $scope.editMode = eidtMode;
+                $scope.$on('setEditMode', function (event,editMode) {
+                    //console.log("reminderInfoSectionTmpl on setEditMode : "+editMode); // 'Data to send'
+                    $scope.editMode = editMode;
                     if($scope.editMode){
-                        $scope.submit();
+                        //$scope.submit();
                     }
                 });
 
@@ -900,7 +1136,6 @@
                 $scope.serviceHistory = [];
                 $scope.$watch(
                     function( $scope ) {
-
                         return $scope.clientId;
                     },
                     function( newValue ) {
@@ -910,7 +1145,7 @@
                     }
                 );
                 function loadHistory(clientId){
-                    $http.get('/api/serviceHistory/'+clientId+'?timestamp='+ new Date())
+                    $http.get('/api/service/history/'+clientId+'?timestamp='+ new Date())
                         .then(function(result) {
                             console.log(result.data);
                             $scope.serviceHistory = result.data;
@@ -944,9 +1179,9 @@
                 );
 
                 function loadComments(clientId){
-                    $http.get('/api/getClientComments/'+clientId+'?timestamp='+ new Date())
+                    $http.get('api/client/getClientComments/'+clientId+'?timestamp='+ new Date())
                         .then(function(result) {
-                            console.log(result.data);
+                            //console.log(result.data);
                             $scope.comments = result.data;
                         });
                 }
@@ -956,32 +1191,30 @@
 				$scope.postComment=function(){
 
 					console.log($scope.newComment);
-                    $http.post('api/postClientComment', {"clientId":$scope.clientId,"content":$scope.newComment}).
+                    var newComment=angular.copy($scope.newComment);
+                    $http.post('api/client/postClientComment', {"clientId":$scope.clientId,"content":newComment}).
                         success(function(data, status, headers, config) {
-                            console.log(config);
-                            console.log(data);
-
-                            //$scope.comments.push(data);
+                            //console.log(config);
+                            $scope.comments.push(data);
+                            alert("[SUCCESS] New comment saved.");
+                            //console.log( $scope.comments);
                         }).
                         error(function(data, status, headers, config) {
+                            alert("[ERROR] Save new comment Error.");
                         });
-
 				};
 				$scope.deleteComment=function(index){
-                    $http.post('api/deleteClientComment', {"comment":$scope.comments[index]}).
+                    $http.post('api/client/deleteClientComment', {"comment":$scope.comments[index]}).
                         success(function(data, status, headers, config) {
                             //console.log(config);
                             console.log(data);
                             $scope.comments.splice(index,1);
+                            alert("[SUCCESS]  This comment has been deleted.");
                             //$scope.comments.push(data);
                         }).
                         error(function(data, status, headers, config) {
+                            alert("[ERROR]  Delete this comment has been deleted.")
                         });
-
-					//$scope.comments = $filter('orderBy')($scope.comments, '-createDateTime');
-                    //console.log($scope.comments);
-                    //console.log("index : "+index);
-					//$scope.comments.splice(index,index+1);
 				};
 			},
 			templateUrl:'directives/templates/commentsSectionTmpl.html',
@@ -995,30 +1228,42 @@
 			templateUrl:'directives/modules/createClient.html',
 			controller: function($scope,$http,$location, $anchorScroll,MenuService) {
 				$scope.hasSubmit = false;
-				$http.post('api/create_client_info')
+				$http.post('api/client/create_client_info')
 					.then(function(result) {
                     console.log(result);
 					$scope.clientDetail=result.data;
 					console.log($scope.clientDetail);
 				}); 
-				$scope.Create=function(){
-					$scope.hasSubmit=true;
-					$scope.$broadcast('setEidtMode',true);
-					$location.hash('top');
-					$anchorScroll();
+				$scope.Save=function(){
+					//$scope.hasSubmit=true;
+                   var fullClientInfo = angular.copy($scope.clientDetail);
+                    $http.post('api/client/saveFullClientInfo', {"fullClientInfo":fullClientInfo}).
+                        success(function(data, status, headers, config) {
+                            //console.log("[Update] - Client Info - SUCCESS");
+                            alert("[SUCCESS] Client Info saved.");
+                            $scope.editMode=false;
+                            $scope.hasSubmit=true;
+                        }).
+                        error(function(data, status, headers, config) {
+                            alert("[ERROR] Save Client Info Error.");
+                            //console.log("[ERROR] Save Client Info Error.");
+                        });
+
+					$scope.$broadcast('setEditMode',false);
+					//$location.hash('top');
+					//$anchorScroll();
 				};
 				$scope.Reset=function(){
-					$http.post('api/getClientInfo/'+$scope.clientDetail.clientId)
+					$http.post('api/client/getClientInfo/'+$scope.clientDetail.clientId)
 						.then(function(result) {
-
 						$scope.clientDetail=result.data					
 					});
 				};
 				$scope.Confirm=function(){
 					alert("Create new client successfully.");
-					MenuService.changeComponents(0);
-					$location.hash('top');
-					$anchorScroll();
+					//MenuService.changeComponents(0);
+					//$location.hash('top');
+					//$anchorScroll();
 				};
 			},
 			templateUrl:'directives/modules/createClient.html',
