@@ -14,6 +14,21 @@ use Doctrine\ODM\MongoDB\DocumentRepository;
  */
 class ServiceInfoRepository extends DocumentRepository
 {
+    public function findLastService($clientId){
+
+        $last = $this->createQueryBuilder()
+            ->field("clientId")->equals($clientId)
+            ->limit(1)
+            ->sort(array("serviceDate"=>'DESC'))
+            ->getQuery()
+            ->getSingleResult();
+
+        return $last;
+    }
+
+
+
+
     public function findConfirmed($filters){
 
         $query = $this->createQueryBuilder()->field("isConfirmed")->equals(true);

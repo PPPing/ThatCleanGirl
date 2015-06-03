@@ -76,63 +76,103 @@ class ServiceCommand extends ContainerAwareCommand
 
     private function CreateServices(){
         $clientList = $this->clientDao->findAllActiveClient();
-        $nextService = "";
+        $defaultTimeZone = date_default_timezone_get();
         foreach($clientList as $client){
-            $this->logger->addDebug($client->getClientId() ." :" . $client->getClientName());
-            continue;
             $frequencyType = $client->getJobDetail()->getFrequency();
             if($frequencyType === FrequencyType::WhenNeed){
                 continue;
             }else{
                 $clientId = $client->getClientId();
-                $pendingServices = $this->serviceDao ->findPending($clientId);
+                $teamId = '';
 
+                $offset_h = 2;
+                $offset_m = 0;
                 $this->logger->addDebug($client->getClientId() ." : ". $client->getClientName());
-
-                if($pendingServices==null){
-                    $this->logger->addDebug($client->getClientId() ." : no pending service");
-                    $lastCompletedService = $this->serviceDao->findLastCompleteService($clientId);
-
-                    if ($lastCompletedService == null) {
-
-                        $lastServiceDate = $client->getStartDate();
-
-                        $lastServiceTeamId = "";
-                    } else {
-                        $lastServiceDate = $lastCompletedService->getServiceDate();
-                        $lastServiceTeamId = $lastCompletedService ->getTeamId();
-                    }
-                    $nextServiceDate = clone $lastServiceDate;
-
+                $lastService = $this->serviceDao->findLastService($clientId);
+                if($lastService===null){
+                    $serviceDate = $client->getServiceDate();
+                }else{
+                    $lastServiceDate = $lastService->getServiceDate();
+                    $serviceDate = clone $lastServiceDate;
                     if($frequencyType === FrequencyType::Weekly) {
-                        $nextServiceDate = $nextServiceDate->modify("+1 week");
+                         $serviceDate->modify("+1 week");
                     }else if($frequencyType === FrequencyType::Fortnightly) {
-                        $nextServiceDate = $nextServiceDate->modify("+2 week");
+                       $serviceDate->modify("+2 week");
                     }else if($frequencyType === FrequencyType::Monthly) {
-                        $nextServiceDate = $nextServiceDate->modify("+4 week");
+                        $serviceDate->modify("+4 week");
                     }else if($frequencyType === FrequencyType::TwiceAWeek) {
-                        $nextServiceDate = null;//$nextServiceDate->modify("+3 day");
-                    }else if($frequencyType ===FrequencyType::WhenNeed){
-                        continue;
+                        //$nextServiceDate = null;//$nextServiceDate->modify("+3 day");
                     }
+                    $teamId = $lastService->getTeamId();
 
-                    $nextService = new ServiceInfo();
-                    $nextService->setStatus(ServiceStatus::Pending);
-                    $nextService->setIsConfirmed(false);
-                    $nextService->setClientId($clientId);
-                    $nextService->setClientName($client->getClientName());
-                    $nextService->setServiceDate($nextServiceDate);
-                    $nextService->setAddress($client->getAddress());
-                    $nextService->setPrice($client->getPrice());
-                    $nextService->setPaymentType($client->getPaymentType());
-                    $nextService->setInvoiceNeeded($client->getInvoiceNeeded());
-                    $nextService->setTeamId($lastServiceTeamId);
-                    $nextService->setCreatorId("auto");
-                    $nextService->setCreateTime(new DateTime("Now"));
-                    $nextService->setFeedback("");
+                    $serviceStartTime = $lastService->getServiceStartTime();
+                    $serviceEndTime = $lastService->getServiceEndTime();
 
-                    //$this->logger->addDebug(json_decode($nextService,JSON_PRETTY_PRINT));
-                    $this->serviceDao->save($nextService);
+                    $start = explode ( ":" ,$serviceStartTime );
+                    $start_h = $start[0];
+                    $start_m= $start[1];
+                    $end = explode ( ":" ,$serviceEndTime );
+                    $end_h = $end[0];
+                    $end_m= $end[1];
+
+                    $offset_h = (int)$end_h - (int)$start_h;
+                    $offset_m = (int)$end_m - (int)$start_m;
+                    if($offset_m<0){
+                        $offset_h -=1;
+                        $offset_m = 60 - $offset_m;
+                    }
+                }
+
+                $today = new DateTime('NOW');
+                if($serviceDate>$today && $serviceDate <= $today->modify("+7 day")) {
+                    $serviceStartTime = $client->getServiceTime();
+
+
+                    $start = explode(":", $serviceStartTime);
+                    $start_h = $start[0];
+                    $start_m = $start[1];
+
+                    $end_h = (int)$start_h + $offset_h;
+                    $end_m = (int)$start_m + $offset_m;
+
+                    if ($end_m >= 60) {
+                        $end_m -= $end_m - 60;
+                        $end_h += 1;
+                    }
+                    $end_h = $end_h > 23 ? 23 : $end_h;
+                    $end_h = $end_h < 10 ? ('0' . $end_h) : $end_h;
+                    $end_m = $end_m < 10 ? ('0' . $end_m) : $end_m;
+                    $serviceEndTime = $end_h . ':' . $end_m;
+
+
+                    $serviceDate->setTimezone(new \DateTimeZone($defaultTimeZone));
+                    $this->logger->addDebug("ServiceDate-" . $serviceDate->format('Y-m-d'));
+                    $this->logger->addDebug("Start-" . $serviceStartTime);
+                    $this->logger->addDebug("End-" . $serviceEndTime);
+                    $service = new ServiceInfo();
+
+                    $service->setStatus(ServiceStatus::Pending);
+                    $service->setIsConfirmed(false);
+                    $service->setClientId($client->getClientId());
+                    $service->setClientName($client->getClientName());
+                    $service->setTel($client->getTel());
+                    $service->setEmail($client->getEmail());
+                    $service->setAddress($client->getAddress());
+                    $service->setSuburb($client->getSuburb());
+                    $service->setPrice($client->getPrice());
+                    $service->setPaymentType($client->getPaymentType());
+                    $service->setInvoiceNeeded($client->getInvoiceNeeded());
+                    $service->setInvoiceTitle($client->getInvoiceTitle());
+                    $service->setServiceDate($serviceDate);
+                    $service->setServiceStartTime($serviceStartTime);
+                    $service->setServiceEndTime($serviceEndTime);
+                    $service->setTeamId($teamId);
+                    $service->setNotes("");
+                    $service->setJobDetail($client->getJobDetail());
+
+                    $service->setCreatorId("auto");
+                    $service->setCreateTime(new DateTime('NOW'));
+                    $this->serviceDao->save($service);
                 }
             }
         }

@@ -540,12 +540,14 @@
                     textColor: 'black' // an option!
                     // eventDataTransform:eventDataTransform
                 };
+
                 $scope.eventSources = [ $scope.serviceEventSources];
                 $scope.curEvent = null;
                 var saveServiceInfo = function(serviceinfo ,callback){
                     $http.post('api/service/save', {"serviceInfo":serviceinfo}).
                         success(function(data, status, headers, config) {
                             if(data==="SUCCESS"){
+                                alert("[SUCCESS] Service Info  saved.");
                                 if (callback && typeof(callback) === "function") {
                                     // execute the callback, passing parameters as necessary
                                     callback();
@@ -556,6 +558,7 @@
                             console.log(data);
                             console.log(config);
                             console.log(headers);
+                            alert("[ERROR] Service Info Error.");
                         });
                 };
                 $scope.openEditor = function (event) {
