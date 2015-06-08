@@ -26,6 +26,15 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/invoice", name="invoice")
+     */
+    public function invoiceAction()
+    {
+        $data = array();
+        return $this->render('AppBundle:email:invoice_test.html.twig',$data);
+    }
+
+    /**
      * @Route("/admin", name="admin")
      */
     public function adminAction()

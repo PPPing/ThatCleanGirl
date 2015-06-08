@@ -169,8 +169,8 @@ class ClientInfo extends BaseDocument
     public function loadFromArray(array $info){
 
         $methods = get_class_methods($this);
-        $log = new Logger('Service');
-        $log->pushHandler(new StreamHandler( 'C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/' .'Service.log', Logger::DEBUG));
+        //$log = new Logger('Service');
+        //$log->pushHandler(new StreamHandler( 'C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/' .'Service.log', Logger::DEBUG));
 
         if(empty($info['id'])) {
             throw new InvalidArgumentException('clientInfo.id');
@@ -183,7 +183,7 @@ class ClientInfo extends BaseDocument
                 $key = lcfirst(substr($method, 3));
                 if(isset($info[$key])) {
                     $value = $info[$key];
-                    $log->addDebug("[KEY]  ".json_encode($key,JSON_PRETTY_PRINT));
+                    //$log->addDebug("[KEY]  ".json_encode($key,JSON_PRETTY_PRINT));
                     //$log->addDebug("[VALUE]  ".json_encode($value,JSON_PRETTY_PRINT));
                     if ($this->endsWith($key, 'date') === true || $key==='birthday') {
                         $value = date_create_from_format('Y-m-d\TH:i:sT', $value);
