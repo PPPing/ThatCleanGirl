@@ -21,7 +21,6 @@
 					<div ng-if="!editMode" name="frequency">{{jobDetail.frequency}}</div>
 					<select ng-if="editMode" ng-model="jobDetail.frequency" class="form-control">
 						<option value="weekly">weekly</option>
-						<option value="twiceAWeek">twice a week</option>
 						<option value="fortnightly">fortnightly</option>
 						<option value="monthly">monthly</option>
 						<option value="whenNeed">when need</option>
@@ -44,40 +43,12 @@
 							<div name="keyInfo-notes">{{jobDetail.key.notes}}</div>
 						</div>
 					</div>
-                    <div class="col-xs-12 form-control-pair-item">
-                        <label for="keyInfo-hasAlarm" class="col-xs-2 form-control-label">Has Alarm</label>
-                            <div class="col-xs-1">
-                                <strong>-</strong>
-                            </div>
-                            <div class="col-xs-8">
-                            <div name="keyInfo-hasAlarm">{{jobDetail.key.hasAlarm | parseBoolean}}</div>
-                        </div>
                     </div>
-
-					<div ng-show="jobDetail.key.hasAlarm==true" class="col-xs-12 form-control-pair-item">
-						<label for="keyInfo-alarmIn" class="col-xs-2 form-control-label">Alarm In</label>
-						<div class="col-xs-1">
-							<strong>-</strong>
-						</div>
-						<div class="col-xs-8">
-							<div name="keyInfo-alarmIn">{{jobDetail.key.alarmIn}}</div>
-						</div>
-					</div>
-					<div ng-show="jobDetail.key.hasAlarm==true" class="col-xs-12 form-control-pair-item">
-						<label for="keyInfo-alarmOut" class="col-xs-2 form-control-label">Alarm Out</label>
-						<div class="col-xs-1">
-							<strong>-</strong>
-						</div>
-						<div class="col-xs-8">
-							<div name="keyInfo-alarmOut">{{jobDetail.key.alarmOut}}</div>
-						</div>
-					</div>
-					</div>
 				</div>
 
                 <div ng-if="editMode" class="col-xs-4 btn-group">
                     <label class="btn btn-default btn-xs" ng-class="{'btn-warning':jobDetail.key.has}" ng-model="jobDetail.key.has" btn-radio=true uncheckable>Yes</label>
-                    <label class="btn btn-default btn-xs" ng-model="jobDetail.key.has" btn-radio=false uncheckable>No</label>
+                    <label class="btn btn-default btn-xs" ng-class="{'btn-warning':!jobDetail.key.has}" ng-model="jobDetail.key.has" btn-radio=false uncheckable>No</label>
                 </div>
 
 				<div ng-if="editMode&&jobDetail.key.has==true" class="col-xs-6 form-group form-group-sub-divider">
@@ -93,36 +64,65 @@
 							</div>
 						</div>
 					</div>
-                    <div class="row" >
-                    <div class="col-xs-10 form-group-sub">
-                        <label for="hasAlarm" class="col-xs-4 form-control-label">Has Alarm</label>
-                        <div class="col-xs-8 btn-group">
-                                <label class="btn btn-default btn-xs" ng-class="{'btn-warning':jobDetail.key.hasAlarm}" ng-model="jobDetail.key.hasAlarm" btn-radio=true uncheckable>Yes</label>
-                                <label class="btn btn-default btn-xs" ng-model="jobDetail.key.hasAlarm" btn-radio=false uncheckable>No</label>
-                        </div>
-                    </div>
-                    </div>
-					<div ng-show="jobDetail.key.hasAlarm==true" class="row" >
-						<div class="col-xs-10 form-group-sub">
-							<label for="alarmIn" class="col-xs-4 form-control-label">Alarm In</label>
-							<div class="col-xs-8">
-                                <!--<plugin-time-picker ng-model ="jobDetail.key.alarmIn"></plugin-time-picker>-->
-                                <input type="text" ng-model="jobDetail.key.alarmIn" class="form-control" value="{{jobDetail.key.alarmIn}}">
-							</div>
-						</div>
-					</div>
-					<div ng-show="jobDetail.key.hasAlarm==true" class="row" >
-						<div class="col-xs-10 form-group-sub">
-							<label for="alarmOut" class="col-xs-4 form-control-label">Alarm Out</label>
-							<div class="col-xs-8">
-                                <!--<plugin-time-picker ng-model ="jobDetail.key.alarmOut"></plugin-time-picker>-->
-                                <input type="text" ng-model="jobDetail.key.alarmOut" class="form-control" value="{{jobDetail.key.alarmOut}}">
-                            </div>
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>
+
+        <div class="row form-row">
+            <div class="col-xs-12 form-group">
+                <label class="col-xs-2 form-control-label">Alarm</label>
+                <div ng-if="!editMode" class="col-xs-10">
+                    <div ng-show="jobDetail.alarm.has==false">No Alarm</div>
+                    <div ng-show="jobDetail.alarm.has==true">
+                        <div class="col-xs-12 form-control-pair-item">
+                            <label for="alarmInfo-alarmIn" class="col-xs-2 form-control-label">Alarm In</label>
+                            <div class="col-xs-1">
+                                <strong>-</strong>
+                            </div>
+                            <div class="col-xs-8">
+                                <div name="keyInfo-alarmIn">{{jobDetail.alarm.alarmIn}}</div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 form-control-pair-item">
+                            <label for="alarmInfo-alarmOut" class="col-xs-2 form-control-label">Alarm Out</label>
+                            <div class="col-xs-1">
+                                <strong>-</strong>
+                            </div>
+                            <div class="col-xs-8">
+                                <div name="keyInfo-alarmOut">{{jobDetail.alarm.alarmOut}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-if="editMode" class="col-xs-4 btn-group">
+                    <label class="btn btn-default btn-xs" ng-class="{'btn-warning':jobDetail.alarm.has}" ng-model="jobDetail.alarm.has" btn-radio=true uncheckable>Yes</label>
+                    <label class="btn btn-default btn-xs" ng-class="{'btn-warning':!jobDetail.alarm.has}" ng-model="jobDetail.alarm.has" btn-radio=false uncheckable>No</label>
+                </div>
+
+                <div ng-if="editMode&&jobDetail.alarm.has==true" class="col-xs-6 form-group form-group-sub-divider">
+                    <div class="row" >
+                        <div class="col-xs-10 form-group-sub">
+                            <label for="alarmIn" class="col-xs-4 form-control-label">Alarm In</label>
+                            <div class="col-xs-8">
+                                <!--<plugin-time-picker ng-model ="jobDetail.key.alarmIn"></plugin-time-picker>-->
+                                <input type="text" ng-model="jobDetail.alarm.alarmIn" class="form-control" value="{{jobDetail.alarm.alarmIn}}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" >
+                        <div class="col-xs-10 form-group-sub">
+                            <label for="alarmOut" class="col-xs-4 form-control-label">Alarm Out</label>
+                            <div class="col-xs-8">
+                                <!--<plugin-time-picker ng-model ="jobDetail.key.alarmOut"></plugin-time-picker>-->
+                                <input type="text" ng-model="jobDetail.alarm.alarmOut" class="form-control" value="{{jobDetail.alarm.alarmOut}}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 		<div class="row form-row">
 			<div class="col-xs-12 form-group">
 				<label class="col-xs-2 form-control-label">Pets</label>
@@ -140,7 +140,7 @@
 				</div>
                 <div ng-if="editMode" class="col-xs-4 btn-group">
                     <label class="btn btn-default btn-xs" ng-class="{'btn-warning':jobDetail.pet.has}" ng-model="jobDetail.pet.has" btn-radio=true uncheckable>Yes</label>
-                    <label class="btn btn-default btn-xs" ng-model="jobDetail.pet.has" btn-radio=false uncheckable>No</label>
+                    <label class="btn btn-default btn-xs"  ng-class="{'btn-warning':!jobDetail.pet.has}" ng-model="jobDetail.pet.has" btn-radio=false uncheckable>No</label>
                 </div>
 				<div ng-if="editMode&&jobDetail.pet.has==true" class="col-xs-6 form-group form-group-sub-divider">
 					<div class="row" >

@@ -3,6 +3,8 @@
 namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 /**
  * @MongoDB\EmbeddedDocument
  */
@@ -15,6 +17,9 @@ class JobDetail extends BaseDocument
 
     /** @MongoDB\EmbedOne(targetDocument="JobDetailKey") */
     protected $key;
+
+    /** @MongoDB\EmbedOne(targetDocument="JobDetailAlarm") */
+    protected $alarm;
 
     /** @MongoDB\EmbedOne(targetDocument="JobDetailPet") */
     protected $pet;
@@ -63,6 +68,55 @@ class JobDetail extends BaseDocument
 
         $this->addItem($jobItem);
         $this->addItem($jobItem1);
+    }
+
+    public function loadFromArray(array $info){
+
+        $methods = get_class_methods($this);
+        //$log = new Logger('Service');
+        //$log->pushHandler(new StreamHandler( 'C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/' .'Service.log', Logger::DEBUG));
+
+        foreach ($methods as $method) {
+            if (strpos($method, 'set') === 0) {
+                $key = lcfirst(substr($method, 3));
+                if(isset($info[$key])) {
+                    $value = $info[$key];
+                   // $log->addDebug("[KEY]  ".json_encode($key,JSON_PRETTY_PRINT));
+                    //$log->addDebug("[VALUE]  ".json_encode($value,JSON_PRETTY_PRINT));
+                    if ($this->endsWith($key, 'date') === true) {
+                        $value = date_create_from_format('Y-m-d\TH:i:sT', $value);
+                    } else if ($value === "false") {
+                        $value = false;
+                    } else if ($value === "true") {
+                        $value = true;
+                    } else if($key == 'key'){
+                        //continue;
+                        $jobDetailKey = new JobDetailKey();
+                        $jobDetailKey->loadFromArray($value);
+                        $value=$jobDetailKey;
+                    } else if($key == 'pet'){
+                        //continue;
+                        $jobDetailPet = new JobDetailPet();
+                        $jobDetailPet->loadFromArray($value);
+                        $value=$jobDetailPet;
+                    } else if($key =='items'){
+                        $items=$value;
+                        $newItems = array();
+                        foreach($items as $item){
+                            $newItem = new JobDetailItem();
+                            $newItem->loadFromArray($item);
+                            //$log->addDebug("[itemA]  ".json_encode($item,JSON_PRETTY_PRINT));
+                            //$newItem->setId($item['id']);
+                            //$this->addItem($newItem);
+                            $newItems[] = $newItem;
+                           // $log->addDebug("[itemB]  ".json_encode($newItem,JSON_PRETTY_PRINT));
+                        }
+                        $value = $newItems;
+                    }
+                    $this->$method($value);
+                }
+            }
+        }
     }
     
     /**
@@ -154,23 +208,6 @@ class JobDetail extends BaseDocument
     }
 
     /**
-     * @var $id
-     */
-    protected $id;
-
-
-    /**
-     * Get id
-     *
-     * @return id $id
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-
-    /**
      * Add item
      *
      * @param AppBundle\Document\JobDetailItem $item
@@ -198,6 +235,17 @@ class JobDetail extends BaseDocument
     public function getItems()
     {
         return $this->items;
+    }
+
+    /**
+     * Set items
+     *
+     * @return \Doctrine\Common\Collections\Collection $items
+     */
+    public function setItems($items)
+    {
+        $this->items = $items;
+        return $this;
     }
 
 

@@ -71,7 +71,7 @@
                 <div class="col-xs-8">
                     <div ng-if="editMode" class="btn-group">
                         <label class="btn btn-default btn-xs" ng-class="{'btn-warning':clientDetail.isActive}" ng-model="clientDetail.isActive" btn-radio=true uncheckable>Yes</label>
-                        <label class="btn btn-default btn-xs" ng-model="clientDetail.isActive" btn-radio=false uncheckable>No</label>
+                        <label class="btn btn-default btn-xs" ng-class="{'btn-warning':!clientDetail.isActive}" ng-model="clientDetail.isActive" btn-radio=false uncheckable>No</label>
                     </div>
                     <div ng-if="!editMode" name="test">{{ clientDetail.isActive | parseBoolean}}</div><!--ng-bind="clientDetail.isActive"-->
                 </div>
@@ -81,15 +81,15 @@
 			<div class="col-xs-6 form-group">
 				<label for="startDate" class="col-xs-4 form-control-label">Start Date</label>
 				<div class="col-xs-8">
-                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.startDate" data-date-format="EEEE, MMM d, yyyy"></plugin-date-picker>
-					<div ng-if="!editMode" ng-bind="clientDetail.startDate | date:'EEEE, MMM d, yy' "></div>
+                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.startDate" data-date-format="EEEE,dd/MM/yyyy"></plugin-date-picker>
+					<div ng-if="!editMode" ng-bind="clientDetail.startDate | date:'EEEE, dd/MM/yyyy' "></div>
                 </div>
 			</div>
 			<div class="col-xs-6 form-group">
 				<label for="price" class="col-xs-4 form-control-label">Start Price</label>
 				<div class="col-xs-6">					
 					<input ng-if="editMode" type="text" ng-model="clientDetail.startPrice" class="form-control" ng-value="{{clientDetail.startPrice}}" required>
-					<div ng-if="!editMode" ng-bind="clientDetail.startPrice | currency:'USD$'"></div>
+					<div ng-if="!editMode" ng-bind="clientDetail.startPrice | currency:'AUD$'"></div>
 				</div>
 			</div>
 		</div>
@@ -97,8 +97,8 @@
             <div class="col-xs-6 form-group">
                 <label for="serviceDate" class="col-xs-4 form-control-label">Service Date</label>
                 <div class="col-xs-8">
-                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.serviceDate" data-date-format="EEEE, MMM d, yyyy"></plugin-date-picker>
-                    <div ng-if="!editMode" ng-bind="clientDetail.serviceDate | date:'EEEE, MMM d, yy' "></div>
+                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.serviceDate" data-date-format="EEEE, dd/MM/yyyy"></plugin-date-picker>
+                    <div ng-if="!editMode" ng-bind="clientDetail.serviceDate | date:'EEEE, dd/MM/yyyy' "></div>
                 </div>
             </div>
         </div>
@@ -106,15 +106,15 @@
             <div class="col-xs-6 form-group">
                 <label for="serviceTime" class="col-xs-4 form-control-label">ServiceTime</label>
                 <div class="col-xs-6">
-                    <plugin-time-picker ng-if="editMode"  ng-model ="clientDetail.serviceTime"></plugin-time-picker>
-                    <div ng-if="!editMode" ng-bind="clientDetail.serviceTime"></div>
+                    <plugin-time-picker ng-if="editMode"  ng-model ="clientDetail.serviceTime" data-show-meridian=false></plugin-time-picker>
+                    <div ng-if="!editMode" ng-bind="clientDetail.serviceTime" ></div>
                 </div>
             </div>
             <div class="col-xs-6 form-group">
                 <label for="price" class="col-xs-4 form-control-label">Current Price</label>
                 <div class="col-xs-6">
                     <input ng-if="editMode" type="text" ng-model="clientDetail.price" class="form-control" ng-value="{{clientDetail.price}}" required>
-                    <div ng-if="!editMode" ng-bind="clientDetail.price | currency:'USD$'"></div>
+                    <div ng-if="!editMode" ng-bind="clientDetail.price | currency:'AUD$'"></div>
                 </div>
             </div>
         </div>

@@ -136,9 +136,32 @@ class ServiceInfo extends BaseDocument
         return $this->id;
     }
 
+    function __construct() {
+        $this->clientId = null;
+        $this->clientName = null;
+        $this->tel=null;
+        $this->email=null;
+        $this->address = null;
+        $this->suburb=null;
+        $this->price=0;
+        $this->paymentType="cash";
+        $this->invoiceNeeded=false;
+        $this->invoiceTitle=null;
+
+        $this->serviceDate = new \DateTime('Now');
+        $this->serviceStartTime = "10:00";
+        $this->serviceEndTime = "12:00";
+
+        $this->teamId=null;
+        $this->notes=null;
+        $this->jobDetail = new JobDetail();
+        $this->creatorId = null;
+        $this->createTime = new \DateTime("NOW");
+        $this->modifyTime = new \DateTime("NOW");
+    }
+
     public function loadFromArray(array $info)
     {
-
        if(empty($info['id'])){
             throw new InvalidArgumentException("clientInfo : Id");
         }else{
@@ -157,6 +180,10 @@ class ServiceInfo extends BaseDocument
                         $value = false;
                     } else if ($value === "true") {
                         $value = true;
+                    } else if($key == 'jobDetail'){
+                        $jobDetail = new JobDetail();
+                        $jobDetail->loadFromArray($value);
+                        $value = $jobDetail;
                     }
                     $this->$method($value);
                 }

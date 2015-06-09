@@ -57,12 +57,13 @@
         return {
             restrict: 'E',
             scope: {
-                timeStr : '=ngModel'
+                timeStr : '=ngModel',
+                showMeridian:'=showMeridian'
             },
             controller: function($scope) {
 
-                $scope.hourOptions=['00','01','02','03','04','05','06','07','08','09','10','11','12'];
-                $scope.minOptions=['00','10','20','30','40','50'];
+                $scope.hourOptions=['07','08','09','10','11','12','13','14','15','16','17','18'];
+                $scope.minOptions=['00','30'];
                 $scope.amOptions = ["AM","PM"];
                 $scope.isAM=true;
                 $scope.hour = '08';
@@ -86,7 +87,7 @@
                             }
                         }
                         var num_hour = parseInt(hour);
-                        if(num_hour>12){
+                        if($scope.showMeridian&&num_hour>12){
                             num_hour-=12;
                             hour = (num_hour<10?'0':'')+num_hour.toString();
                             am="PM";
@@ -105,7 +106,7 @@
                     $scope.change();
                 };
                 $scope.change=function(){
-                    if(!$scope.isAM){
+                    if($scope.showMeridian&&!$scope.isAM){
                         $scope.hour = parseInt( $scope.hour)+12;
                     }
                     $scope.timeStr = $scope.hour+":"+ $scope.min;

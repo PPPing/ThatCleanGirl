@@ -494,7 +494,7 @@
                 //config object
                 $scope.uiConfig = {
                     calendar:{
-                        height: 700,
+                        height: 525,
                         editable: false,
                         defaultView:'agendaWeek',
                         header:{
@@ -502,10 +502,36 @@
                             center: '',
                             right: 'today prev,next'
                         },
+                        weekends:false,
+                        //businessHours:true,
+                        minTime:"07:00:00",
+                        maxTime:"18:00:00",
+                        //slotDuration:'00:15:00',
                         eventClick: $scope.alertOnEventClick,
                         eventRender: $scope.eventRender
                     }
                 };
+                $scope.publicHolidays=null;
+                $scope.publicHolidaysSources={
+                    events:  function(start, end, timezone, callback){
+                            if($scope.publicHolidays===null){
+                                $http.get('http://www.webcal.fi/cal.php?id=136&format=json&start_year=2015&end_year=next_year&tz=Australia%2FSydney')
+                                    .then(function(result) {
+                                        console.log(result.data);
+
+                                        var events = [];
+                                        angular.forEach(result.data, function (value, key) {
+
+                                        });
+                                        callback(events);
+                                    });
+                            }else{
+
+                            }
+                    },
+                    color: 'pind',   // an option!
+                    textColor: 'red' // an option!
+                }
 
                 $scope.serviceList=null;
                 $scope.serviceEvents = function(start, end, timezone, callback) {
@@ -541,7 +567,7 @@
                     // eventDataTransform:eventDataTransform
                 };
 
-                $scope.eventSources = [ $scope.serviceEventSources];
+                $scope.eventSources = [ $scope.serviceEventSources, $scope.publicHolidaysSources];
                 $scope.curEvent = null;
                 var saveServiceInfo = function(serviceinfo ,callback){
                     $http.post('api/service/save', {"serviceInfo":serviceinfo}).

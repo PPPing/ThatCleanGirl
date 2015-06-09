@@ -63,12 +63,6 @@ class ReminderInfo extends BaseDocument
     }
 
     /**
-     * @var $id
-     */
-    protected $id;
-
-
-    /**
      * Set ovenDate
      *
      * @param date $ovenDate
@@ -285,15 +279,6 @@ class ReminderInfo extends BaseDocument
     public function getOthers()
     {
         return $this->others;
-    }
-    /**
-     * Get id
-     *
-     * @return id $id
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     public function loadFromArray(array $info)

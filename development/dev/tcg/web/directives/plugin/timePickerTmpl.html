@@ -2,7 +2,7 @@
     <select  class="form-control form-control-time-picker-hour" ng-model="hour"  ng-change="change()" ng-options="h for h in hourOptions" ng-required="true" ></select>
     <div class="form-control-time-picker-colon">:</div>
     <select class="form-control form-control-time-picker-min" ng-model="min"   ng-change="change()" ng-options="m for m in minOptions" ng-required="true" ></select>
-    <button class="btn btn-default form-control-time-picker-am" ng-class="" ng-click="toggleAM()">{{isAM?'AM':'PM'}}</button>
+    <button ng-if="showMeridian" class="btn btn-default form-control-time-picker-am" ng-class="" ng-click="toggleAM()">{{isAM?'AM':'PM'}}</button>
     <style type="text/css">
         .form-control-time-picker-group{
             position: relative;

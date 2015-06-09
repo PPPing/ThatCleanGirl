@@ -148,10 +148,10 @@ class ClientInfoRepository extends DocumentRepository
         }else{
             $jobDetail["key"]["has"] = false;
         }
-        if($jobDetail["key"]["hasAlarm"] === true || $jobDetail["key"]["hasAlarm"] === "true"){
-            $jobDetail["key"]["hasAlarm"] = true;
+        if($jobDetail["alarm"]["has"] === true || $jobDetail["alarm"]["has"] === "true"){
+            $jobDetail["alarm"]["has"] = true;
         }else{
-            $jobDetail["key"]["hasAlarm"] = false;
+            $jobDetail["alarm"]["has"] = false;
         }
         if($jobDetail["pet"]["has"] === true||$jobDetail["pet"]["has"] === "true"){
             $jobDetail["pet"]["has"] = true;

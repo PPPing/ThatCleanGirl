@@ -20,8 +20,8 @@
 		<thead>
 		<tbody>
 			<tr ng-repeat="serviceInfo in serviceHistory">
-				<td>{{serviceInfo.serviceDate | date:'dd/MM/yyyy' }}</td>
-				<td>{{serviceInfo.price | currency:"USD$"}}</td>
+				<td>{{serviceInfo.serviceDate | date:'EEEE, dd/MM/yyyy' }}</td>
+				<td>{{serviceInfo.price | currency:"AUD$"}}</td>
                 <td>{{serviceInfo.teamId}}</td>
 				<td>{{serviceInfo.feedback}}</td>
 			</tr>

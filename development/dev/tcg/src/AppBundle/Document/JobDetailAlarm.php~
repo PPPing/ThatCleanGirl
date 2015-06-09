@@ -4,32 +4,32 @@ namespace AppBundle\Document;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 
-class KeyKeepingType{
-    const KeptByUs = "keptByUs";
-    const Original = "original";
-    const Kitchen ="kitchen";
-}
-
 /**
  * @MongoDB\EmbeddedDocument
  */
-class JobDetailKey extends BaseDocument
+class JobDetailAlarm extends BaseDocument
 {
     /**
      * @MongoDB\Boolean
      */
     protected $has;
 
+
     /**
      * @MongoDB\string
      * */
-    protected $notes;
+    protected $alarmIn;
 
+    /**
+     * @MongoDB\string
+     * */
+    protected $alarmOut;
 
     public function __construct()
     {
         $this->has = false;
-        $this->notes = KeyKeepingType::KeptByUs;
+        $this->alarmIn="09:00";
+        $this->alarmOut="17:00";
     }
     public function loadFromArray(array $info){
         $methods = get_class_methods($this);
@@ -72,25 +72,48 @@ class JobDetailKey extends BaseDocument
         return $this->has;
     }
 
+
     /**
-     * Set notes
+     * Set alarmIn
      *
-     * @param string $notes
+     * @param string $alarmIn
      * @return self
      */
-    public function setNotes($notes)
+    public function setAlarmIn($alarmIn)
     {
-        $this->notes = $notes;
+        $this->alarmIn = $alarmIn;
         return $this;
     }
 
     /**
-     * Get notes
+     * Get alarmIn
      *
-     * @return string $notes
+     * @return string $alarmIn
      */
-    public function getNotes()
+    public function getAlarmIn()
     {
-        return $this->notes;
+        return $this->alarmIn;
+    }
+
+    /**
+     * Set alarmOut
+     *
+     * @param string $alarmOut
+     * @return self
+     */
+    public function setAlarmOut($alarmOut)
+    {
+        $this->alarmOut = $alarmOut;
+        return $this;
+    }
+
+    /**
+     * Get alarmOut
+     *
+     * @return string $alarmOut
+     */
+    public function getAlarmOut()
+    {
+        return $this->alarmOut;
     }
 }

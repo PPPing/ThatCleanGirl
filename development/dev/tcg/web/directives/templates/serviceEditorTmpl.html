@@ -62,7 +62,7 @@
                     <label for="price" class="col-xs-4 form-control-label">Price</label>
                     <div class="col-xs-6">
                         <input ng-if="editMode" type="text" ng-model="serviceInfo.price" class="form-control"  required>
-                        <div ng-if="!editMode" ng-bind="serviceInfo.price | currency:'USD$'"></div>
+                        <div ng-if="!editMode" ng-bind="serviceInfo.price | currency:'AUD$'"></div>
                     </div>
                 </div>
             </div>
@@ -104,8 +104,8 @@
                 <div class="col-xs-6 form-group">
                     <label for="serviceDate" class="col-xs-4 form-control-label">Service Date</label>
                     <div class="col-xs-8">
-                        <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="serviceInfo.serviceDate" required></plugin-date-picker>
-                        <div ng-if="!editMode" ng-bind="serviceInfo.serviceDate | date:'dd/MM/yyyy' "></div>
+                        <plugin-date-picker ng-if="editMode" placeholder="EEEE, dd/MM/yyyy" ng-model ="serviceInfo.serviceDate" required></plugin-date-picker>
+                        <div ng-if="!editMode" ng-bind="serviceInfo.serviceDate | date:'EEEE, dd/MM/yyyy' "></div>
                     </div>
                 </div>
                 <div class="col-xs-6 form-group">
@@ -124,17 +124,16 @@
                 <div class="col-xs-6 form-group">
                     <label for="serviceTime" class="col-xs-4 form-control-label">Start Time</label>
                     <div class="col-xs-6">
-                        <plugin-time-picker ng-if="editMode"  ng-model ="serviceInfo.serviceStartTime"></plugin-time-picker>
+                        <plugin-time-picker ng-if="editMode"  ng-model ="serviceInfo.serviceStartTime" data-show-meridian=false></plugin-time-picker>
                         <div ng-if="!editMode" ng-bind="serviceInfo.serviceStartTime"></div>
                     </div>
                 </div>
             </div>
-
             <div class="row form-row">
                 <div class="col-xs-6 form-group">
                     <label for="endTime" class="col-xs-4 form-control-label">End Time</label>
                     <div class="col-xs-6">
-                        <plugin-time-picker ng-if="editMode"  ng-model ="serviceInfo.serviceEndTime" required></plugin-time-picker>
+                        <plugin-time-picker ng-if="editMode"  ng-model ="serviceInfo.serviceEndTime" data-show-meridian=false required></plugin-time-picker>
                         <div ng-if="!editMode" ng-bind="serviceInfo.serviceEndTime"></div>
                     </div>
                 </div>

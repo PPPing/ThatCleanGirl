@@ -18,6 +18,9 @@ class JobDetail extends BaseDocument
     /** @MongoDB\EmbedOne(targetDocument="JobDetailKey") */
     protected $key;
 
+    /** @MongoDB\EmbedOne(targetDocument="JobDetailAlarm") */
+    protected $alarm;
+
     /** @MongoDB\EmbedOne(targetDocument="JobDetailPet") */
     protected $pet;
 
@@ -50,6 +53,7 @@ class JobDetail extends BaseDocument
         $this->rotations = array($r1,$r2,$r3,$r4);
 
         $this->key = new JobDetailKey();
+        $this->alarm = new JobDetailAlarm();
         $this->pet = new JobDetailPet();
 
         $jobItem = new JobDetailItem();
@@ -96,6 +100,11 @@ class JobDetail extends BaseDocument
                         $jobDetailPet = new JobDetailPet();
                         $jobDetailPet->loadFromArray($value);
                         $value=$jobDetailPet;
+                    } else if($key == 'alarm'){
+                        //continue;
+                        $jobDetailAlarm = new JobDetailAlarm();
+                        $jobDetailAlarm->loadFromArray($value);
+                        $value=$jobDetailAlarm;
                     } else if($key =='items'){
                         $items=$value;
                         $newItems = array();
@@ -266,5 +275,27 @@ class JobDetail extends BaseDocument
     public function getRotations()
     {
         return $this->rotations;
+    }
+
+    /**
+     * Set alarm
+     *
+     * @param AppBundle\Document\JobDetailAlarm $alarm
+     * @return self
+     */
+    public function setAlarm(\AppBundle\Document\JobDetailAlarm $alarm)
+    {
+        $this->alarm = $alarm;
+        return $this;
+    }
+
+    /**
+     * Get alarm
+     *
+     * @return AppBundle\Document\JobDetailAlarm $alarm
+     */
+    public function getAlarm()
+    {
+        return $this->alarm;
     }
 }

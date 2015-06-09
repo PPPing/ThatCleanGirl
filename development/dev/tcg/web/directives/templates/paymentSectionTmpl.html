@@ -51,7 +51,7 @@
                 </div>-->
                 <div ng-if="editMode" class="col-xs-4 btn-group">
                     <label class="btn btn-default btn-xs" ng-class="{'btn-warning':clientDetail.invoiceNeeded}" ng-model="clientDetail.invoiceNeeded" btn-radio=true uncheckable>Yes</label>
-                    <label class="btn btn-default btn-xs" ng-model="clientDetail.invoiceNeeded" btn-radio=false uncheckable>No</label>
+                    <label class="btn btn-default btn-xs" ng-class="{'btn-warning':!clientDetail.invoiceNeeded}" ng-model="clientDetail.invoiceNeeded" btn-radio=false uncheckable>No</label>
                 </div>
 
 				<div ng-if="editMode&&clientDetail.invoiceNeeded==true" class="col-xs-6 form-group form-group-sub-divider">
