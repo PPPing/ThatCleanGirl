@@ -386,7 +386,10 @@
                 $scope.alertOnEventClick = function( data, jsEvent, view){
                     console.log(data.title + ' was clicked ');
                     console.log(data);
-                    $scope.openEditor(data);
+					if(data.type=='serivce'){
+						$scope.openEditor(data);
+					}
+                    
                 };
                 /* alert on Drop */
                 $scope.alertOnDrop = function(event, delta, revertFunc, jsEvent, ui, view){
@@ -474,6 +477,7 @@
                     event.color= '#e7d836';
                     event.textColor= 'black';
 
+					event.type='service';
                     event = updateEvent(event);
                     return event;
                 };
@@ -515,13 +519,19 @@
                 $scope.publicHolidaysSources={
                     events:  function(start, end, timezone, callback){
                             if($scope.publicHolidays===null){
-                                $http.get('http://www.webcal.fi/cal.php?id=136&format=json&start_year=2015&end_year=next_year&tz=Australia%2FSydney')
+                                $http.get('/api/service/holiday')
                                     .then(function(result) {
                                         console.log(result.data);
 
                                         var events = [];
                                         angular.forEach(result.data, function (value, key) {
-
+											event ={
+												title:value.name,
+												allDay:true,
+												start:new Date(value.date),
+												type:'holiday'
+											};
+											events.push(event);
                                         });
                                         callback(events);
                                     });
@@ -529,8 +539,8 @@
 
                             }
                     },
-                    color: 'pind',   // an option!
-                    textColor: 'red' // an option!
+                    color: '#FFDEEE',   // an option!
+                    textColor: '#333' // an option!
                 }
 
                 $scope.serviceList=null;

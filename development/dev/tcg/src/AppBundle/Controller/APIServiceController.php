@@ -15,6 +15,25 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 class APIServiceController extends Controller
 {
+	/**
+     * @Route("/api/service/holiday", name="_api_service_holiday")
+     */
+    public function serviceHoliday()
+    {
+		$url ='http://www.webcal.fi/cal.php?id=136&format=json&start_year=2015&end_year=next_year&tz=Australia%2FSydney';
+        $ch = curl_init();
+		$timeout = 5;
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+		$data = curl_exec($ch);
+		curl_close($ch);
+
+        $response =  new Response($data);
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+	
     /**
      * @Route("/api/service/history/{clientId}", name="_api_service_history")
      */
