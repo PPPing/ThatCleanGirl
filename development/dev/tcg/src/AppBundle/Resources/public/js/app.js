@@ -328,6 +328,14 @@
                     {
                         id:'teamC',
                         name:'TeamC'
+                    },
+                    {
+                        id:'birthday',
+                        name:'Birthday'
+                    },
+                    {
+                        id:'clean',
+                        name:'clean'
                     }
                 ];
                 $scope.filtersMask = 0
@@ -335,7 +343,11 @@
                 $scope.filtersValue={};
                 var initFilters = function() {
                     angular.forEach($scope.teamList, function (value, key) {
-                        $scope.filters[value.id] = true;
+                        if(value.id=='birthday'||value.id=='clean'){
+                            $scope.filters[value.id] = false;
+                        }else{
+                            $scope.filters[value.id] = true;
+                        }
                         $scope.filtersValue[value.id] = Math.pow(10, key);
                         $scope.filtersMask += $scope.filtersValue[value.id];
                        // console.log(key +' : '+$scope.filtersMask);
@@ -388,7 +400,9 @@
                     console.log(data);
 					if(data.type=='serivce'){
 						$scope.openEditor(data);
-					}
+					}else if(data.type=='birthday'||data.type=='clean'){
+                        $scope.openNotifyInfoViewer(data);
+                    }
                     
                 };
                 /* alert on Drop */
@@ -519,16 +533,16 @@
                 $scope.publicHolidaysSources={
                     events:  function(start, end, timezone, callback){
                             if($scope.publicHolidays===null){
-                                $http.get('/api/service/holiday')
+                                $http.get('/api/service/getHolidays')
                                     .then(function(result) {
                                         console.log(result.data);
 
                                         var events = [];
                                         angular.forEach(result.data, function (value, key) {
 											event ={
-												title:value.name,
+												title:value.title,
 												allDay:true,
-												start:new Date(value.date),
+												start:new Date(value.start),
 												type:'holiday'
 											};
 											events.push(event);
@@ -540,6 +554,44 @@
                             }
                     },
                     color: '#FFDEEE',   // an option!
+                    textColor: '#333' // an option!
+                }
+
+                $scope.notifications=null;
+                $scope.notificationsSources={
+                    events:  function(start, end, timezone, callback){
+                        if($scope.filters['birthday']!=true&&$scope.filters['clean']!=true){
+                            var events = [];
+                            callback(events);
+                        }else{
+                            if($scope.notifications===null){
+                                $http.get('/api/service/getNotifications')
+                                    .then(function(result) {
+                                        console.log(result.data);
+
+                                        var events = [];
+                                        angular.forEach(result.data, function (value, key) {
+                                            if($scope.filters[value.type]===true){
+                                                event ={
+                                                    title:value.title,
+                                                    allDay:true,
+                                                    start:new Date(value.date),
+                                                    type:value.type,
+                                                    info:value
+                                                };
+                                                events.push(event);
+                                            }
+                                        });
+                                        callback(events);
+                                    });
+                            }else{
+
+                            }
+                        }
+
+
+                    },
+                    color: '#FFD03A',   // an option!
                     textColor: '#333' // an option!
                 }
 
@@ -577,7 +629,7 @@
                     // eventDataTransform:eventDataTransform
                 };
 
-                $scope.eventSources = [ $scope.serviceEventSources, $scope.publicHolidaysSources];
+                $scope.eventSources = [ $scope.serviceEventSources, $scope.notificationsSources,$scope.publicHolidaysSources];
                 $scope.curEvent = null;
                 var saveServiceInfo = function(serviceinfo ,callback){
                     $http.post('api/service/save', {"serviceInfo":serviceinfo}).
@@ -606,7 +658,7 @@
                         controller: function($scope,$modalInstance,serviceInfo){
                            $scope.serviceInfo = serviceInfo;
                            console.log($scope.serviceInfo);
-                            $scope.serviceInfo.clientId = "1038-5986";
+                            //$scope.serviceInfo.clientId = "1038-5986";
                             $scope.editMode=!$scope.serviceInfo.isConfirmed;
 
                             $scope.Confirm = function(){
@@ -645,6 +697,35 @@
                         //console.log('Modal dismissed at: ' + new Date());
                     });
                 };
+                $scope.openNotifyInfoViewer = function (event) {
+                    $scope.curEvent = event;
+                    console.log($scope.curEvent);
+                    var modalInstance = $modal.open({
+                        animation: true,
+                        templateUrl: 'directives/templates/notifyViewerTmpl.html',
+                        controller: function($scope,$modalInstance,notifyInfo){
+                            $scope.notifyInfo = notifyInfo;
+                            console.log($scope.notifyInfo);
+                            var clientId = $scope.notifyInfo.clientId
+                            console.log(clientId);
+
+                        },
+                        resolve: {
+                            notifyInfo: function () {
+
+                                return $scope.curEvent.info;
+                            }
+                        }
+                    });
+                    modalInstance.result.then(function (serviceInfo) {
+                        //console.log(serviceInfo);
+                        $scope.curEvent = eventDataUpdate($scope.curEvent,serviceInfo);
+                        console.log( $scope.curEvent);
+                        uiCalendarConfig.calendars[calendarId].fullCalendar('updateEvent',$scope.curEvent);
+                    }, function () {
+                        //console.log('Modal dismissed at: ' + new Date());
+                    });
+                }
 
             },
             templateUrl:'directives/templates/serviceCalendarTmpl.html',

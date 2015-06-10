@@ -119,7 +119,7 @@ class ServiceCommand extends ContainerAwareCommand
                 }
 
                 $today = new DateTime('NOW');
-                if ($serviceDate > $today && $serviceDate <= $today->modify("+7 day")) {
+                if ($serviceDate > $today && $serviceDate <= $today->modify("+14 day")) {
                     $serviceStartTime = $client->getServiceTime();
 
 
