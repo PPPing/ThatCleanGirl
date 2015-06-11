@@ -7,7 +7,10 @@ use AppBundle\Document\NotificationType;
 use AppBundle\Document\ServiceInfo;
 use AppBundle\Document\ServiceStatus;
 use Doctrine\ODM\MongoDB\DocumentRepository;
-
+use \DateTime;
+use AppBundle\Document\NotificationInfo;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 /**
  * ServiceInfoRepository
  *
@@ -29,6 +32,7 @@ class NotificationInfoRepository extends DocumentRepository
 
         return $result;
     }
+
     public function archiveCleanReminderNotification(){
 
         $result = $this->createQueryBuilder()
@@ -45,12 +49,122 @@ class NotificationInfoRepository extends DocumentRepository
 
     public function findUnconfirmed()
     {
-       /* $this->findBy(array("status"=>NotificationStatus::Unconfirmed));
-        $result = $this->createQueryBuilder()
-            ->find()
-            ->field("status")->equals(NotificationStatus::Unconfirmed)
-            ->getQuery()
-            ->execute();*/
         return $this->findBy(array("status"=>NotificationStatus::Unconfirmed));
+    }
+    public function UpdateClientBirthdayNotification($client){
+        $result = $this->createQueryBuilder()
+            ->update()
+            ->multiple(true)
+            ->field("status")->equals(NotificationStatus::Unconfirmed)
+            ->field("type")->equals(NotificationType::Birthday)
+            ->field("clientId")->equals($client->getClientId())
+            ->field("status")->set(NotificationStatus::Confirmed)
+            ->getQuery()
+            ->execute();
+
+        $defaultTimeZone = date_default_timezone_get();
+        $birthday = $client->getBirthday();
+        $today = new DateTime('NOW');
+        $today->setTimezone(new \DateTimeZone($defaultTimeZone));
+        $today_m = $today->format('m');
+        $today_Y = $today->format('Y');
+        $birthday->setTimezone(new \DateTimeZone($defaultTimeZone));
+        $birthday_m = $birthday->format('m');
+        $birthday_md = $birthday->format('md');
+
+        if($today_m === $birthday_m){//$birthday_md>=$today_md&&$birthday_md<= ((int)$today_md +31)){
+            $notifyDate = date_create_from_format('Ymd',$today_Y.$birthday_md);
+            $notificationInfo = new NotificationInfo();
+            $notificationInfo->setClientId($client->getClientId());
+            $notificationInfo->setStatus(NotificationStatus::Unconfirmed);
+            $notificationInfo->setType(NotificationType::Birthday);
+            $notificationInfo->setDate($notifyDate);
+            $notificationInfo->setTitle("Birthday - ". $client->getClientName());
+            $notificationInfo->setClientName($client->getClientName());
+            $notificationInfo->setTel($client->getTel());
+            $notificationInfo->setEmail($client->getEmail());
+            $notificationInfo->setAddress($client->getAddress());
+            $notificationInfo->setSuburb($client->getSuburb());
+
+           // $this->logger->debug($client->getClientName().' : '.$notifyDate->format('Y-m-d'));
+
+            $this->dm->persist($notificationInfo);
+            $dm = $this->getDocumentManager();
+            $dm->persist($notificationInfo);
+            $dm->flush();
+        }
+    }
+
+    public function UpdateClientCleanNotification($client){
+
+        $log = new Logger('Notification');
+        $log->pushHandler(new StreamHandler( 'C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/' .'Notification.log', Logger::DEBUG));
+        $result = $this->createQueryBuilder()
+            ->update()
+            ->multiple(true)
+            ->field("status")->equals(NotificationStatus::Unconfirmed)
+            ->field("type")->equals(NotificationType::Clean)
+            ->field("clientId")->equals($client->getClientId())
+            ->field("status")->set(NotificationStatus::Confirmed)
+            ->getQuery()
+            ->execute();
+        $defaultTimeZone = date_default_timezone_get();
+        $notificationList = array();
+        $reminderInfo = $client->getReminderInfo();
+        $methods = get_class_methods($reminderInfo);
+        foreach($methods as $method) {
+            if (strpos($method, 'get') === 0 && $this->endsWith($method, 'Date') === true) {
+                $date = $reminderInfo->$method();
+                if ($date === null) {
+                    continue;
+                }
+                //$log->debug('- '.$method .':'.$date->format('Y-m-d'));
+                $today = new DateTime('NOW');
+                $today->setTimezone(new \DateTimeZone($defaultTimeZone));
+                $today_Ym = $today->format('Ym');
+                $date->setTimezone(new \DateTimeZone($defaultTimeZone));
+                $date_Ym = $date->format('Ym');
+                if ($today_Ym === $date_Ym){//$date > $today && $date <= $today->modify("+30 day")) {
+                    $log->debug('* '.$method .':'.$date->format('Y-m-d'));
+                    $dateKey = $date->format('md');
+                    $itemKey = substr(substr($method, 3), 0, -4);
+                    if (!empty($notificationList[$dateKey])) {
+                        $notificationInfo = $notificationList[$dateKey];
+                    } else {
+                        $notificationInfo = new NotificationInfo();
+                        $notificationInfo->setTitle("Spring Clean Reminder");
+                        $notificationInfo->setClientId($client->getClientId());
+                        $notificationInfo->setStatus(NotificationStatus::Unconfirmed);
+                        $notificationInfo->setType(NotificationType::Clean);
+                        $notificationInfo->setDate($date);
+                        $notificationInfo->setClientName($client->getClientName());
+                        $notificationInfo->setTel($client->getTel());
+                        $notificationInfo->setEmail($client->getEmail());
+                        $notificationInfo->setAddress($client->getAddress());
+                        $notificationInfo->setSuburb($client->getSuburb());
+                    }
+                    $items = $notificationInfo->getItems();
+                    $items[] = $itemKey;
+                    $notificationInfo->setItems($items);
+                    $notificationList[$dateKey] = $notificationInfo;
+                }
+            }
+        }
+        $dm = $this->getDocumentManager();
+        foreach($notificationList as $notify) {
+            $log->debug($notify->getDate()->format('Y-m-d'));
+            $dm->persist($notify);
+        }
+        $dm->flush();
+    }
+
+    public  static function endsWith($haystack, $needle)
+    {
+        $length = strlen($needle);
+        if ($length == 0) {
+            return true;
+        }
+
+        return (substr($haystack, -$length) === $needle);
     }
 }

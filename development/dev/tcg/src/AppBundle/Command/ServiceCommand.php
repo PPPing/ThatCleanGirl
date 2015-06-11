@@ -58,7 +58,7 @@ class ServiceCommand extends ContainerAwareCommand
             $this->logger->pushHandler(new StreamHandler($this->getContainer()->getParameter('log_dir') . 'ServiceCommand.log'));
             $type = $input->getArgument('type');
             $text = 'Type - ' . $type . ' Started';
-            if ($type === 'create') {
+            if ($type === 'service') {
                 $output->writeln($text);
                 //$this->CreatePendingServices();
                 $this->CreateServices();
@@ -103,8 +103,6 @@ class ServiceCommand extends ContainerAwareCommand
                 $clientId = $client->getClientId();
                 $teamId = '';
 
-                $offset_h = 2;
-                $offset_m = 0;
                 $this->logger->addDebug($client->getClientId() . " : " . $client->getClientName());
                 $lastService = $this->serviceDao->findLastService($clientId);
                 if ($lastService === null) {
@@ -122,51 +120,15 @@ class ServiceCommand extends ContainerAwareCommand
                         //$nextServiceDate = null;//$nextServiceDate->modify("+3 day");
                     }
                     $teamId = $lastService->getTeamId();
-
-                    $serviceStartTime = $lastService->getServiceStartTime();
-                    $serviceEndTime = $lastService->getServiceEndTime();
-
-                    $start = explode(":", $serviceStartTime);
-                    $start_h = $start[0];
-                    $start_m = $start[1];
-                    $end = explode(":", $serviceEndTime);
-                    $end_h = $end[0];
-                    $end_m = $end[1];
-
-                    $offset_h = (int)$end_h - (int)$start_h;
-                    $offset_m = (int)$end_m - (int)$start_m;
-                    if ($offset_m < 0) {
-                        $offset_h -= 1;
-                        $offset_m = 60 - $offset_m;
-                    }
                 }
 
                 $today = new DateTime('NOW');
                 if ($serviceDate > $today && $serviceDate <= $today->modify("+14 day")) {
                     $serviceStartTime = $client->getServiceTime();
 
-
-                    $start = explode(":", $serviceStartTime);
-                    $start_h = $start[0];
-                    $start_m = $start[1];
-
-                    $end_h = (int)$start_h + $offset_h;
-                    $end_m = (int)$start_m + $offset_m;
-
-                    if ($end_m >= 60) {
-                        $end_m -= $end_m - 60;
-                        $end_h += 1;
-                    }
-                    $end_h = $end_h > 23 ? 23 : $end_h;
-                    $end_h = $end_h < 10 ? ('0' . $end_h) : $end_h;
-                    $end_m = $end_m < 10 ? ('0' . $end_m) : $end_m;
-                    $serviceEndTime = $end_h . ':' . $end_m;
-
-
                     $serviceDate->setTimezone(new \DateTimeZone($defaultTimeZone));
                     $this->logger->addDebug("ServiceDate-" . $serviceDate->format('Y-m-d'));
                     $this->logger->addDebug("Start-" . $serviceStartTime);
-                    $this->logger->addDebug("End-" . $serviceEndTime);
                     $service = new ServiceInfo();
 
                     $service->setStatus(ServiceStatus::Pending);
@@ -183,7 +145,6 @@ class ServiceCommand extends ContainerAwareCommand
                     $service->setInvoiceTitle($client->getInvoiceTitle());
                     $service->setServiceDate($serviceDate);
                     $service->setServiceStartTime($serviceStartTime);
-                    $service->setServiceEndTime($serviceEndTime);
                     $service->setTeamId($teamId);
                     $service->setNotes("");
                     $service->setJobDetail($client->getJobDetail());
@@ -232,43 +193,14 @@ class ServiceCommand extends ContainerAwareCommand
 
         $clientList = $this->clientDao->findAllAvailableClient();
 
-        $defaultTimeZone = date_default_timezone_get();
-        $today = new \DateTime('NOW');
-        $today->setTimezone(new \DateTimeZone($defaultTimeZone));
-        $today_year = $today->format('Y');
-        $today_md = $today->format('md');
 
         foreach ($clientList as $client) {
-                $birthday = $client->getBirthday();
-
-                $birthday->setTimezone(new \DateTimeZone($defaultTimeZone));
-                $birthday_year = $birthday->format('Y');
-                $birthday_md = $birthday->format('md');
-
-                if($birthday_md>=$today_md&&$birthday_md<= ((int)$today_md +31)){
-                    $notifyDate = date_create_from_format('Ymd',$today_year.$birthday_md);
-                    $notificationInfo = new NotificationInfo();
-                    $notificationInfo->setClientId($client->getClientId());
-                    $notificationInfo->setStatus(NotificationStatus::Unconfirmed);
-                    $notificationInfo->setType(NotificationType::Birthday);
-                    $notificationInfo->setDate($notifyDate);
-                    $notificationInfo->setTitle("Birthday - ". $client->getClientName());
-					$notificationInfo->setClientName($client->getClientName());
-                    $notificationInfo->setTel($client->getTel());
-                    $notificationInfo->setEmail($client->getEmail());
-                    $notificationInfo->setAddress($client->getAddress());
-                    $notificationInfo->setSuburb($client->getSuburb());
-                    
-					$this->logger->debug($client->getClientName().' : '.$notifyDate->format('Y-m-d'));
-
-                    $this->dm->persist($notificationInfo);
-                }
+            $this->notificationDao->UpdateClientBirthdayNotification($client);
         }
-        $this->dm->flush();
     }
 	
 	/**
-     * update every month 30 days
+     * update every month 31 days
      */
     public function updateCleanReminder()
     {
@@ -276,66 +208,9 @@ class ServiceCommand extends ContainerAwareCommand
 
         $clientList = $this->clientDao->findAllAvailableClient();
 
-        $defaultTimeZone = date_default_timezone_get();
-
         foreach ($clientList as $client) {
-			$notificationList = array();
-            $reminderInfo = $client->getReminderInfo();
-            $methods = get_class_methods($reminderInfo);
-            foreach($methods as $method){
-                if (strpos($method, 'get') === 0 && $this->endsWith($method, 'Date') === true) {
-                    $date = $reminderInfo->$method();
-                    if($date===null){
-                        continue;
-                    }
-                    //$this->logger->debug('- '.$method .':'.$date->format('Y-m-d'));
-                    $today = new DateTime('NOW');
-                    if($date > $today && $date <= $today->modify("+30 day")){
-                        //$this->logger->debug('* '.$method .':'.$date->format('Y-m-d'));
-						$dateKey = $date->format('md');
-						$itemKey = substr(substr($method,3),0,-4);
-						if(!empty($notificationList[$dateKey])){
-							$notificationInfo = $notificationList[$dateKey];
-						}else{
-							$notificationInfo = new NotificationInfo();
-							$notificationInfo->setTitle("Spring Clean Reminder");
-							$notificationInfo->setClientId($client->getClientId());
-							$notificationInfo->setStatus(NotificationStatus::Unconfirmed);
-							$notificationInfo->setType(NotificationType::Clean);
-							$notificationInfo->setDate($date);
-							$notificationInfo->setClientName($client->getClientName());
-							$notificationInfo->setTel($client->getTel());
-							$notificationInfo->setEmail($client->getEmail());
-							$notificationInfo->setAddress($client->getAddress());
-							$notificationInfo->setSuburb($client->getSuburb());
-						}
-						
-						$items = $notificationInfo->getItems();
-						//$item = new \stdClass();
-						//$item->$itemKey= true;
-						$items[] = $itemKey;
-						
-						$notificationInfo->setItems($items);
-						$notificationList[$dateKey] = $notificationInfo;
-                    }
-                }
-            }
-			
-			foreach($notificationList as $notify){
-				$this->dm->persist($notify);
-			}
+            $this->notificationDao->UpdateClientCleanNotification($client);
         }
-        $this->dm->flush();
-    }
-	
-	public  static function endsWith($haystack, $needle)
-    {
-        $length = strlen($needle);
-        if ($length == 0) {
-            return true;
-        }
-
-        return (substr($haystack, -$length) === $needle);
     }
 }
 

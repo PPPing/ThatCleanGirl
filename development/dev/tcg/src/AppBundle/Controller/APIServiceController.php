@@ -52,6 +52,34 @@ class APIServiceController extends Controller
     }
 
     /**
+     * @Route("/api/service/getNotificationGroups", name="_api_get_notificationGroups")
+     */
+    public function getNotificationGroups()
+    {
+        $notifications = $this->get('doctrine_mongodb')
+            ->getManager()
+            ->getRepository('AppBundle:NotificationInfo')
+            ->findUnconfirmed();
+
+        $groups=array();
+        $birthdays = array();
+        $cleans = array();
+        foreach($notifications as $notifyInfo) {
+            if($notifyInfo->getType()== NotificationType::Birthday){
+                $birthdays[] = $notifyInfo;
+            }else if($notifyInfo->getType()== NotificationType::Clean){
+                $cleans[] = $notifyInfo;
+            }
+        }
+        $groups = array('birthday'=> $birthdays ,'clean'=>$cleans);
+
+
+        $response =  new Response(json_encode($groups,JSON_PRETTY_PRINT));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
+    /**
      * @Route("/api/service/history/{clientId}", name="_api_service_history")
      */
     public function serviceHistory($clientId)
@@ -116,7 +144,6 @@ class APIServiceController extends Controller
         $service->setInvoiceTitle("company");
         $service->setServiceDate(new \DateTime('NOW'));
         $service->setServiceStartTime("10:00");
-        $service->setServiceEndTime("15:00");
         $service->setTeamId("TeamA");
         $service->setNotes("nothing");
         $service->setJobDetail(new JobDetail());

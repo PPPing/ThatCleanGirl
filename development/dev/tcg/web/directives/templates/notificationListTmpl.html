@@ -1,28 +1,35 @@
-<div class="module-section">
+<div class="module-section" ng-class="{'module-section-hidden':isHidden}">
     <div class="module-section-header">
 		<span class="module-section-header-square">
 		</span>
 		<span class="module-section-header-title">
 			Notifications
 		</span>
+        <div class="module-section-button-group">
+            <span ng-show="!isHidden" class="module-section-button glyphicon glyphicon-chevron-up" ng-click="setHidden(true)"></span>
+            <span ng-show="isHidden" class="module-section-button glyphicon glyphicon glyphicon-chevron-down" ng-click="setHidden(false)"></span>
+        </div>
     </div>
-    <div class="module-section-body">
-        
+    <div class="module-section-body" style="padding-bottom: 3px;">
+        <div class="row" style="padding:0 5px">
+            <div style="float:left;font-size:18px;line-height:22px;">Birthday</div>
+            <div style="float:right" class="btn-group">
+                <label class="btn btn-default btn-xs" >Hide</label>
+            </div>
+        </div>
     </div>
-    <table class="service-list-table light" style="margin-top: -10px;">
+
+    <table class="service-list-table light">
         <thead>
         <tr>
-		    <th>Type</th>
             <th>Client Name</th>
-            
-            <th>Service Date</th>
+            <th>Birthday Date</th>
             <th>Address</th>
             <th>Suburb</th>
         </tr>
         <thead>
         <tbody>
-        <tr ng-repeat="notifyInfo in notifyInfoList" ng-click="EditService($index)">
-            <td>{{notifyInfo.type}}</td>
+        <tr ng-repeat="notifyInfo in  birthdays" ng-click="openNotifyViewer('birthday',$index)">
             <td>{{notifyInfo.clientName}}</td>
             <td>{{notifyInfo.date | date:'dd/MM/yyyy'}}</td>
             <td>{{notifyInfo.address}}</td>
@@ -30,4 +37,33 @@
         </tr>
         </tbody>
     </table>
+
+    <div class="module-section-body" style="padding-bottom: 3px;">
+        <div class="row" style="padding:5px 5px 0px 5px ">
+            <div style="float:left;font-size:18px;line-height:22px;">Spring Clean Reminder</div>
+            <div style="float:right" class="btn-group">
+                <label class="btn btn-default btn-xs" >Hide</label>
+            </div>
+        </div>
+    </div>
+        <table class="service-list-table light">
+            <thead>
+            <tr>
+                <th>Client Name</th>
+                <th>Address</th>
+                <th>Suburb</th>
+                <th>Remind Date</th>
+                <th>Items</th>
+            </tr>
+            <thead>
+            <tbody>
+            <tr ng-repeat="notifyInfo in cleans" ng-click="openNotifyViewer('clean',$index)">
+                <td>{{notifyInfo.clientName}}</td>
+                <td>{{notifyInfo.address}}</td>
+                <td>{{notifyInfo.suburb}}</td>
+                <td>{{notifyInfo.date | date:'dd/MM/yyyy'}}</td>
+                <td>{{notifyInfo.items.join()}}</td>
+            </tr>
+            </tbody>
+        </table>
 </div>

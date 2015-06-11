@@ -97,10 +97,6 @@ class ServiceInfo extends BaseDocument
     /**
      * @MongoDB\String
      */
-    protected $serviceEndTime;
-    /**
-     * @MongoDB\String
-     */
     protected $teamId;
 
     /**
@@ -150,7 +146,6 @@ class ServiceInfo extends BaseDocument
 
         $this->serviceDate = new \DateTime('Now');
         $this->serviceStartTime = "10:00";
-        $this->serviceEndTime = "12:00";
 
         $this->teamId=null;
         $this->notes=null;
@@ -499,28 +494,6 @@ class ServiceInfo extends BaseDocument
     public function getServiceStartTime()
     {
         return $this->serviceStartTime;
-    }
-
-    /**
-     * Set serviceEndTime
-     *
-     * @param string $serviceEndTime
-     * @return self
-     */
-    public function setServiceEndTime($serviceEndTime)
-    {
-        $this->serviceEndTime = $serviceEndTime;
-        return $this;
-    }
-
-    /**
-     * Get serviceEndTime
-     *
-     * @return string $serviceEndTime
-     */
-    public function getServiceEndTime()
-    {
-        return $this->serviceEndTime;
     }
 
     /**

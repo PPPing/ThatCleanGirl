@@ -1,5 +1,5 @@
 (function(){
-	var app = angular.module('thatCleanGirl', ['pluginDirectives','ui.calendar']).config(function($interpolateProvider,$httpProvider){
+	var app = angular.module('thatCleanGirl', ['pluginDirectives','ui.calendar','ngCookies']).config(function($interpolateProvider,$httpProvider){
         $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
 
         $httpProvider.defaults.headers.post['Content-Type'] =
@@ -310,19 +310,61 @@
 	app.directive('notificationList',function(){
         return {
             restrict: 'E',
-            controller: function($scope,$http) {              
+            controller: function($scope,$http, $modal,$cookies) {
+                if($cookies.tcg_display_notification_list_isHidden==true||$cookies.tcg_display_notification_list_isHidden=='true'){;
+                    $scope.isHidden=true;
+                }else{
+                    $scope.isHidden=false;
+                }
+                $scope.setHidden=function(value){
+                    $scope.isHidden=value;
+                    $cookies.tcg_display_notification_list_isHidden=$scope.isHidden;
+                    console.log($cookies.tcg_display_notification_list_isHidden);
+                }
                 function loadServiceList(){
-					$http.get('/api/service/getNotifications')
+                    $scope.notifyInfoList=[];
+                    $scope.birthdays=[];
+                    $scope.cleans=[];
+					$http.get('/api/service/getNotificationGroups')
                          .then(function(result) {
                                 console.log(result.data);
 								$scope.notifyInfoList =result.data;
-                                        
+                                $scope.birthdays = $scope.notifyInfoList.birthday;
+                                 $scope.cleans = $scope.notifyInfoList.clean;
                           });
                 }
-                $scope.EditService = function(index){
-                    console.log(index);
-                };
 				loadServiceList();
+
+                $scope.openNotifyViewer = function (type,index) {
+                    console.log(type+" - "+ index);
+                    var modalInstance = $modal.open({
+                        animation: true,
+                        templateUrl: 'directives/templates/notificationViewerTmpl.html',
+                        controller: function($scope,$modalInstance,notifyInfo){
+                            $scope.notifyInfo = notifyInfo;
+                            //console.log($scope.notifyInfo);
+                            if($scope.notifyInfo.type=='clean'){
+                                console.log($scope.notifyInfo.items);
+                                $scope.cleanItems = {};
+                                angular.forEach($scope.notifyInfo.items, function (value, key) {
+                                    $scope.cleanItems[value]=$scope.notifyInfo.date;
+                                });
+                            }
+                            $scope.OK= function(){
+                                $modalInstance.close();
+                            };
+                        },
+                        resolve: {
+                            notifyInfo: function () {
+                                return $scope.notifyInfoList[type][index];
+                            }
+                        }
+                    });
+                    modalInstance.result.then(function (serviceInfo) {
+
+                    }, function () {
+                    });
+                }
             },
             templateUrl:'directives/templates/notificationListTmpl.html',
             controllerAs: 'notifyList'
@@ -513,9 +555,8 @@
                     event.start.setMinutes(startTime[1]);
 
                     event.end = new Date(data.serviceDate);
-                    var endTime = data.serviceEndTime.split(":");
-                    event.end.setHours(endTime[0]);
-                    event.end.setMinutes(endTime[1]);
+                    event.end.setHours(event.start.getHours() + 1);
+                    event.end.setMinutes(event.start.getMinutes());
 
                     event.allDay=false;
                     event.serviceInfo = data;
@@ -684,7 +725,7 @@
                     // eventDataTransform:eventDataTransform
                 };
 
-                $scope.eventSources = [ $scope.serviceEventSources, $scope.notificationsSources,$scope.publicHolidaysSources];
+                $scope.eventSources = [ $scope.serviceEventSources, $scope.notificationsSources];//,$scope.publicHolidaysSources];
                 $scope.curEvent = null;
                 var saveServiceInfo = function(serviceinfo ,callback){
                     $http.post('api/service/save', {"serviceInfo":serviceinfo}).

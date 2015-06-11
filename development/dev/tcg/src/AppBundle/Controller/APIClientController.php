@@ -61,6 +61,11 @@ class APIClientController extends Controller
             ->getRepository('AppBundle:ClientInfo')
             ->updateClientBasicInfo($clientInfo);
 
+        $this->get('doctrine_mongodb')
+            ->getManager()
+            ->getRepository('AppBundle:NotificationInfo')
+            ->UpdateClientBirthdayNotification($clientInfo);
+
         $response =  new Response(json_encode($clientInfo));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
@@ -102,10 +107,15 @@ class APIClientController extends Controller
         if($reminderInfoArray!=null){
             $reminderInfo->loadFromArray($reminderInfoArray);
         }
-        $result =  $this->get('doctrine_mongodb')
+        $clientInfo =  $this->get('doctrine_mongodb')
             ->getManager()
             ->getRepository('AppBundle:ClientInfo')
             ->updateClientReminderInfo($clientId,$reminderInfo);
+
+        $this->get('doctrine_mongodb')
+            ->getManager()
+            ->getRepository('AppBundle:NotificationInfo')
+            ->updateClientCleanNotification($clientInfo);
 
         $response =  new Response(json_encode($reminderInfo));
         $response->headers->set('Content-Type', 'application/json');
@@ -241,6 +251,16 @@ class APIClientController extends Controller
         $dm = $this->get('doctrine_mongodb')->getManager();
         $dm->persist($clientInfo);
         $dm->flush();
+
+        $this->get('doctrine_mongodb')
+            ->getManager()
+            ->getRepository('AppBundle:NotificationInfo')
+            ->UpdateClientBirthdayNotification($clientInfo);
+        $this->get('doctrine_mongodb')
+            ->getManager()
+            ->getRepository('AppBundle:NotificationInfo')
+            ->updateClientCleanNotification($clientInfo);
+
 
         $response =  new Response(json_encode($clientInfo,JSON_PRETTY_PRINT));
         $response->headers->set('Content-Type', 'application/json');

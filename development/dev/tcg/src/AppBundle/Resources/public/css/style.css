@@ -427,10 +427,19 @@ table {
 	background-color:#FF9900;
 	float:left;
 }
-.module-section-header-title{
+.module-section{
 	padding:2px 5px;
 	font-size:13px;
 	line-height:20px;
+    overflow: hidden;
+}
+.module-section-hidden{
+    height:20px;
+}
+.module-section-header-action-text{
+    padding:2px 5px;
+    font-size:13px;
+    line-height:20px;
 }
 .module-section-body{
 	background-color:#fff;
