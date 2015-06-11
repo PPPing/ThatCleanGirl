@@ -32,6 +32,30 @@ class NotificationInfo extends BaseDocument
      */
     protected $clientId;
 
+	/**
+     * @MongoDB\String
+     */
+    protected $clientName;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $tel;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $email;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $address;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $suburb;
     /**
      * @MongoDB\string
      */
@@ -51,6 +75,9 @@ class NotificationInfo extends BaseDocument
      * @MongoDB\Date
      */
     protected $date;
+	
+	/** @MongoDB\collection*/
+    protected $items =  array();
 
     /**
      * @MongoDB\Date
@@ -204,5 +231,137 @@ class NotificationInfo extends BaseDocument
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * Set items
+     *
+     * @param collection $items
+     * @return self
+     */
+    public function setItems($items)
+    {
+        $this->items = $items;
+        return $this;
+    }
+
+    /**
+     * Get items
+     *
+     * @return collection $items
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    /**
+     * Set clientName
+     *
+     * @param string $clientName
+     * @return self
+     */
+    public function setClientName($clientName)
+    {
+        $this->clientName = $clientName;
+        return $this;
+    }
+
+    /**
+     * Get clientName
+     *
+     * @return string $clientName
+     */
+    public function getClientName()
+    {
+        return $this->clientName;
+    }
+
+    /**
+     * Set tel
+     *
+     * @param string $tel
+     * @return self
+     */
+    public function setTel($tel)
+    {
+        $this->tel = $tel;
+        return $this;
+    }
+
+    /**
+     * Get tel
+     *
+     * @return string $tel
+     */
+    public function getTel()
+    {
+        return $this->tel;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     * @return self
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string $email
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set address
+     *
+     * @param string $address
+     * @return self
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+        return $this;
+    }
+
+    /**
+     * Get address
+     *
+     * @return string $address
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * Set suburb
+     *
+     * @param string $suburb
+     * @return self
+     */
+    public function setSuburb($suburb)
+    {
+        $this->suburb = $suburb;
+        return $this;
+    }
+
+    /**
+     * Get suburb
+     *
+     * @return string $suburb
+     */
+    public function getSuburb()
+    {
+        return $this->suburb;
     }
 }

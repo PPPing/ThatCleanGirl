@@ -48,7 +48,13 @@ class APIController extends Controller
         $new_client->changeAlart = true;
         $new_client->alartMsg = "All your non-saved information will lost.";
 
-        array_push($client->modules,$dashboard,$client_list,$new_client);
+		$invoice_list = new stdClass();
+        $invoice_list->id = "invoice-list";
+        $invoice_list->name = "Invoice";
+        $invoice_list->url = "";
+		$invoice_list->isSubModule = false;
+		
+        array_push($client->modules,$dashboard,$client_list,$new_client,$invoice_list);
 
 
         $staff = new stdClass();

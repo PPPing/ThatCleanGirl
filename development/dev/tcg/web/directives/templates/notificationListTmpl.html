@@ -1,0 +1,33 @@
+<div class="module-section">
+    <div class="module-section-header">
+		<span class="module-section-header-square">
+		</span>
+		<span class="module-section-header-title">
+			Notifications
+		</span>
+    </div>
+    <div class="module-section-body">
+        
+    </div>
+    <table class="service-list-table light" style="margin-top: -10px;">
+        <thead>
+        <tr>
+		    <th>Type</th>
+            <th>Client Name</th>
+            
+            <th>Service Date</th>
+            <th>Address</th>
+            <th>Suburb</th>
+        </tr>
+        <thead>
+        <tbody>
+        <tr ng-repeat="notifyInfo in notifyInfoList" ng-click="EditService($index)">
+            <td>{{notifyInfo.type}}</td>
+            <td>{{notifyInfo.clientName}}</td>
+            <td>{{notifyInfo.date | date:'dd/MM/yyyy'}}</td>
+            <td>{{notifyInfo.address}}</td>
+            <td>{{notifyInfo.suburb}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>

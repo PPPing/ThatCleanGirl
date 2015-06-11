@@ -21,38 +21,6 @@ use Symfony\Component\Validator\Constraints\Date;
 
 class APIServiceController extends Controller
 {
-	/**
-     * @Route("/api/service/updateHoliday", name="_api_update_holiday")
-     */
-    public function updateHoliday()
-    {
-        $dm = $this->get('doctrine_mongodb')->getManager();
-        $dm->getDocumentCollection('AppBundle\Document\HolidayInfo')->drop();
-		$url ='http://www.webcal.fi/cal.php?id=136&format=json&start_year=2015&end_year=next_year&tz=Australia%2FSydney';
-        $ch = curl_init();
-		$timeout = 5;
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-		$data = curl_exec($ch);
-		curl_close($ch);
-
-        $log = new Logger('Service');
-        $log->pushHandler(new StreamHandler($this->container->getParameter('log_dir') .'serviceHistory.log', Logger::DEBUG));
-
-        $holidaysData=json_decode($data);
-        foreach($holidaysData as $item){
-            $log->addDebug($item->name);
-            $holiday = new HolidayInfo();
-            $holiday->setTitle($item->name);
-            $holiday->setStart($item->date);
-            $dm->persist($holiday);
-        }
-        $dm->flush();
-        $response =  new Response("Updated");
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
-    }
     /**
      * @Route("/api/service/getHolidays", name="_api_get_holidays")
      */
@@ -64,104 +32,6 @@ class APIServiceController extends Controller
             ->findAll();
 
         $response =  new Response(json_encode($holidays,JSON_PRETTY_PRINT));
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
-    }
-
-
-    /**
-     * @Route("/api/service/updateBirthday", name="_api_updateBirthday")
-     */
-    public function updateBirthday()
-    {
-        $log = new Logger('Service');
-        $log->pushHandler(new StreamHandler($this->container->getParameter('log_dir') .'serviceHistory.log', Logger::DEBUG));
-        $dm = $this->get('doctrine_mongodb')->getManager();
-
-
-        $n=$dm->getRepository('AppBundle:NotificationInfo')->archiveBirthdayNotification();
-
-        $clientList = $dm->getRepository('AppBundle:ClientInfo')->findAllAvailableClient();
-
-        $defaultTimeZone = date_default_timezone_get();
-        $today = new \DateTime('NOW');
-        $today->setTimezone(new \DateTimeZone($defaultTimeZone));
-        $today_year = $today->format('Y');
-        $today_md = $today->format('md');
-
-        foreach ($clientList as $client) {
-                $birthday = $client->getBirthday();
-
-                $birthday->setTimezone(new \DateTimeZone($defaultTimeZone));
-                $birthday_year = $birthday->format('Y');
-                $birthday_md = $birthday->format('md');
-
-                if($birthday_md>=$today_md&&$birthday_md<= ((int)$today_md +31)){
-                    $notifyDate = date_create_from_format('Ymd',$today_year.$birthday_md);
-                    $notificationInfo = new NotificationInfo();
-                    $notificationInfo->setClientId($client->getClientId());
-                    $notificationInfo->setStatus(NotificationStatus::Unconfirmed);
-                    $notificationInfo->setType(NotificationType::Birthday);
-                    $notificationInfo->setDate($notifyDate);
-                    $notificationInfo->setTitle("Birthday - ". $client->getClientName());
-                    $log->debug($client->getClientName().' : '.$notifyDate->format('Y-m-d'));
-
-                    $dm->persist($notificationInfo);
-                }
-        }
-        $dm->flush();
-
-        // print_r(json_encode($clientList,JSON_PRETTY_PRINT));
-        $response =  new Response(json_encode($n,JSON_PRETTY_PRINT));
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
-    }
-
-    /**
-     * @Route("/api/service/updateCleanReminder", name="_api_updateCleanReminder")
-     */
-    public function updateCleanReminder()
-    {
-        $log = new Logger('Service');
-        $log->pushHandler(new StreamHandler($this->container->getParameter('log_dir') .'serviceHistory.log', Logger::DEBUG));
-        $dm = $this->get('doctrine_mongodb')->getManager();
-
-        $n=$dm->getRepository('AppBundle:NotificationInfo')->archiveCleanReminderNotification();
-
-        $clientList = $dm->getRepository('AppBundle:ClientInfo')->findAllAvailableClient();
-
-        $defaultTimeZone = date_default_timezone_get();
-
-        foreach ($clientList as $client) {
-            $reminderInfo = $client->getReminderInfo();
-             $methods = get_class_methods($reminderInfo);
-            foreach($methods as $method){
-                if (strpos($method, 'get') === 0 && $this->endsWith($method, 'Date') === true) {
-                    $date = $reminderInfo->$method();
-                    if($date===null){
-                        continue;
-                    }
-                    //$log->debug('- '.$method .':'.$date->format('Y-m-d'));
-                    $today = new DateTime('NOW');
-                    if($date > $today && $date <= $today->modify("+14 day")){
-                        //$log->debug('* '.$method .':'.$date->format('Y-m-d'));
-                        $notificationInfo = new NotificationInfo();
-                        $notificationInfo->setTitle("Clean - ". $key = ucfirst(substr(substr($method, 3),0,-4)));
-                        $notificationInfo->setClientId($client->getClientId());
-                        $notificationInfo->setStatus(NotificationStatus::Unconfirmed);
-                        $notificationInfo->setType(NotificationType::Clean);
-                        $notificationInfo->setDate($date);
-
-                        $dm->persist($notificationInfo);
-                    }
-
-                }
-            }
-        }
-        $dm->flush();
-
-        // print_r(json_encode($clientList,JSON_PRETTY_PRINT));
-        $response =  new Response(json_encode($n,JSON_PRETTY_PRINT));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
@@ -180,19 +50,6 @@ class APIServiceController extends Controller
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
-
-
-
-    public  static function endsWith($haystack, $needle)
-    {
-        $length = strlen($needle);
-        if ($length == 0) {
-            return true;
-        }
-
-        return (substr($haystack, -$length) === $needle);
-    }
-
 
     /**
      * @Route("/api/service/history/{clientId}", name="_api_service_history")

@@ -18,6 +18,10 @@ use AppBundle\Document\ClientInfo;
 use AppBundle\Document\FrequencyType;
 use AppBundle\Document\ServiceInfo;
 use AppBundle\Document\ServiceStatus;
+use AppBundle\Document\HolidayInfo;
+use AppBundle\Document\NotificationInfo;
+use AppBundle\Document\NotificationStatus;
+use AppBundle\Document\NotificationType;
 use \DateTime;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -25,7 +29,8 @@ class ServiceCommand extends ContainerAwareCommand
 {
     protected $clientDao;
     protected $serviceDao;
-
+	protected $notificationDao;
+	protected $dm;
     protected $logger;
 
     protected function configure()
@@ -44,9 +49,12 @@ class ServiceCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            $this->clientDao = $this->getContainer()->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:ClientInfo');
-            $this->serviceDao = $this->getContainer()->get('doctrine_mongodb')->getManager()->getRepository('AppBundle:ServiceInfo');
-            $this->logger = new Logger('ServiceCommand');
+			$this->dm = $this->getContainer()->get('doctrine_mongodb')->getManager();
+            $this->clientDao = $this->dm->getRepository('AppBundle:ClientInfo');
+            $this->serviceDao = $this->dm->getRepository('AppBundle:ServiceInfo');
+            $this->notificationDao = $this->dm->getRepository('AppBundle:NotificationInfo');
+			
+			$this->logger = new Logger('ServiceCommand');
             $this->logger->pushHandler(new StreamHandler($this->getContainer()->getParameter('log_dir') . 'ServiceCommand.log'));
             $type = $input->getArgument('type');
             $text = 'Type - ' . $type . ' Started';
@@ -55,7 +63,22 @@ class ServiceCommand extends ContainerAwareCommand
                 //$this->CreatePendingServices();
                 $this->CreateServices();
                 $text = 'Type - ' . $type . ' Finish';
-            } else {
+            } else if ($type === 'holiday') {
+                $output->writeln($text);
+                //$this->CreatePendingServices();
+                $this->updateHoliday();
+                $text = 'Type - ' . $type . ' Finish';
+			}else if ($type === 'birthday') {
+                $output->writeln($text);
+                //$this->CreatePendingServices();
+                $this->updateBirthday();
+                $text = 'Type - ' . $type . ' Finish';
+			}else if ($type === 'clean') {
+                $output->writeln($text);
+                //$this->CreatePendingServices();
+                $this->updateCleanReminder();
+                $text = 'Type - ' . $type . ' Finish';
+			}else {
                 $text = 'Type is missing.';
             }
 
@@ -173,6 +196,147 @@ class ServiceCommand extends ContainerAwareCommand
         }
     }
 
+	/*
+	*update every year
+	*/
+	private function updateHoliday(){
+        $this->dm->getDocumentCollection('AppBundle\Document\HolidayInfo')->drop();
+		$url ='http://www.webcal.fi/cal.php?id=136&format=json&start_year=2015&end_year=next_year&tz=Australia%2FSydney';
+        $ch = curl_init();
+		$timeout = 5;
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+		$data = curl_exec($ch);
+		curl_close($ch);
+       
+        $holidaysData=json_decode($data);
+        foreach($holidaysData as $item){
+            $this->logger->addDebug($item->name);
+            $holiday = new HolidayInfo();
+            $holiday->setTitle($item->name);
+            $holiday->setStart($item->date);
+            $this->dm->persist($holiday);
+        }
+        $this->dm->flush();
+        
+	}
+	
+	/**
+     * update every month 31 days
+     */
+    public function updateBirthday()
+    {
+        
+        $this->notificationDao->archiveBirthdayNotification();
+
+        $clientList = $this->clientDao->findAllAvailableClient();
+
+        $defaultTimeZone = date_default_timezone_get();
+        $today = new \DateTime('NOW');
+        $today->setTimezone(new \DateTimeZone($defaultTimeZone));
+        $today_year = $today->format('Y');
+        $today_md = $today->format('md');
+
+        foreach ($clientList as $client) {
+                $birthday = $client->getBirthday();
+
+                $birthday->setTimezone(new \DateTimeZone($defaultTimeZone));
+                $birthday_year = $birthday->format('Y');
+                $birthday_md = $birthday->format('md');
+
+                if($birthday_md>=$today_md&&$birthday_md<= ((int)$today_md +31)){
+                    $notifyDate = date_create_from_format('Ymd',$today_year.$birthday_md);
+                    $notificationInfo = new NotificationInfo();
+                    $notificationInfo->setClientId($client->getClientId());
+                    $notificationInfo->setStatus(NotificationStatus::Unconfirmed);
+                    $notificationInfo->setType(NotificationType::Birthday);
+                    $notificationInfo->setDate($notifyDate);
+                    $notificationInfo->setTitle("Birthday - ". $client->getClientName());
+					$notificationInfo->setClientName($client->getClientName());
+                    $notificationInfo->setTel($client->getTel());
+                    $notificationInfo->setEmail($client->getEmail());
+                    $notificationInfo->setAddress($client->getAddress());
+                    $notificationInfo->setSuburb($client->getSuburb());
+                    
+					$this->logger->debug($client->getClientName().' : '.$notifyDate->format('Y-m-d'));
+
+                    $this->dm->persist($notificationInfo);
+                }
+        }
+        $this->dm->flush();
+    }
+	
+	/**
+     * update every month 30 days
+     */
+    public function updateCleanReminder()
+    {
+        $this->notificationDao->archiveCleanReminderNotification();
+
+        $clientList = $this->clientDao->findAllAvailableClient();
+
+        $defaultTimeZone = date_default_timezone_get();
+
+        foreach ($clientList as $client) {
+			$notificationList = array();
+            $reminderInfo = $client->getReminderInfo();
+            $methods = get_class_methods($reminderInfo);
+            foreach($methods as $method){
+                if (strpos($method, 'get') === 0 && $this->endsWith($method, 'Date') === true) {
+                    $date = $reminderInfo->$method();
+                    if($date===null){
+                        continue;
+                    }
+                    //$this->logger->debug('- '.$method .':'.$date->format('Y-m-d'));
+                    $today = new DateTime('NOW');
+                    if($date > $today && $date <= $today->modify("+30 day")){
+                        //$this->logger->debug('* '.$method .':'.$date->format('Y-m-d'));
+						$dateKey = $date->format('md');
+						$itemKey = substr(substr($method,3),0,-4);
+						if(!empty($notificationList[$dateKey])){
+							$notificationInfo = $notificationList[$dateKey];
+						}else{
+							$notificationInfo = new NotificationInfo();
+							$notificationInfo->setTitle("Spring Clean Reminder");
+							$notificationInfo->setClientId($client->getClientId());
+							$notificationInfo->setStatus(NotificationStatus::Unconfirmed);
+							$notificationInfo->setType(NotificationType::Clean);
+							$notificationInfo->setDate($date);
+							$notificationInfo->setClientName($client->getClientName());
+							$notificationInfo->setTel($client->getTel());
+							$notificationInfo->setEmail($client->getEmail());
+							$notificationInfo->setAddress($client->getAddress());
+							$notificationInfo->setSuburb($client->getSuburb());
+						}
+						
+						$items = $notificationInfo->getItems();
+						//$item = new \stdClass();
+						//$item->$itemKey= true;
+						$items[] = $itemKey;
+						
+						$notificationInfo->setItems($items);
+						$notificationList[$dateKey] = $notificationInfo;
+                    }
+                }
+            }
+			
+			foreach($notificationList as $notify){
+				$this->dm->persist($notify);
+			}
+        }
+        $this->dm->flush();
+    }
+	
+	public  static function endsWith($haystack, $needle)
+    {
+        $length = strlen($needle);
+        if ($length == 0) {
+            return true;
+        }
+
+        return (substr($haystack, -$length) === $needle);
+    }
 }
 
 

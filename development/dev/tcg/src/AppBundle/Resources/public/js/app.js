@@ -271,7 +271,9 @@
                         return $scope.getActiveModule()?$scope.getActiveModule().id:null;
                     },
                     function( newValue ) {
+						
 						if($scope.getActiveModule()&&$scope.getActiveModule().isSubModule==false){
+							console.log(newValue);
 							var el = $compile( "<module-"+newValue+"></module-"+newValue+">" )( $scope );
 							$element.html( el );
 						}	
@@ -304,7 +306,32 @@
             controllerAs: 'dashboardMain'
         };
     });
-    app.directive('serviceCalendar',function($compile) {
+    
+	app.directive('notificationList',function(){
+        return {
+            restrict: 'E',
+            controller: function($scope,$http) {              
+                function loadServiceList(){
+					$http.get('/api/service/getNotifications')
+                         .then(function(result) {
+                                console.log(result.data);
+								$scope.notifyInfoList =result.data;
+                                        
+                          });
+                }
+                $scope.EditService = function(index){
+                    console.log(index);
+                };
+				loadServiceList();
+            },
+            templateUrl:'directives/templates/notificationListTmpl.html',
+            controllerAs: 'notifyList'
+        };
+    });
+	
+	
+	
+	app.directive('serviceCalendar',function($compile) {
         return {
             restrict: 'E',
             scope: {
@@ -398,11 +425,16 @@
                 $scope.alertOnEventClick = function( data, jsEvent, view){
                     console.log(data.title + ' was clicked ');
                     console.log(data);
-					if(data.type=='serivce'){
+					console.log(data.type);
+					if(data.type=='service'){
+						console.log('openEditor');
 						$scope.openEditor(data);
-					}else if(data.type=='birthday'||data.type=='clean'){
-                        $scope.openNotifyInfoViewer(data);
+					}else if(data.type=='clean'){
+                        $scope.openCleanReminderEditor(data);
+                    }else if(data.type=='birthday'){
+                        $scope.openBirthdayInfoViewer(data);
                     }
+					
                     
                 };
                 /* alert on Drop */
@@ -520,7 +552,7 @@
                             center: '',
                             right: 'today prev,next'
                         },
-                        weekends:false,
+                        //weekends:false,
                         //businessHours:true,
                         minTime:"07:00:00",
                         maxTime:"18:00:00",
@@ -536,7 +568,7 @@
                                 $http.get('/api/service/getHolidays')
                                     .then(function(result) {
                                         console.log(result.data);
-
+										$scope.publicHolidays = result.data;
                                         var events = [];
                                         angular.forEach(result.data, function (value, key) {
 											event ={
@@ -550,7 +582,17 @@
                                         callback(events);
                                     });
                             }else{
-
+								var events = [];
+								angular.forEach($scope.publicHolidays, function (value, key) {
+											event ={
+												title:value.title,
+												allDay:true,
+												start:new Date(value.start),
+												type:'holiday'
+											};
+											events.push(event);
+                                        });
+                                        callback(events);
                             }
                     },
                     color: '#FFDEEE',   // an option!
@@ -568,7 +610,7 @@
                                 $http.get('/api/service/getNotifications')
                                     .then(function(result) {
                                         console.log(result.data);
-
+										$scope.notifications = result.data;
                                         var events = [];
                                         angular.forEach(result.data, function (value, key) {
                                             if($scope.filters[value.type]===true){
@@ -585,7 +627,20 @@
                                         callback(events);
                                     });
                             }else{
-
+                                        var events = [];
+                                        angular.forEach($scope.notifications, function (value, key) {
+                                            if($scope.filters[value.type]===true){
+                                                event ={
+                                                    title:value.title,
+                                                    allDay:true,
+                                                    start:new Date(value.date),
+                                                    type:value.type,
+                                                    info:value
+                                                };
+                                                events.push(event);
+                                            }
+                                        });
+                                        callback(events);
                             }
                         }
 
@@ -614,7 +669,7 @@
                     }else{
                         var events = [];
                         angular.forEach($scope.serviceList, function (value, key) {
-                            console.log($scope.filters[value.teamId]);
+                            //console.log($scope.filters[value.teamId]);
                             if($scope.filters[value.teamId]===true || value.isConfirmed===false){
                                 events.push(eventDataTransform(value));
                             }
@@ -697,17 +752,19 @@
                         //console.log('Modal dismissed at: ' + new Date());
                     });
                 };
-                $scope.openNotifyInfoViewer = function (event) {
+                $scope.openBirthdayInfoViewer = function (event) {
                     $scope.curEvent = event;
                     console.log($scope.curEvent);
                     var modalInstance = $modal.open({
                         animation: true,
-                        templateUrl: 'directives/templates/notifyViewerTmpl.html',
+                        templateUrl: 'directives/templates/birthdayInfoViewerTmpl.html',
                         controller: function($scope,$modalInstance,notifyInfo){
                             $scope.notifyInfo = notifyInfo;
                             console.log($scope.notifyInfo);
-                            var clientId = $scope.notifyInfo.clientId
-                            console.log(clientId);
+							$scope.OK = function(){
+                               
+                                $modalInstance.close($scope.serviceInfo);
+                            };
 
                         },
                         resolve: {
@@ -719,9 +776,56 @@
                     });
                     modalInstance.result.then(function (serviceInfo) {
                         //console.log(serviceInfo);
-                        $scope.curEvent = eventDataUpdate($scope.curEvent,serviceInfo);
-                        console.log( $scope.curEvent);
-                        uiCalendarConfig.calendars[calendarId].fullCalendar('updateEvent',$scope.curEvent);
+                        //$scope.curEvent = eventDataUpdate($scope.curEvent,serviceInfo);
+                        //console.log( $scope.curEvent);
+                        //uiCalendarConfig.calendars[calendarId].fullCalendar('updateEvent',$scope.curEvent);
+                    }, function () {
+                        //console.log('Modal dismissed at: ' + new Date());
+                    });
+                }
+				$scope.openCleanReminderEditor = function (event) {
+                    $scope.curEvent = event;
+                    console.log($scope.curEvent);
+                    var modalInstance = $modal.open({
+                        animation: true,
+                        templateUrl: 'directives/templates/cleanReminderEditorTmpl.html',
+                        controller: function($scope,$modalInstance,notifyInfo){
+                            $scope.notifyInfo = notifyInfo;
+                            console.log($scope.notifyInfo);
+                            var clientId = $scope.notifyInfo.clientId
+                            console.log(clientId);
+							$scope.cleanItems = {};
+							angular.forEach($scope.notifyInfo.items, function (value, key) {
+                                   //console.log($scope.filters[value.teamId]);
+                                   $scope.cleanItems[value]=$scope.notifyInfo.date;
+                                });
+							console.log($scope.cleanItems);
+							
+							$scope.Edit = function(){
+                                $scope.editMode = true;
+                            };
+                            $scope.Save = function(){
+									
+								$scope.editMode = false;
+                                //var serviceInfo = angular.copy($scope.serviceInfo);
+                                //saveServiceInfo(serviceInfo,function(){
+                                //    $modalInstance.close($scope.serviceInfo);
+                                //});
+                            };
+
+                        },
+                        resolve: {
+                            notifyInfo: function () {
+
+                                return $scope.curEvent.info;
+                            }
+                        }
+                    });
+                    modalInstance.result.then(function (serviceInfo) {
+                        //console.log(serviceInfo);
+                        //$scope.curEvent = eventDataUpdate($scope.curEvent,serviceInfo);
+                        //console.log( $scope.curEvent);
+                        //uiCalendarConfig.calendars[calendarId].fullCalendar('updateEvent',$scope.curEvent);
                     }, function () {
                         //console.log('Modal dismissed at: ' + new Date());
                     });
@@ -1398,4 +1502,64 @@
 			scope: {}
 		};
 	});
+	
+	app.directive('moduleInvoiceList',function() {
+		return {
+			restrict: 'E',
+			scope: {},
+			controller: function($scope) {
+				$scope.moduleInfo={
+					curSubModule:"invoice-list"
+					//clientDetail_clientId:null
+				};
+			},
+			templateUrl:'directives/modules/invoiceList.html',
+			controllerAs: 'invoiceListModule'
+		};
+	});
+	
+	app.directive('invoiceListTmpl',function(){
+		return {
+			restrict: 'E',
+			controller: function($scope,$http) {
+				var clientList = null;
+                $http.get('/api/client/getClientList?timestamp='+ new Date())
+				.then(function(result) {
+                        clientList = result.data.slice(0);
+                        console.log(clientList);
+                        $scope.clientListData = clientList;
+				});
+				this.viewClientDetail=function(clientId){
+					console.log(clientId);
+					console.log($scope.moduleInfo);
+					$scope.moduleInfo.curSubModule="client-detail";
+					$scope.moduleInfo.clientDetail_clientId = clientId;
+				};
+                $scope.keyWord="";
+                $scope.filter=function(){
+                    //console.log($scope.keyWord);
+                    var regex = new RegExp( $scope.keyWord, 'i');
+                    var newClientList = [];
+                    angular.forEach(clientList, function (value, key) {
+                        var clientInfo = value;
+                        var content = clientInfo.clientName +" "
+                                    +clientInfo.tel +" "
+                                    +clientInfo.address +" "
+                                    +clientInfo.district +" "
+                                    +clientInfo.jobDetail.frequency +" "
+                                    +clientInfo.price;
+                        if(regex.test(content)){
+                            newClientList.push(value);
+                        }
+                    });
+                    $scope.clientListData = newClientList;
+                }
+			},
+			templateUrl:'directives/templates/invoiceListTmpl.html',
+			controllerAs: 'clientListTmpl'
+		};
+	});
+	
+	
+	
 })();

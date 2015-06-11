@@ -45,6 +45,10 @@ class TestCommand extends ContainerAwareCommand
                 $output->writeln($text);
                 $this->TestEmail();
                 $text = 'Type - ' . $type . ' Finish';
+			}else if ($type === 'pdf') {
+                $output->writeln($text);
+                $this->TestPDF();
+                $text = 'Type - ' . $type . ' Finish';
             } else {
                 $text = 'Type is missing.';
             }
@@ -57,6 +61,22 @@ class TestCommand extends ContainerAwareCommand
             $this->logger->addError($e->getTraceAsString());
         }
     }
+	
+	private function TestPDF(){
+		$this->getContainer()->get('knp_snappy.pdf')->generateFromHtml(
+			 $this->getContainer()->get('templating')->render(
+				'AppBundle:email:testpdf.html.twig',
+                    array('title' => 'adfads','headerImage'=>'adfadf')
+				),
+				'C:\\xampp\\htdocs\\GitHub\\ThatCleanGirl\\development\\dev\\tcg\\web\PDF\\test1.pdf',
+				array('page-size'=>'A4','header-left'=>'Left')
+		);
+		/*$this->getContainer()->get('knp_snappy.pdf')->generateFromHtml(
+				'http://www.google.fr',
+				'C:\\xampp\\htdocs\\GitHub\\ThatCleanGirl\\development\\dev\\tcg\\web\PDF\\test1.pdf',
+				array('orientation'=>'Landscape','lowquality'=>false)
+		);*/
+	}
 
     private function TestEmail(){
         $message = \Swift_Message::newInstance()
@@ -64,9 +84,9 @@ class TestCommand extends ContainerAwareCommand
             ->setFrom('thatcleangirl@gmail.com')
             ->setTo('zhongyp.design@gmail.com')
             ->setBody(
-                $this->renderView(
-                    'AppBundle:default:index.html.twig',
-                    array('name' => 'adfads')
+                $this->getContainer()->get('templating')->render(
+                    'AppBundle:email:test_pdf.html',
+                    array('title' => 'adfads','headerImage'=>'adfadf')
                 )
             )
             /*

@@ -36,7 +36,7 @@ class ReminderInfo extends BaseDocument
     /**
      * @MongoDB\Date
      */
-    protected $WindowsDate;
+    protected $windowsDate;
     /**
      * @MongoDB\Date
      */
@@ -180,7 +180,7 @@ class ReminderInfo extends BaseDocument
      */
     public function setWindowsDate($windowsDate)
     {
-        $this->WindowsDate = $windowsDate;
+        $this->windowsDate = $windowsDate;
         return $this;
     }
 
@@ -191,7 +191,7 @@ class ReminderInfo extends BaseDocument
      */
     public function getWindowsDate()
     {
-        return $this->WindowsDate;
+        return $this->windowsDate;
     }
 
     /**

@@ -785,6 +785,10 @@ input.form-control.ng-invalid{
 .service-list-row{
     margin: 0 0 10px 0;
 }
+
+.clean-reminder-item{
+	margin-bottom:10px;
+}
 /*
 .form-control-label{
 	display:table-cell;
@@ -827,6 +831,48 @@ input.form-control.ng-invalid{
 	color:#FAFAFA;
 }
 
+/*
+*invoice list
+*/
+
+.invoice-list-table{
+	width:100%;
+	max-width: 100%;
+	font-size:12px;
+	box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1 );
+}
+.invoice-list-table .glyphicon{
+	color:#FF5A33;
+	cursor:pointer;
+}
+.invoice-list-table>thead{
+	background-color:#ffad33;
+	color:#FAFAFA;
+}
+.invoice-list-table>thead>tr>th{
+	padding:4px 6px;
+	font-weight: normal;
+	border-right: 1px solid #FAFAFA;
+}
+.invoice-list-table>thead>tr>th:last-child{
+	border-right: none;
+}
+.invoice-list-table>tbody{
+	background-color:#FAFAFA;
+}
+.invoice-list-table>tbody>tr:nth-child(even){
+	background-color:#F0F0F0;
+}
+.invoice-list-table>tbody>tr>td{
+	padding:4px 6px;
+	font-weight: normal;
+	border-right: 1px solid #DFDFDF;
+	border-bottom: 1px solid #DFDFDF;
+	color:#333;
+}
+.invoice-list-table>tbody>tr>td:last-child{
+	border-right: none;
+}
 
 
 

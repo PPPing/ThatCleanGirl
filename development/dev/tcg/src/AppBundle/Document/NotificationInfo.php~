@@ -8,7 +8,7 @@ use Monolog\Handler\StreamHandler;
 
 
 class NotificationType{
-    const Holiday = "holiday";
+    const Birthday = "birthday";
     const Clean = "clean";
 }
 
@@ -32,6 +32,30 @@ class NotificationInfo extends BaseDocument
      */
     protected $clientId;
 
+	/**
+     * @MongoDB\String
+     */
+    protected $clientName;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $tel;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $email;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $address;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $suburb;
     /**
      * @MongoDB\string
      */
@@ -51,6 +75,9 @@ class NotificationInfo extends BaseDocument
      * @MongoDB\Date
      */
     protected $date;
+	
+	/** @MongoDB\collection*/
+    protected $items =  array();
 
     /**
      * @MongoDB\Date
@@ -182,5 +209,49 @@ class NotificationInfo extends BaseDocument
     public function getCreateTime()
     {
         return $this->createTime;
+    }
+
+    /**
+     * Set title
+     *
+     * @param string $title
+     * @return self
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * Get title
+     *
+     * @return string $title
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * Set items
+     *
+     * @param collection $items
+     * @return self
+     */
+    public function setItems($items)
+    {
+        $this->items = $items;
+        return $this;
+    }
+
+    /**
+     * Get items
+     *
+     * @return collection $items
+     */
+    public function getItems()
+    {
+        return $this->items;
     }
 }
