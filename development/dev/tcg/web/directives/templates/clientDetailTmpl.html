@@ -5,4 +5,11 @@
     <payment-section-tmpl ng-model="clientDetail" data-edit-mode=false data-save-section=true></payment-section-tmpl>
 	<service-history-section-tmpl ng-model="clientDetail.clientId" data-readonly=true ></service-history-section-tmpl>
 	<comments-section-tmpl ng-model="clientDetail.clientId"></comments-section-tmpl>
+	<div ng-show="clientDetail.isActive" class="row bottom-actions-section">
+		<span class="bottom-action-button" ng-click="createService()">Create Service</span>
+		<span class="bottom-action-button" ng-click="SendConfirmEmail()">Send Confirm Email</span>
+	</div>
+	<div ng-show="!clientDetail.isActive" class="row bottom-actions-section">
+		<span class="bottom-action-button-large" ng-click="SendConfirmEmail()">Send Confirm Email</span>
+	</div>
 </div>

@@ -246,13 +246,17 @@ class ClientInfoRepository extends DocumentRepository
     }
 
     public function findAllAvailableClient(){
-        $activeClients = $this->findBy(array("available"=>true));
+        //$activeClients = $this->findBy(array("available"=>true));
 
+		$activeClients = $this->findBy(array("available"=>true),array("clientName"=>"ASC"));		
+		
         return $activeClients;
     }
 
     public function findAllActiveClient(){
         $activeClients = $this->findBy(array("available"=>true,"isActive"=>true));
+			
+			
 
         return $activeClients;
     }

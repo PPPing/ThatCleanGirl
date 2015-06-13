@@ -77,7 +77,8 @@
                         var hour = '08';
                         var min = '00';
                         var am = "AM";
-                        if (newValue != null) {
+						console.log(newValue);
+                        if (newValue != null&&newValue!='') {
                             newValue = newValue.trim().split(":");
                             if (newValue[0]) {
                                 hour = newValue[0];

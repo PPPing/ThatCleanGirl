@@ -221,8 +221,16 @@
 			},
 			popModulesStack:function(){
 				if(modulesStack.length>1){
-					modulesStack.pop();
+					if(changeAlert()){
+						modulesStack.pop();
+					}
 				}
+			},
+			cancelAlert:function(){
+				var moduleStackNode = modulesStack[modulesStack.length-1];
+				//console.log(moduleStackNode);
+				var curModule = moduleStackNode.modules[moduleStackNode.curModuleIndex];
+				curModule.changeAlart=false;
 			}
 		}
 		//MenuService.initMenuService();
@@ -321,6 +329,20 @@
                     $cookies.tcg_display_notification_list_isHidden=$scope.isHidden;
                     console.log($cookies.tcg_display_notification_list_isHidden);
                 }
+				
+				$scope.predicateB = 'clientName';
+				$scope.reverseB = true;
+				$scope.orderB = function(predicate) {
+					$scope.reverseB = ($scope.predicateB === predicate) ? !$scope.reverseB : false;
+					$scope.predicateB = predicate;
+				};
+				
+				$scope.predicateC = 'clientName';
+				$scope.reverseC = true;
+				$scope.orderC = function(predicate) {
+					$scope.reverseC = ($scope.predicateC === predicate) ? !$scope.reverseC : false;
+					$scope.predicateC = predicate;
+				};
                 function loadServiceList(){
                     $scope.notifyInfoList=[];
                     $scope.birthdays=[];
@@ -725,7 +747,7 @@
                     // eventDataTransform:eventDataTransform
                 };
 
-                $scope.eventSources = [ $scope.serviceEventSources, $scope.notificationsSources];//,$scope.publicHolidaysSources];
+                $scope.eventSources = [ $scope.serviceEventSources, $scope.notificationsSources,$scope.publicHolidaysSources];
                 $scope.curEvent = null;
                 var saveServiceInfo = function(serviceinfo ,callback){
                     $http.post('api/service/save', {"serviceInfo":serviceinfo}).
@@ -771,6 +793,10 @@
                                 $scope.editMode = true;
                             };
                             $scope.Save = function(){
+								if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
+                                    alert("Please input all required information.");
+									return;
+								}
                                 $scope.editMode = false;
                                 var serviceInfo = angular.copy($scope.serviceInfo);
                                 saveServiceInfo(serviceInfo,function(){
@@ -1074,6 +1100,18 @@
 					$scope.moduleInfo.curSubModule="client-detail";
 					$scope.moduleInfo.clientDetail_clientId = clientId;
 				};
+				
+				this.createNewClient=function(){
+					$scope.moduleInfo.curSubModule="new-client";
+				};
+				
+				$scope.predicate = 'clientName';
+				$scope.reverse = true;
+				$scope.order = function(predicate) {
+					$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+					$scope.predicate = predicate;
+				};
+				
                 $scope.keyWord="";
                 $scope.filter=function(){
                     //console.log($scope.keyWord);
@@ -1102,7 +1140,7 @@
 	app.directive('clientDetailTmpl',function(){
 		return {
 			restrict: 'E',
-			controller: function($scope,$http,MenuService,UserService) {
+			controller: function($scope,$http,$modal,MenuService,UserService) {
 				var clientDetailModules=[
 					{
 						id:"client-detail",
@@ -1127,6 +1165,81 @@
 						});
                     }
                 );
+				var saveServiceInfo = function(serviceinfo ,callback){
+                    $http.post('api/service/save', {"serviceInfo":serviceinfo}).
+                        success(function(data, status, headers, config) {
+                            if(data==="SUCCESS"){
+                                alert("[SUCCESS] Service Info  saved.");
+                                if (callback && typeof(callback) === "function") {
+                                    // execute the callback, passing parameters as necessary
+                                    callback();
+                                }
+                            }
+                        }).
+                        error(function(data, status, headers, config) {
+                            console.log(data);
+                            console.log(config);
+                            console.log(headers);
+                            alert("[ERROR] Service Info Error.");
+                        });
+                };
+				
+				$scope.createService=function(){
+					var modalInstance = $modal.open({
+                        animation: true,
+                        templateUrl: 'directives/templates/serviceWhenNeedEditorTmpl.html',
+                        controller: function($scope,$modalInstance,clientInfo){
+                           $scope.editMode=true;
+						   $scope.serviceInfo = {};
+						   $scope.serviceInfo.clientName =clientInfo.clientName;
+						   $scope.serviceInfo.tel =clientInfo.tel;
+						   $scope.serviceInfo.address =clientInfo.address;
+						   $scope.serviceInfo.email =clientInfo.email;
+						   $scope.serviceInfo.suburb =clientInfo.suburb;
+						   $scope.serviceInfo.paymentType =angular.copy(clientInfo.paymentType);
+						   $scope.serviceInfo.price =angular.copy(clientInfo.price);
+						   $scope.serviceInfo.invoiceNeeded =angular.copy(clientInfo.invoiceNeeded);
+						   $scope.serviceInfo.invoiceTitle =angular.copy(clientInfo.invoiceTitle);
+						   $scope.serviceInfo.serviceDate =new Date();;
+						   $scope.serviceInfo.teamId ='';
+						   $scope.serviceInfo.serviceStartTime =angular.copy(clientInfo.serviceTime);
+						   $scope.serviceInfo.notes='';
+						   $scope.serviceInfo.jobDetail = angular.copy(clientInfo.jobDetail);
+						   $scope.serviceInfo.isConfirmed=false;
+                           console.log($scope.serviceInfo);
+                            //$scope.serviceInfo.clientId = "1038-5986";
+                            $scope.editMode=!$scope.serviceInfo.isConfirmed;
+
+                            $scope.Confirm = function(){
+                                $scope.serviceInfo.isConfirmed=true;
+								if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
+                                    alert("Please input all required information.");
+									return;
+								}
+                                $scope.serviceInfo.isConfirmed=true;
+                                var serviceInfo = angular.copy($scope.serviceInfo);
+                                saveServiceInfo(serviceInfo,function(){
+                                    $modalInstance.close($scope.serviceInfo);
+                                });
+                            };
+                            $scope.Edit = function(){
+                                $scope.editMode = true;
+                            };
+                            $scope.Save = function(){
+								if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
+                                    alert("Please input all required information.");
+									return;
+								}
+                                $scope.editMode = false;
+                            };
+                        },
+                        resolve: {
+                            clientInfo: function () {
+                                return $scope.clientDetail;
+                            }
+                        }
+                    });
+				}
 			},
 			templateUrl:'directives/templates/clientDetailTmpl.html',
 			controllerAs: 'clientDetailTmpl'
@@ -1170,6 +1283,7 @@
                             .then(function (result) {
                                 console.log(result);
                                 MenuService.popModulesStack();
+								//MenuService.changeComponents(0);
                             });
                     }
                 };
@@ -1487,13 +1601,76 @@
 		};
 	});
 
+	app.directive('newClientTmpl',function() {
+		return {
+			restrict: 'E',
+			controller: function($scope,$http,$location, $anchorScroll,MenuService) {
+				var clientDetailModules=[
+					{
+						id:"new-client",
+						name:"New Client",
+						isSubModule:true,
+						changeAlart:true,
+						alartMsg:'All your non-saved information will lost.'
+					}
+				];
+				
+				$scope.hasSubmit = false;
+				$http.get('api/client/create_client_info')
+					.then(function(result) {
+                    console.log(result);
+					$scope.clientDetail=result.data;
+					console.log($scope.clientDetail);
+					MenuService.pushModulesStack(clientDetailModules);
+				}); 
+				$scope.Save=function(){
+					//$scope.hasSubmit=true;
+                   var fullClientInfo = angular.copy($scope.clientDetail);
+                    $http.post('api/client/saveFullClientInfo', {"fullClientInfo":fullClientInfo}).
+                        success(function(data, status, headers, config) {
+                            //console.log("[Update] - Client Info - SUCCESS");
+                            alert("[SUCCESS] Client Info saved.");
+                            $scope.editMode=false;
+                            $scope.hasSubmit=true;
+                        }).
+                        error(function(data, status, headers, config) {
+                            alert("[ERROR] Save Client Info Error.");
+                            //console.log("[ERROR] Save Client Info Error.");
+                        });
+
+					$scope.$broadcast('setEditMode',false);
+					
+					MenuService.cancelAlert();
+					//clientDetailModules.changeAlart=false;
+					//$location.hash('top');
+					//$anchorScroll();
+				};
+				$scope.Reset=function(){
+					$http.post('api/client/getClientInfo/'+$scope.clientDetail.clientId)
+						.then(function(result) {
+						$scope.clientDetail=result.data					
+					});
+				};
+				$scope.Confirm=function(){
+					alert("Create new client successfully.");
+					//MenuService.changeComponents(0);
+					//$location.hash('top');
+					//$anchorScroll();
+				};
+			},
+			templateUrl:'directives/templates/newClientTmpl.html',
+			controllerAs: 'newClientModule'
+		};
+	});
+	
+	
     app.directive('moduleNewClient',function() {
 		return {
 			restrict: 'E',
 			templateUrl:'directives/modules/createClient.html',
 			controller: function($scope,$http,$location, $anchorScroll,MenuService) {
 				$scope.hasSubmit = false;
-				$http.post('api/client/create_client_info')
+				$http.get('api/client/create_client_info')
 					.then(function(result) {
                     console.log(result);
 					$scope.clientDetail=result.data;

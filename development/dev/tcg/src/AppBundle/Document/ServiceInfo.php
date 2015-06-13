@@ -158,7 +158,7 @@ class ServiceInfo extends BaseDocument
     public function loadFromArray(array $info)
     {
        if(empty($info['id'])){
-            throw new InvalidArgumentException("clientInfo : Id");
+            //$this->id ->
         }else{
             $this->id = $info['id'];
         }

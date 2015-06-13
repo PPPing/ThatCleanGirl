@@ -170,7 +170,7 @@ class ClientInfo extends BaseDocument
 
         $methods = get_class_methods($this);
         $log = new Logger('Service');
-        $log->pushHandler(new StreamHandler( 'C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/' .'Service.log', Logger::DEBUG));
+        $log->pushHandler(new StreamHandler( 'C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/' .'Notification.log', Logger::DEBUG));
 
         if(empty($info['id'])) {
             throw new InvalidArgumentException('clientInfo.id');
@@ -185,7 +185,8 @@ class ClientInfo extends BaseDocument
                     $value = $info[$key];
                     //$log->addDebug("[KEY]  ".$key);
                     //$log->addDebug("[VALUE]  ".json_encode($value,JSON_PRETTY_PRINT));
-                    if ($this->endsWith($key, 'date') === true || $key==='birthday') {
+                    if ($this->endsWith($key, 'Date') === true || $key==='birthday') {
+						$log->addDebug("[ClientInfo KEY] Date  - ".$key);
                         $value = date_create_from_format('Y-m-d\TH:i:sT', $value);
                     } else if ($value === "false") {
                         $value = false;

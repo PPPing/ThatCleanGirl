@@ -40,13 +40,13 @@ class APIController extends Controller
         $client_list->url = "";
         $client_list->isSubModule = false;
 
-        $new_client = new stdClass();
+        /*$new_client = new stdClass();
         $new_client->id = "new-client";
         $new_client->name = "New Client";
         $new_client->url = "";
         $new_client->isSubModule = false;
         $new_client->changeAlart = true;
-        $new_client->alartMsg = "All your non-saved information will lost.";
+        $new_client->alartMsg = "All your non-saved information will lost.";*/
 
 		$invoice_list = new stdClass();
         $invoice_list->id = "invoice-list";
@@ -54,7 +54,7 @@ class APIController extends Controller
         $invoice_list->url = "";
 		$invoice_list->isSubModule = false;
 		
-        array_push($client->modules,$dashboard,$client_list,$new_client,$invoice_list);
+        array_push($client->modules,$dashboard,$client_list,$invoice_list);
 
 
         $staff = new stdClass();

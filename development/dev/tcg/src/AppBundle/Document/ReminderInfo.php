@@ -293,7 +293,7 @@ class ReminderInfo extends BaseDocument
                 $key = lcfirst(substr($method, 3));
                 if(isset($info[$key])){
                     $value = $info[$key];
-                    if( $this->endsWith($key, 'date')===true ){
+                    if( $this->endsWith($key, 'Date')===true ){
                         $value = date_create_from_format('Y-m-d\TH:i:sT', $value);
                     }else if($value==="false"){
                         $value=false;

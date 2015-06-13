@@ -19,6 +19,7 @@ use Monolog\Handler\StreamHandler;
  */
 class NotificationInfoRepository extends DocumentRepository
 {
+	
     public function archiveBirthdayNotification(){
 
         $result = $this->createQueryBuilder()
@@ -51,6 +52,22 @@ class NotificationInfoRepository extends DocumentRepository
     {
         return $this->findBy(array("status"=>NotificationStatus::Unconfirmed));
     }
+	
+	
+	public function archiveClientNotification($clientId){
+
+        $result = $this->createQueryBuilder()
+            ->update()
+            ->multiple(true)
+            ->field("status")->equals(NotificationStatus::Unconfirmed)
+			->field("clientId")->equals($clientId)
+            ->field("status")->set(NotificationStatus::Confirmed)
+             ->getQuery()
+             ->execute();
+
+        return $result;
+    }
+	
     public function UpdateClientBirthdayNotification($client){
         $result = $this->createQueryBuilder()
             ->update()
@@ -118,7 +135,11 @@ class NotificationInfoRepository extends DocumentRepository
                 if ($date === null) {
                     continue;
                 }
-                //$log->debug('- '.$method .':'.$date->format('Y-m-d'));
+				if(is_string($date)){
+					$log->debug('~~~~~ '.$method .':'.$date);
+				}
+                
+				//$log->debug('- '.$method .':'.$date->format('Y-m-d'));
                 $today = new DateTime('NOW');
                 $today->setTimezone(new \DateTimeZone($defaultTimeZone));
                 $today_Ym = $today->format('Ym');
