@@ -1,0 +1,20 @@
+# This file is auto-generated during the composer install
+parameters:
+    wkpath_pdf: "\"C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe\""
+    wkpath_image: \"C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltoimage.exe\""
+    log_dir: C:\\xampp\\htdocs\\github\\ThatCleanGirl\\development\\dev\\tcg\\app\\logs\\
+    pdf_dir: C:\\xampp\\htdocs\\github\\ThatCleanGirl\\development\\dev\\tcg\\pdf\\
+    tcg_frequency_weekly: Weekly
+    tcg_frequency_fortnightly: Fortnightly
+    tcg_frequency_monthly: Monthly
+    tcg_frequency_whenNeed: When need
+    tcg_key_keptByUs: Kept by us
+    tcg_key_original: Put back original place
+    tcg_key_kitchen: Put back kitchen bench
+    tcg_pet_doesNotMatter: Doesn't matter
+    tcg_pet_keptInDoor: Kept indoor
+    tcg_pet_keptOutDoor: Kept outdoor
+    tcg_pay_cash: Cash
+    tcg_pay_cheque: Cheque
+    tcg_pay_debt: Debt
+

@@ -1,5 +1,5 @@
 (function(){
-	var app = angular.module('thatCleanGirl', ['pluginDirectives','ui.calendar','ngCookies']).config(function($interpolateProvider,$httpProvider){
+    var app = angular.module('thatCleanGirl', ['pluginDirectives','ui.calendar','ngCookies']).config(function($interpolateProvider,$httpProvider){
         $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
 
         $httpProvider.defaults.headers.post['Content-Type'] =
@@ -48,57 +48,57 @@
         };
     });
 
-	app.directive('dMultiline',function() {
-		return {			
-			restrict: 'A',
-			require: 'ngModel',
-			scope: {
-				bindModel : '=ngModel'
-			},
-			link: function ($scope, element, attrs) {
-				$scope.$watch(
-                    function( $scope ) {	
+    app.directive('dMultiline',function() {
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            scope: {
+                bindModel : '=ngModel'
+            },
+            link: function ($scope, element, attrs) {
+                $scope.$watch(
+                    function( $scope ) {
                         if($scope.bindModel){
-							return $scope.bindModel;
-						}else{
-							return "";
-						}
+                            return $scope.bindModel;
+                        }else{
+                            return "";
+                        }
                     },
-                    function( newValue ) {						
-						if(newValue!=""){
-							element.html(newValue.replace(/\n/g,"<br>"));
-						}
+                    function( newValue ) {
+                        if(newValue!=""){
+                            element.html(newValue.replace(/\n/g,"<br>"));
+                        }
                     }
-                );	
-			}
-		};
-	});
-	
-	app.directive('dFormControlRotationGroup',function() {
-		return {			
-			restrict: 'A',
-			require: 'ngModel',
-			scope: {
-				bindModel : '=ngModel'
-			},
-			link: function ($scope, element, attrs) {
-				$scope.$watch(
-                    function( $scope ) {	
+                );
+            }
+        };
+    });
+
+    app.directive('dFormControlRotationGroup',function() {
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            scope: {
+                bindModel : '=ngModel'
+            },
+            link: function ($scope, element, attrs) {
+                $scope.$watch(
+                    function( $scope ) {
                         if($scope.bindModel){
-							return $scope.bindModel;
-						}else{
-							return "";
-						}
+                            return $scope.bindModel;
+                        }else{
+                            return "";
+                        }
                     },
-                    function( newValue ) {						
-						if(newValue!=""){
-							element.html(newValue.replace(/\n/g,"<br>"));
-						}
+                    function( newValue ) {
+                        if(newValue!=""){
+                            element.html(newValue.replace(/\n/g,"<br>"));
+                        }
                     }
-                );	
-			}
-		};
-	});
+                );
+            }
+        };
+    });
 
     app.factory('ValidationService',function($http){
         var ValidationService = {
@@ -120,9 +120,9 @@
 
         return ValidationService;
     });
-	
-	app.factory('UserService',function($http){
-		var UserService = {
+
+    app.factory('UserService',function($http){
+        var UserService = {
             profile:function(){
                 var profile = {account:"",
                     name:"",
@@ -134,11 +134,11 @@
                     });
                 return profile;
             }
-		};
+        };
 
-		return UserService;
-	});
-	app.factory('MenuService',function() {
+        return UserService;
+    });
+    app.factory('MenuService',function() {
         var components = [];
 
         var curComponentIndex = 0;
@@ -170,72 +170,72 @@
         if (components.length > 0) {
             pushModulesStack(curModuleIndex, components[curComponentIndex].modules);
         }
-		var MenuService = {
-			initMenuService:function(data){
-				console.log("initMenuService");
+        var MenuService = {
+            initMenuService:function(data){
+                console.log("initMenuService");
                 components = data;
-				pushModulesStack(0,components[curComponentIndex].modules);
-			},
-			getComponentIndex:function(){
-				return curComponentIndex;
-			},
-			getModuleIndex:function(){
-				return modulesStack[modulesStack.length-1].curModuleIndex;
-			}, 
-			getComponents:function(){
-				return components;
-			},
-			getModules:function(){
+                pushModulesStack(0,components[curComponentIndex].modules);
+            },
+            getComponentIndex:function(){
+                return curComponentIndex;
+            },
+            getModuleIndex:function(){
+                return modulesStack[modulesStack.length-1].curModuleIndex;
+            },
+            getComponents:function(){
+                return components;
+            },
+            getModules:function(){
                 if (components.length <= 0) {
                     return[];
                 }
-				return modulesStack[modulesStack.length-1].modules;
-			},
-			getActiveModule:function(){
+                return modulesStack[modulesStack.length-1].modules;
+            },
+            getActiveModule:function(){
                 if (components.length <= 0) {
                     return;
                 }
-				var moduleStackNode = modulesStack[modulesStack.length-1];
-				//console.log(moduleStackNode);
-				return moduleStackNode.modules[moduleStackNode.curModuleIndex];
-			},
-			getModulesStackDepth:function(){
-				return modulesStack.length;
-			},
-			changeComponents:function(index){
+                var moduleStackNode = modulesStack[modulesStack.length-1];
+                //console.log(moduleStackNode);
+                return moduleStackNode.modules[moduleStackNode.curModuleIndex];
+            },
+            getModulesStackDepth:function(){
+                return modulesStack.length;
+            },
+            changeComponents:function(index){
                 if(changeAlert()){
                     curComponentIndex = index;
                     curModuleIndex=0;
                     modulesStack=[];
                     pushModulesStack(0,components[curComponentIndex].modules);
                 }
-			},
-			changeModule:function(index){
+            },
+            changeModule:function(index){
                 if(changeAlert()){
                     modulesStack[modulesStack.length-1].curModuleIndex = index;
                 }
 
-			},
-			pushModulesStack:function(modules){
-				pushModulesStack(0,modules);
-			},
-			popModulesStack:function(){
-				if(modulesStack.length>1){
-					if(changeAlert()){
-						modulesStack.pop();
-					}
-				}
-			},
-			cancelAlert:function(){
-				var moduleStackNode = modulesStack[modulesStack.length-1];
-				//console.log(moduleStackNode);
-				var curModule = moduleStackNode.modules[moduleStackNode.curModuleIndex];
-				curModule.changeAlart=false;
-			}
-		}
-		//MenuService.initMenuService();
-		return MenuService;
-	});
+            },
+            pushModulesStack:function(modules){
+                pushModulesStack(0,modules);
+            },
+            popModulesStack:function(){
+                if(modulesStack.length>1){
+                    if(changeAlert()){
+                        modulesStack.pop();
+                    }
+                }
+            },
+            cancelAlert:function(){
+                var moduleStackNode = modulesStack[modulesStack.length-1];
+                //console.log(moduleStackNode);
+                var curModule = moduleStackNode.modules[moduleStackNode.curModuleIndex];
+                curModule.changeAlart=false;
+            }
+        }
+        //MenuService.initMenuService();
+        return MenuService;
+    });
 
     app.controller('TestController',['$scope','$http',function($scope, $http){
         this.testWebAPI = function() {
@@ -248,7 +248,7 @@
 
     }]);
 
-	app.controller('TopMenuController',['$scope','$http','MenuService',function($scope,$http,MenuService){
+    app.controller('TopMenuController',['$scope','$http','MenuService',function($scope,$http,MenuService){
         $http.get('/api/menu_info')
             .then(function(result) {
                 console.log(result);
@@ -257,39 +257,39 @@
                 $scope.changeComponents = MenuService.changeComponents;
                 $scope.getComponentIndex = MenuService.getComponentIndex;
             });
-	}]);	
-	app.controller('SiderController',['$scope','MenuService',function($scope,MenuService){
+    }]);
+    app.controller('SiderController',['$scope','MenuService',function($scope,MenuService){
         $scope.getModules = MenuService.getModules;
-		$scope.changeModule = MenuService.changeModule;
-		$scope.getModuleIndex = MenuService.getModuleIndex;
-		$scope.back= MenuService.popModulesStack;
-		$scope.modulesStackDepth = MenuService.getModulesStackDepth;
-	}]);
-	
-	app.directive('moduleContainer',function($compile) {
-		return {
-			restrict: 'E',
-			template: '<div></div>',
-			scope: {},
-			controller:function($scope,$element,MenuService) {
-				$scope.getActiveModule = MenuService.getActiveModule;
-				$scope.$watch(
+        $scope.changeModule = MenuService.changeModule;
+        $scope.getModuleIndex = MenuService.getModuleIndex;
+        $scope.back= MenuService.popModulesStack;
+        $scope.modulesStackDepth = MenuService.getModulesStackDepth;
+    }]);
+
+    app.directive('moduleContainer',function($compile) {
+        return {
+            restrict: 'E',
+            template: '<div></div>',
+            scope: {},
+            controller:function($scope,$element,MenuService) {
+                $scope.getActiveModule = MenuService.getActiveModule;
+                $scope.$watch(
                     function( $scope ) {
 
                         return $scope.getActiveModule()?$scope.getActiveModule().id:null;
                     },
                     function( newValue ) {
-						
-						if($scope.getActiveModule()&&$scope.getActiveModule().isSubModule==false){
-							console.log(newValue);
-							var el = $compile( "<module-"+newValue+"></module-"+newValue+">" )( $scope );
-							$element.html( el );
-						}	
+
+                        if($scope.getActiveModule()&&$scope.getActiveModule().isSubModule==false){
+                            console.log(newValue);
+                            var el = $compile( "<module-"+newValue+"></module-"+newValue+">" )( $scope );
+                            $element.html( el );
+                        }
                     }
                 );
-			}
-		};
-	});
+            }
+        };
+    });
     app.directive('moduleDashboard',function() {
         return {
             restrict: 'E',
@@ -314,8 +314,8 @@
             controllerAs: 'dashboardMain'
         };
     });
-    
-	app.directive('notificationList',function(){
+
+    app.directive('notificationList',function(){
         return {
             restrict: 'E',
             controller: function($scope,$http, $modal,$cookies) {
@@ -329,33 +329,33 @@
                     $cookies.tcg_display_notification_list_isHidden=$scope.isHidden;
                     console.log($cookies.tcg_display_notification_list_isHidden);
                 }
-				
-				$scope.predicateB = 'clientName';
-				$scope.reverseB = true;
-				$scope.orderB = function(predicate) {
-					$scope.reverseB = ($scope.predicateB === predicate) ? !$scope.reverseB : false;
-					$scope.predicateB = predicate;
-				};
-				
-				$scope.predicateC = 'clientName';
-				$scope.reverseC = true;
-				$scope.orderC = function(predicate) {
-					$scope.reverseC = ($scope.predicateC === predicate) ? !$scope.reverseC : false;
-					$scope.predicateC = predicate;
-				};
+
+                $scope.predicateB = 'clientName';
+                $scope.reverseB = true;
+                $scope.orderB = function(predicate) {
+                    $scope.reverseB = ($scope.predicateB === predicate) ? !$scope.reverseB : false;
+                    $scope.predicateB = predicate;
+                };
+
+                $scope.predicateC = 'clientName';
+                $scope.reverseC = true;
+                $scope.orderC = function(predicate) {
+                    $scope.reverseC = ($scope.predicateC === predicate) ? !$scope.reverseC : false;
+                    $scope.predicateC = predicate;
+                };
                 function loadServiceList(){
                     $scope.notifyInfoList=[];
                     $scope.birthdays=[];
                     $scope.cleans=[];
-					$http.get('/api/service/getNotificationGroups')
-                         .then(function(result) {
-                                console.log(result.data);
-								$scope.notifyInfoList =result.data;
-                                $scope.birthdays = $scope.notifyInfoList.birthday;
-                                 $scope.cleans = $scope.notifyInfoList.clean;
-                          });
+                    $http.get('/api/service/getNotificationGroups')
+                        .then(function(result) {
+                            console.log(result.data);
+                            $scope.notifyInfoList =result.data;
+                            $scope.birthdays = $scope.notifyInfoList.birthday;
+                            $scope.cleans = $scope.notifyInfoList.clean;
+                        });
                 }
-				loadServiceList();
+                loadServiceList();
 
                 $scope.openNotifyViewer = function (type,index) {
                     console.log(type+" - "+ index);
@@ -392,10 +392,10 @@
             controllerAs: 'notifyList'
         };
     });
-	
-	
-	
-	app.directive('serviceCalendar',function($compile) {
+
+
+
+    app.directive('serviceCalendar',function($compile) {
         return {
             restrict: 'E',
             scope: {
@@ -441,7 +441,7 @@
                         }
                         $scope.filtersValue[value.id] = Math.pow(10, key);
                         $scope.filtersMask += $scope.filtersValue[value.id];
-                       // console.log(key +' : '+$scope.filtersMask);
+                        // console.log(key +' : '+$scope.filtersMask);
                     });
                 };
                 initFilters();
@@ -489,26 +489,26 @@
                 $scope.alertOnEventClick = function( data, jsEvent, view){
                     console.log(data.title + ' was clicked ');
                     console.log(data);
-					console.log(data.type);
-					if(data.type=='service'){
-						console.log('openEditor');
-						$scope.openEditor(data);
-					}else if(data.type=='clean'){
+                    console.log(data.type);
+                    if(data.type=='service'){
+                        console.log('openEditor');
+                        $scope.openEditor(data);
+                    }else if(data.type=='clean'){
                         $scope.openCleanReminderEditor(data);
                     }else if(data.type=='birthday'){
                         $scope.openBirthdayInfoViewer(data);
                     }
-					
-                    
+
+
                 };
                 /* alert on Drop */
                 $scope.alertOnDrop = function(event, delta, revertFunc, jsEvent, ui, view){
-                   // $scope.alertMessage = ('Event Droped to make dayDelta ' + delta);
+                    // $scope.alertMessage = ('Event Droped to make dayDelta ' + delta);
                     console.log('Event Droped to make dayDelta ' + delta);
                 };
                 /* alert on Resize */
                 $scope.alertOnResize = function(event, delta, revertFunc, jsEvent, ui, view ){
-                   // $scope.alertMessage = ('Event Resized to make dayDelta ' + delta);
+                    // $scope.alertMessage = ('Event Resized to make dayDelta ' + delta);
                     console.log('Event Resized to make dayDelta ' + delta);
                 };
 
@@ -586,7 +586,7 @@
                     event.color= '#e7d836';
                     event.textColor= 'black';
 
-					event.type='service';
+                    event.type='service';
                     event = updateEvent(event);
                     return event;
                 };
@@ -598,9 +598,8 @@
                     event.start.setMinutes(startTime[1]);
 
                     event.end = new Date(data.serviceDate);
-                    var endTime = data.serviceEndTime.split(":");
-                    event.end.setHours(endTime[0]);
-                    event.end.setMinutes(endTime[1]);
+                    event.end.setHours(event.start.getHours() + 1);
+                    event.end.setMinutes(event.start.getMinutes());
                     event = updateEvent(event);
                     return event;
                 }
@@ -627,36 +626,36 @@
                 $scope.publicHolidays=null;
                 $scope.publicHolidaysSources={
                     events:  function(start, end, timezone, callback){
-                            if($scope.publicHolidays===null){
-                                $http.get('/api/service/getHolidays')
-                                    .then(function(result) {
-                                        console.log(result.data);
-										$scope.publicHolidays = result.data;
-                                        var events = [];
-                                        angular.forEach(result.data, function (value, key) {
-											event ={
-												title:value.title,
-												allDay:true,
-												start:new Date(value.start),
-												type:'holiday'
-											};
-											events.push(event);
-                                        });
-                                        callback(events);
+                        if($scope.publicHolidays===null){
+                            $http.get('/api/service/getHolidays')
+                                .then(function(result) {
+                                    console.log(result.data);
+                                    $scope.publicHolidays = result.data;
+                                    var events = [];
+                                    angular.forEach(result.data, function (value, key) {
+                                        event ={
+                                            title:value.title,
+                                            allDay:true,
+                                            start:new Date(value.start),
+                                            type:'holiday'
+                                        };
+                                        events.push(event);
                                     });
-                            }else{
-								var events = [];
-								angular.forEach($scope.publicHolidays, function (value, key) {
-											event ={
-												title:value.title,
-												allDay:true,
-												start:new Date(value.start),
-												type:'holiday'
-											};
-											events.push(event);
-                                        });
-                                        callback(events);
-                            }
+                                    callback(events);
+                                });
+                        }else{
+                            var events = [];
+                            angular.forEach($scope.publicHolidays, function (value, key) {
+                                event ={
+                                    title:value.title,
+                                    allDay:true,
+                                    start:new Date(value.start),
+                                    type:'holiday'
+                                };
+                                events.push(event);
+                            });
+                            callback(events);
+                        }
                     },
                     color: '#FFDEEE',   // an option!
                     textColor: '#333' // an option!
@@ -673,7 +672,7 @@
                                 $http.get('/api/service/getNotifications')
                                     .then(function(result) {
                                         console.log(result.data);
-										$scope.notifications = result.data;
+                                        $scope.notifications = result.data;
                                         var events = [];
                                         angular.forEach(result.data, function (value, key) {
                                             if($scope.filters[value.type]===true){
@@ -690,20 +689,20 @@
                                         callback(events);
                                     });
                             }else{
-                                        var events = [];
-                                        angular.forEach($scope.notifications, function (value, key) {
-                                            if($scope.filters[value.type]===true){
-                                                event ={
-                                                    title:value.title,
-                                                    allDay:true,
-                                                    start:new Date(value.date),
-                                                    type:value.type,
-                                                    info:value
-                                                };
-                                                events.push(event);
-                                            }
-                                        });
-                                        callback(events);
+                                var events = [];
+                                angular.forEach($scope.notifications, function (value, key) {
+                                    if($scope.filters[value.type]===true){
+                                        event ={
+                                            title:value.title,
+                                            allDay:true,
+                                            start:new Date(value.date),
+                                            type:value.type,
+                                            info:value
+                                        };
+                                        events.push(event);
+                                    }
+                                });
+                                callback(events);
                             }
                         }
 
@@ -722,10 +721,10 @@
                                 $scope.serviceList = result.data;
                                 var events = [];
                                 angular.forEach(result.data, function (value, key) {
-                                   //console.log($scope.filters[value.teamId]);
-                                   if($scope.filters[value.teamId]===true || value.isConfirmed===false){
+                                    //console.log($scope.filters[value.teamId]);
+                                    if($scope.filters[value.teamId]===true || value.isConfirmed===false){
                                         events.push(eventDataTransform(value));
-                                   }
+                                    }
                                 });
                                 callback(events);
                             });
@@ -774,8 +773,8 @@
                         animation: true,
                         templateUrl: 'directives/templates/serviceEditorTmpl.html',
                         controller: function($scope,$modalInstance,serviceInfo){
-                           $scope.serviceInfo = serviceInfo;
-                           console.log($scope.serviceInfo);
+                            $scope.serviceInfo = serviceInfo;
+                            console.log($scope.serviceInfo);
                             //$scope.serviceInfo.clientId = "1038-5986";
                             $scope.editMode=!$scope.serviceInfo.isConfirmed;
 
@@ -793,10 +792,10 @@
                                 $scope.editMode = true;
                             };
                             $scope.Save = function(){
-								if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
+                                if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
                                     alert("Please input all required information.");
-									return;
-								}
+                                    return;
+                                }
                                 $scope.editMode = false;
                                 var serviceInfo = angular.copy($scope.serviceInfo);
                                 saveServiceInfo(serviceInfo,function(){
@@ -828,8 +827,8 @@
                         controller: function($scope,$modalInstance,notifyInfo){
                             $scope.notifyInfo = notifyInfo;
                             console.log($scope.notifyInfo);
-							$scope.OK = function(){
-                               
+                            $scope.OK = function(){
+
                                 $modalInstance.close($scope.serviceInfo);
                             };
 
@@ -850,7 +849,7 @@
                         //console.log('Modal dismissed at: ' + new Date());
                     });
                 }
-				$scope.openCleanReminderEditor = function (event) {
+                $scope.openCleanReminderEditor = function (event) {
                     $scope.curEvent = event;
                     console.log($scope.curEvent);
                     var modalInstance = $modal.open({
@@ -861,19 +860,19 @@
                             console.log($scope.notifyInfo);
                             var clientId = $scope.notifyInfo.clientId
                             console.log(clientId);
-							$scope.cleanItems = {};
-							angular.forEach($scope.notifyInfo.items, function (value, key) {
-                                   //console.log($scope.filters[value.teamId]);
-                                   $scope.cleanItems[value]=$scope.notifyInfo.date;
-                                });
-							console.log($scope.cleanItems);
-							
-							$scope.Edit = function(){
+                            $scope.cleanItems = {};
+                            angular.forEach($scope.notifyInfo.items, function (value, key) {
+                                //console.log($scope.filters[value.teamId]);
+                                $scope.cleanItems[value]=$scope.notifyInfo.date;
+                            });
+                            console.log($scope.cleanItems);
+
+                            $scope.Edit = function(){
                                 $scope.editMode = true;
                             };
                             $scope.Save = function(){
-									
-								$scope.editMode = false;
+
+                                $scope.editMode = false;
                                 //var serviceInfo = angular.copy($scope.serviceInfo);
                                 //saveServiceInfo(serviceInfo,function(){
                                 //    $modalInstance.close($scope.serviceInfo);
@@ -909,65 +908,65 @@
             restrict: 'E',
             require: 'ngModel',
             scope: {
-               serviceInfo:'=ngModel'
+                serviceInfo:'=ngModel'
             },
             controller: function($scope,$http,$element,MenuService,ValidationService){
                 /* $scope.editMode=false;
-                $scope.serviceInfo={};
-                var clientDetailModules=[
-                    {
-                        id:"service-editor",
-                        name:"Service",
-                        isSubModule:true
-                    }
-                ];
+                 $scope.serviceInfo={};
+                 var clientDetailModules=[
+                 {
+                 id:"service-editor",
+                 name:"Service",
+                 isSubModule:true
+                 }
+                 ];
 
-               c
+                 c
 
-                function saveService( info ,callback){
-                    $http.post('job/saveService', {"serviceInfo":$scope.serviceInfo}).
-                        success(function(data, status, headers, config) {
-                            if(data==="SUCCESS"){
-                                if (callback && typeof(callback) === "function") {
-                                    // execute the callback, passing parameters as necessary
-                                    callback();
-                                }
-                            }
-                        }).
-                        error(function(data, status, headers, config) {
-                        });
-                }
-                $scope.Confirm = function(){
-                    console.log($scope.serviceInfo);
-                    console.log($scope.serviceInfo.serviceDate);
-                    console.log($scope.serviceInfo.teamId);
-                    $scope.serviceInfo.isConfirmed=true;
-                    if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
-                        alert("Please input all required information.");
-                    }
-                    saveService($scope.serviceInfo,function(){
-                        MenuService.popModulesStack();
-                        //console.log("Confirmed");
-                    });
-                };
-                $scope.Edit=function(){
-                    console.log("edit");
-                    $scope.editMode = true;
-                };
-                $scope.Save = function(){
-                    console.log($scope.serviceInfo);
-                    console.log($scope.serviceInfo.serviceDate);
-                    console.log($scope.serviceInfo.teamId);
-                    if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
-                        alert("Please input all required information.");
-                    }
+                 function saveService( info ,callback){
+                 $http.post('job/saveService', {"serviceInfo":$scope.serviceInfo}).
+                 success(function(data, status, headers, config) {
+                 if(data==="SUCCESS"){
+                 if (callback && typeof(callback) === "function") {
+                 // execute the callback, passing parameters as necessary
+                 callback();
+                 }
+                 }
+                 }).
+                 error(function(data, status, headers, config) {
+                 });
+                 }
+                 $scope.Confirm = function(){
+                 console.log($scope.serviceInfo);
+                 console.log($scope.serviceInfo.serviceDate);
+                 console.log($scope.serviceInfo.teamId);
+                 $scope.serviceInfo.isConfirmed=true;
+                 if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
+                 alert("Please input all required information.");
+                 }
+                 saveService($scope.serviceInfo,function(){
+                 MenuService.popModulesStack();
+                 //console.log("Confirmed");
+                 });
+                 };
+                 $scope.Edit=function(){
+                 console.log("edit");
+                 $scope.editMode = true;
+                 };
+                 $scope.Save = function(){
+                 console.log($scope.serviceInfo);
+                 console.log($scope.serviceInfo.serviceDate);
+                 console.log($scope.serviceInfo.teamId);
+                 if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
+                 alert("Please input all required information.");
+                 }
 
-                    saveService($scope.serviceInfo,function(){
-                        //MenuService.popModulesStack();
-                        console.log("save");
-                        $scope.editMode = false;
-                    });
-                };*/
+                 saveService($scope.serviceInfo,function(){
+                 //MenuService.popModulesStack();
+                 console.log("save");
+                 $scope.editMode = false;
+                 });
+                 };*/
             },
             templateUrl:'directives/templates/serviceEditorTmpl.html',
             controllerAs: 'serviceEditor'
@@ -1033,14 +1032,14 @@
                 );
 
                 $scope.parseStatus=function(status){
-                  var statusStr = "";
-                  switch (status){
-                      case 0 :  statusStr = "Pending";break;
-                      case 1 :  statusStr = "Processing";break;
-                      case 2 :  statusStr = "Completed";break;
-                      case 3 :  statusStr = "Reviewed";break;
-                      case 4 :  statusStr = "Cancelled";break;
-                  };
+                    var statusStr = "";
+                    switch (status){
+                        case 0 :  statusStr = "Pending";break;
+                        case 1 :  statusStr = "Processing";break;
+                        case 2 :  statusStr = "Completed";break;
+                        case 3 :  statusStr = "Reviewed";break;
+                        case 4 :  statusStr = "Cancelled";break;
+                    };
                     return statusStr;
                 };
 
@@ -1069,49 +1068,49 @@
     });
 
     app.directive('moduleClientList',function() {
-		return {
-			restrict: 'E',
-			scope: {},
-			controller: function($scope) {
-				$scope.moduleInfo={
-					curSubModule:"client-list"
-					//clientDetail_clientId:null
-				};
-			},
-			templateUrl:'directives/modules/clientList.html',
-			controllerAs: 'clientListModule'
-		};
-	});
-	
-	app.directive('clientListTmpl',function(){
-		return {
-			restrict: 'E',
-			controller: function($scope,$http) {
-				var clientList = null;
+        return {
+            restrict: 'E',
+            scope: {},
+            controller: function($scope) {
+                $scope.moduleInfo={
+                    curSubModule:"client-list"
+                    //clientDetail_clientId:null
+                };
+            },
+            templateUrl:'directives/modules/clientList.html',
+            controllerAs: 'clientListModule'
+        };
+    });
+
+    app.directive('clientListTmpl',function(){
+        return {
+            restrict: 'E',
+            controller: function($scope,$http) {
+                var clientList = null;
                 $http.get('/api/client/getClientList?timestamp='+ new Date())
-				.then(function(result) {
+                    .then(function(result) {
                         clientList = result.data.slice(0);
                         console.log(clientList);
                         $scope.clientListData = clientList;
-				});
-				this.viewClientDetail=function(clientId){
-					console.log(clientId);
-					console.log($scope.moduleInfo);
-					$scope.moduleInfo.curSubModule="client-detail";
-					$scope.moduleInfo.clientDetail_clientId = clientId;
-				};
-				
-				this.createNewClient=function(){
-					$scope.moduleInfo.curSubModule="new-client";
-				};
-				
-				$scope.predicate = 'clientName';
-				$scope.reverse = true;
-				$scope.order = function(predicate) {
-					$scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
-					$scope.predicate = predicate;
-				};
-				
+                    });
+                this.viewClientDetail=function(clientId){
+                    console.log(clientId);
+                    console.log($scope.moduleInfo);
+                    $scope.moduleInfo.curSubModule="client-detail";
+                    $scope.moduleInfo.clientDetail_clientId = clientId;
+                };
+
+                this.createNewClient=function(){
+                    $scope.moduleInfo.curSubModule="new-client";
+                };
+
+                $scope.predicate = 'clientName';
+                $scope.reverse = true;
+                $scope.order = function(predicate) {
+                    $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+                    $scope.predicate = predicate;
+                };
+
                 $scope.keyWord="";
                 $scope.filter=function(){
                     //console.log($scope.keyWord);
@@ -1120,52 +1119,52 @@
                     angular.forEach(clientList, function (value, key) {
                         var clientInfo = value;
                         var content = clientInfo.clientName +" "
-                                    +clientInfo.tel +" "
-                                    +clientInfo.address +" "
-                                    +clientInfo.district +" "
-                                    +clientInfo.jobDetail.frequency +" "
-                                    +clientInfo.price;
+                            +clientInfo.tel +" "
+                            +clientInfo.address +" "
+                            +clientInfo.district +" "
+                            +clientInfo.jobDetail.frequency +" "
+                            +clientInfo.price;
                         if(regex.test(content)){
                             newClientList.push(value);
                         }
                     });
                     $scope.clientListData = newClientList;
                 }
-			},
-			templateUrl:'directives/templates/clientListTmpl.html',
-			controllerAs: 'clientListTmpl'
-		};
-	});
-	
-	app.directive('clientDetailTmpl',function(){
-		return {
-			restrict: 'E',
-			controller: function($scope,$http,$modal,MenuService,UserService) {
-				var clientDetailModules=[
-					{
-						id:"client-detail",
-						name:"Client Detail",
-						isSubModule:true
-					}
-				];
-				$scope.$watch(
+            },
+            templateUrl:'directives/templates/clientListTmpl.html',
+            controllerAs: 'clientListTmpl'
+        };
+    });
+
+    app.directive('clientDetailTmpl',function(){
+        return {
+            restrict: 'E',
+            controller: function($scope,$http,$modal,MenuService,UserService) {
+                var clientDetailModules=[
+                    {
+                        id:"client-detail",
+                        name:"Client Detail",
+                        isSubModule:true
+                    }
+                ];
+                $scope.$watch(
                     function( $scope ) {
                         return $scope.moduleInfo.clientDetail_clientId;
                     },
                     function( newValue ) {
-						//newValue = "111";
+                        //newValue = "111";
                         console.log(newValue);
-						$http.get('api/client/getClientInfo/'+newValue)
-						.then(function(result) {
+                        $http.get('api/client/getClientInfo/'+newValue)
+                            .then(function(result) {
                                 console.log(result);
-							$scope.clientDetail = result.data;
-							$scope.UserService = UserService;
+                                $scope.clientDetail = result.data;
+                                $scope.UserService = UserService;
 
-							MenuService.pushModulesStack(clientDetailModules);
-						});
+                                MenuService.pushModulesStack(clientDetailModules);
+                            });
                     }
                 );
-				var saveServiceInfo = function(serviceinfo ,callback){
+                var saveServiceInfo = function(serviceinfo ,callback){
                     $http.post('api/service/save', {"serviceInfo":serviceinfo}).
                         success(function(data, status, headers, config) {
                             if(data==="SUCCESS"){
@@ -1183,39 +1182,39 @@
                             alert("[ERROR] Service Info Error.");
                         });
                 };
-				
-				$scope.createService=function(){
-					var modalInstance = $modal.open({
+
+                $scope.createService=function(){
+                    var modalInstance = $modal.open({
                         animation: true,
                         templateUrl: 'directives/templates/serviceWhenNeedEditorTmpl.html',
                         controller: function($scope,$modalInstance,clientInfo){
-                           $scope.editMode=true;
-						   $scope.serviceInfo = {};
-						   $scope.serviceInfo.clientName =clientInfo.clientName;
-						   $scope.serviceInfo.tel =clientInfo.tel;
-						   $scope.serviceInfo.address =clientInfo.address;
-						   $scope.serviceInfo.email =clientInfo.email;
-						   $scope.serviceInfo.suburb =clientInfo.suburb;
-						   $scope.serviceInfo.paymentType =angular.copy(clientInfo.paymentType);
-						   $scope.serviceInfo.price =angular.copy(clientInfo.price);
-						   $scope.serviceInfo.invoiceNeeded =angular.copy(clientInfo.invoiceNeeded);
-						   $scope.serviceInfo.invoiceTitle =angular.copy(clientInfo.invoiceTitle);
-						   $scope.serviceInfo.serviceDate =new Date();;
-						   $scope.serviceInfo.teamId ='';
-						   $scope.serviceInfo.serviceStartTime =angular.copy(clientInfo.serviceTime);
-						   $scope.serviceInfo.notes='';
-						   $scope.serviceInfo.jobDetail = angular.copy(clientInfo.jobDetail);
-						   $scope.serviceInfo.isConfirmed=false;
-                           console.log($scope.serviceInfo);
+                            $scope.editMode=true;
+                            $scope.serviceInfo = {};
+                            $scope.serviceInfo.clientName =clientInfo.clientName;
+                            $scope.serviceInfo.tel =clientInfo.tel;
+                            $scope.serviceInfo.address =clientInfo.address;
+                            $scope.serviceInfo.email =clientInfo.email;
+                            $scope.serviceInfo.suburb =clientInfo.suburb;
+                            $scope.serviceInfo.paymentType =angular.copy(clientInfo.paymentType);
+                            $scope.serviceInfo.price =angular.copy(clientInfo.price);
+                            $scope.serviceInfo.invoiceNeeded =angular.copy(clientInfo.invoiceNeeded);
+                            $scope.serviceInfo.invoiceTitle =angular.copy(clientInfo.invoiceTitle);
+                            $scope.serviceInfo.serviceDate =new Date();;
+                            $scope.serviceInfo.teamId ='';
+                            $scope.serviceInfo.serviceStartTime =angular.copy(clientInfo.serviceTime);
+                            $scope.serviceInfo.notes='';
+                            $scope.serviceInfo.jobDetail = angular.copy(clientInfo.jobDetail);
+                            $scope.serviceInfo.isConfirmed=false;
+                            console.log($scope.serviceInfo);
                             //$scope.serviceInfo.clientId = "1038-5986";
                             $scope.editMode=!$scope.serviceInfo.isConfirmed;
 
                             $scope.Confirm = function(){
                                 $scope.serviceInfo.isConfirmed=true;
-								if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
+                                if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
                                     alert("Please input all required information.");
-									return;
-								}
+                                    return;
+                                }
                                 $scope.serviceInfo.isConfirmed=true;
                                 var serviceInfo = angular.copy($scope.serviceInfo);
                                 saveServiceInfo(serviceInfo,function(){
@@ -1226,10 +1225,10 @@
                                 $scope.editMode = true;
                             };
                             $scope.Save = function(){
-								if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
+                                if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
                                     alert("Please input all required information.");
-									return;
-								}
+                                    return;
+                                }
                                 $scope.editMode = false;
                             };
                         },
@@ -1239,27 +1238,42 @@
                             }
                         }
                     });
-				}
-			},
-			templateUrl:'directives/templates/clientDetailTmpl.html',
-			controllerAs: 'clientDetailTmpl'
-		};
-	});
-	
- 	app.directive('clientInfoSectionTmpl',function(){
-		return{
-			restrict: 'E',
-			require: 'ngModel',
-			scope: {
-				clientDetail : '=ngModel',
+                }
+
+                $scope.SendConfirmEmail=function(){
+                    if(confirm("Send confirm email to this client?")){
+                        $http.get('api/client/confirmClientInfo/'+$scope.clientDetail.clientId).
+                            success(function(data, status, headers, config) {
+
+                                alert("[SUCCESS] Confirmed email is send.");
+
+                            }).
+                            error(function(data, status, headers, config) {
+                                alert("[ERROR] Confirm error.");
+                                console.log(data);
+                            });
+                    }
+                };
+            },
+            templateUrl:'directives/templates/clientDetailTmpl.html',
+            controllerAs: 'clientDetailTmpl'
+        };
+    });
+
+    app.directive('clientInfoSectionTmpl',function(){
+        return{
+            restrict: 'E',
+            require: 'ngModel',
+            scope: {
+                clientDetail : '=ngModel',
                 saveSection:'=saveSection',
-				editMode:'=editMode'
-			},
-			controller: function($scope,$http,$element,MenuService,ValidationService) {
+                editMode:'=editMode'
+            },
+            controller: function($scope,$http,$element,MenuService,ValidationService) {
                 //console.log($scope.editMode);
                 //console.log($scope.saveSection);
                 //$scope.editMode=true;
-				$scope.submit=function() {
+                $scope.submit=function() {
                     if(!ValidationService.check($element)){
                         alert("Please input all required information.");
                         return;
@@ -1274,7 +1288,7 @@
                         error(function(data, status, headers, config) {
                             alert("[ERROR] Save Client Info Error.");
                         });
-				};
+                };
 
                 $scope.delete=function() {
                     if (confirm("Are sure want to DELETE this client?")) {
@@ -1283,7 +1297,7 @@
                             .then(function (result) {
                                 console.log(result);
                                 MenuService.popModulesStack();
-								//MenuService.changeComponents(0);
+                                //MenuService.changeComponents(0);
                             });
                     }
                 };
@@ -1294,23 +1308,23 @@
                         //$scope.submit();
                     }
                 });
-			},
-			templateUrl:'directives/templates/clientInfoSectionTmpl.html',
-			controllerAs: 'clientInfoSection'
-		};
-	});
-	
-	app.directive('jobDetailSectionTmpl',function(){
-		return{
-			restrict: 'E',
-			require: 'ngModel',
-			scope: {
-				jobDetail : '=ngModel',
-				editMode:'=editMode',
+            },
+            templateUrl:'directives/templates/clientInfoSectionTmpl.html',
+            controllerAs: 'clientInfoSection'
+        };
+    });
+
+    app.directive('jobDetailSectionTmpl',function(){
+        return{
+            restrict: 'E',
+            require: 'ngModel',
+            scope: {
+                jobDetail : '=ngModel',
+                editMode:'=editMode',
                 saveSection:'=saveSection',
                 clientId:'@clientId'
-			},
-			controller: function($scope,$http,$modal) {
+            },
+            controller: function($scope,$http,$modal) {
                 this.curItemIndex=0;
 
                 $scope.itemIndex = null;
@@ -1329,7 +1343,7 @@
                         };
                     }else{
                         if(typeof $scope.jobDetail.items[$index] === 'undefined') {
-                           alert("Job : "+$index+" is not existing.");
+                            alert("Job : "+$index+" is not existing.");
                             return;
                         }
                         else {
@@ -1371,7 +1385,7 @@
                             $scope.jobDetail.items.push(editedItem);
                         }
                     }, function () {
-                       // console.log('Modal dismissed at: ' + new Date());
+                        // console.log('Modal dismissed at: ' + new Date());
                     });
                 };
 
@@ -1385,7 +1399,7 @@
                         alert("Invalid Client Id.");
                         return;
                     }
-                   // console.log("submit");
+                    // console.log("submit");
                     var jobDetail = angular.copy($scope.jobDetail);
                     //console.log(jobDetail);
                     $http.post('api/client/updateClientJobDetail', {"jobDetail":jobDetail,"clientId":$scope.clientId}).
@@ -1399,30 +1413,30 @@
                         });
                 };
 
-				$scope.$on('setEditMode', function (event,editMode) {
-					//console.log("jobDetailSectionTmpl on setEditMode : "+editMode); // 'Data to send'
-					$scope.editMode = editMode;
+                $scope.$on('setEditMode', function (event,editMode) {
+                    //console.log("jobDetailSectionTmpl on setEditMode : "+editMode); // 'Data to send'
+                    $scope.editMode = editMode;
                     if($scope.editMode){
                         //$scope.submit();
                     }
-				});
+                });
 
-			},
-			templateUrl:'directives/templates/jobDetailSectionTmpl.html',
-			controllerAs: 'jobDetailSection'
-		};
-	}); 
-	
-	app.directive('paymentSectionTmpl',function(){
-		return{
-			restrict: 'E',
-			require: 'ngModel',
-			scope: {
-				clientDetail : '=ngModel',
-				editMode:'=editMode',
+            },
+            templateUrl:'directives/templates/jobDetailSectionTmpl.html',
+            controllerAs: 'jobDetailSection'
+        };
+    });
+
+    app.directive('paymentSectionTmpl',function(){
+        return{
+            restrict: 'E',
+            require: 'ngModel',
+            scope: {
+                clientDetail : '=ngModel',
+                editMode:'=editMode',
                 saveSection:'=saveSection'
-			},
-			controller: function($scope,$http) {
+            },
+            controller: function($scope,$http) {
                 $scope.submit=function(){
                     if($scope.clientDetail.invoiceNeeded ==true && $scope.clientDetail.invoiceTitle==""){
                         alert("Please input Company Titile..");
@@ -1443,18 +1457,18 @@
                         });
                 };
 
-				$scope.$on('setEditMode', function (event,editMode) {
-					//console.log("paymentSectionTmpl on setEditMode : "+editMode); // 'Data to send'
-					$scope.editMode = editMode;
+                $scope.$on('setEditMode', function (event,editMode) {
+                    //console.log("paymentSectionTmpl on setEditMode : "+editMode); // 'Data to send'
+                    $scope.editMode = editMode;
                     if($scope.editMode){
                         //$scope.submit();
                     }
-				});
-			},
-			templateUrl:'directives/templates/paymentSectionTmpl.html',
-			controllerAs: 'paymentSection'
-		};
-	});
+                });
+            },
+            templateUrl:'directives/templates/paymentSectionTmpl.html',
+            controllerAs: 'paymentSection'
+        };
+    });
 
     app.directive('reminderInfoSectionTmpl',function(){
         return{
@@ -1504,14 +1518,14 @@
     });
 
     app.directive('serviceHistorySectionTmpl',function(){
-		return{
-			restrict: 'E',
-			require: 'ngModel',
-			scope: {
-				clientId : '=ngModel',
-				readonly:'@readonly'
-			},
-			controller: function($scope,$http) {
+        return{
+            restrict: 'E',
+            require: 'ngModel',
+            scope: {
+                clientId : '=ngModel',
+                readonly:'@readonly'
+            },
+            controller: function($scope,$http) {
                 $scope.serviceHistory = [];
                 $scope.$watch(
                     function( $scope ) {
@@ -1530,20 +1544,20 @@
                             $scope.serviceHistory = result.data;
                         });
                 }
-			},
-			templateUrl:'directives/templates/serviceHistorySectionTmpl.html',
-			controllerAs: 'serviceSection'
-		};
-	});
-	
-	app.directive('commentsSectionTmpl',function($filter){
-		return{
-			restrict: 'E',
-			require: 'ngModel',
-			scope: {
-				clientId : '=ngModel'
-			},
-			controller: function($scope,$http,UserService) {
+            },
+            templateUrl:'directives/templates/serviceHistorySectionTmpl.html',
+            controllerAs: 'serviceSection'
+        };
+    });
+
+    app.directive('commentsSectionTmpl',function($filter){
+        return{
+            restrict: 'E',
+            require: 'ngModel',
+            scope: {
+                clientId : '=ngModel'
+            },
+            controller: function($scope,$http,UserService) {
                 $scope.comments = [];
                 $scope.$watch(
                     function( $scope ) {
@@ -1566,10 +1580,10 @@
                 }
 
                 $scope.newComment="";
-				$scope.UserService = UserService;
-				$scope.postComment=function(){
+                $scope.UserService = UserService;
+                $scope.postComment=function(){
 
-					console.log($scope.newComment);
+                    console.log($scope.newComment);
                     var newComment=angular.copy($scope.newComment);
                     $http.post('api/client/postClientComment', {"clientId":$scope.clientId,"content":newComment}).
                         success(function(data, status, headers, config) {
@@ -1581,8 +1595,8 @@
                         error(function(data, status, headers, config) {
                             alert("[ERROR] Save new comment Error.");
                         });
-				};
-				$scope.deleteComment=function(index){
+                };
+                $scope.deleteComment=function(index){
                     $http.post('api/client/deleteClientComment', {"comment":$scope.comments[index]}).
                         success(function(data, status, headers, config) {
                             //console.log(config);
@@ -1594,38 +1608,38 @@
                         error(function(data, status, headers, config) {
                             alert("[ERROR]  Delete this comment has been deleted.")
                         });
-				};
-			},
-			templateUrl:'directives/templates/commentsSectionTmpl.html',
-			controllerAs: 'commentsSection'
-		};
-	});
+                };
+            },
+            templateUrl:'directives/templates/commentsSectionTmpl.html',
+            controllerAs: 'commentsSection'
+        };
+    });
 
-	app.directive('newClientTmpl',function() {
-		return {
-			restrict: 'E',
-			controller: function($scope,$http,$location, $anchorScroll,MenuService) {
-				var clientDetailModules=[
-					{
-						id:"new-client",
-						name:"New Client",
-						isSubModule:true,
-						changeAlart:true,
-						alartMsg:'All your non-saved information will lost.'
-					}
-				];
-				
-				$scope.hasSubmit = false;
-				$http.get('api/client/create_client_info')
-					.then(function(result) {
-                    console.log(result);
-					$scope.clientDetail=result.data;
-					console.log($scope.clientDetail);
-					MenuService.pushModulesStack(clientDetailModules);
-				}); 
-				$scope.Save=function(){
-					//$scope.hasSubmit=true;
-                   var fullClientInfo = angular.copy($scope.clientDetail);
+    app.directive('newClientTmpl',function() {
+        return {
+            restrict: 'E',
+            controller: function($scope,$http,$location, $anchorScroll,MenuService) {
+                var clientDetailModules=[
+                    {
+                        id:"new-client",
+                        name:"New Client",
+                        isSubModule:true,
+                        changeAlart:true,
+                        alartMsg:'All your non-saved information will lost.'
+                    }
+                ];
+
+                $scope.hasSubmit = false;
+                $http.get('api/client/create_client_info')
+                    .then(function(result) {
+                        console.log(result);
+                        $scope.clientDetail=result.data;
+                        console.log($scope.clientDetail);
+                        MenuService.pushModulesStack(clientDetailModules);
+                    });
+                $scope.Save=function(){
+                    //$scope.hasSubmit=true;
+                    var fullClientInfo = angular.copy($scope.clientDetail);
                     $http.post('api/client/saveFullClientInfo', {"fullClientInfo":fullClientInfo}).
                         success(function(data, status, headers, config) {
                             //console.log("[Update] - Client Info - SUCCESS");
@@ -1638,47 +1652,47 @@
                             //console.log("[ERROR] Save Client Info Error.");
                         });
 
-					$scope.$broadcast('setEditMode',false);
-					
-					MenuService.cancelAlert();
-					//clientDetailModules.changeAlart=false;
-					//$location.hash('top');
-					//$anchorScroll();
-				};
-				$scope.Reset=function(){
-					$http.post('api/client/getClientInfo/'+$scope.clientDetail.clientId)
-						.then(function(result) {
-						$scope.clientDetail=result.data					
-					});
-				};
-				$scope.Confirm=function(){
-					alert("Create new client successfully.");
-					//MenuService.changeComponents(0);
-					//$location.hash('top');
-					//$anchorScroll();
-				};
-			},
-			templateUrl:'directives/templates/newClientTmpl.html',
-			controllerAs: 'newClientModule'
-		};
-	});
-	
-	
+                    $scope.$broadcast('setEditMode',false);
+
+                    MenuService.cancelAlert();
+                    //clientDetailModules.changeAlart=false;
+                    //$location.hash('top');
+                    //$anchorScroll();
+                };
+                $scope.Reset=function(){
+                    $http.post('api/client/getClientInfo/'+$scope.clientDetail.clientId)
+                        .then(function(result) {
+                            $scope.clientDetail=result.data
+                        });
+                };
+                $scope.Confirm=function(){
+                    alert("Create new client successfully.");
+                    //MenuService.changeComponents(0);
+                    //$location.hash('top');
+                    //$anchorScroll();
+                };
+            },
+            templateUrl:'directives/templates/newClientTmpl.html',
+            controllerAs: 'newClientModule'
+        };
+    });
+
+
     app.directive('moduleNewClient',function() {
-		return {
-			restrict: 'E',
-			templateUrl:'directives/modules/createClient.html',
-			controller: function($scope,$http,$location, $anchorScroll,MenuService) {
-				$scope.hasSubmit = false;
-				$http.get('api/client/create_client_info')
-					.then(function(result) {
-                    console.log(result);
-					$scope.clientDetail=result.data;
-					console.log($scope.clientDetail);
-				}); 
-				$scope.Save=function(){
-					//$scope.hasSubmit=true;
-                   var fullClientInfo = angular.copy($scope.clientDetail);
+        return {
+            restrict: 'E',
+            templateUrl:'directives/modules/createClient.html',
+            controller: function($scope,$http,$location, $anchorScroll,MenuService) {
+                $scope.hasSubmit = false;
+                $http.get('api/client/create_client_info')
+                    .then(function(result) {
+                        console.log(result);
+                        $scope.clientDetail=result.data;
+                        console.log($scope.clientDetail);
+                    });
+                $scope.Save=function(){
+                    //$scope.hasSubmit=true;
+                    var fullClientInfo = angular.copy($scope.clientDetail);
                     $http.post('api/client/saveFullClientInfo', {"fullClientInfo":fullClientInfo}).
                         success(function(data, status, headers, config) {
                             //console.log("[Update] - Client Info - SUCCESS");
@@ -1691,68 +1705,68 @@
                             //console.log("[ERROR] Save Client Info Error.");
                         });
 
-					$scope.$broadcast('setEditMode',false);
-					//$location.hash('top');
-					//$anchorScroll();
-				};
-				$scope.Reset=function(){
-					$http.post('api/client/getClientInfo/'+$scope.clientDetail.clientId)
-						.then(function(result) {
-						$scope.clientDetail=result.data					
-					});
-				};
-				$scope.Confirm=function(){
-					alert("Create new client successfully.");
-					//MenuService.changeComponents(0);
-					//$location.hash('top');
-					//$anchorScroll();
-				};
-			},
-			templateUrl:'directives/modules/createClient.html',
-			controllerAs: 'newClientModule'
-		};
-	});
+                    $scope.$broadcast('setEditMode',false);
+                    //$location.hash('top');
+                    //$anchorScroll();
+                };
+                $scope.Reset=function(){
+                    $http.post('api/client/getClientInfo/'+$scope.clientDetail.clientId)
+                        .then(function(result) {
+                            $scope.clientDetail=result.data
+                        });
+                };
+                $scope.Confirm=function(){
+                    alert("Create new client successfully.");
+                    //MenuService.changeComponents(0);
+                    //$location.hash('top');
+                    //$anchorScroll();
+                };
+            },
+            templateUrl:'directives/modules/createClient.html',
+            controllerAs: 'newClientModule'
+        };
+    });
 
     app.directive('moduleStaffList',function() {
-		return {
-			restrict: 'E',
-			template: '<div>module Staff List</div>',
-			scope: {}
-		};
-	});
-	
-	app.directive('moduleInvoiceList',function() {
-		return {
-			restrict: 'E',
-			scope: {},
-			controller: function($scope) {
-				$scope.moduleInfo={
-					curSubModule:"invoice-list"
-					//clientDetail_clientId:null
-				};
-			},
-			templateUrl:'directives/modules/invoiceList.html',
-			controllerAs: 'invoiceListModule'
-		};
-	});
-	
-	app.directive('invoiceListTmpl',function(){
-		return {
-			restrict: 'E',
-			controller: function($scope,$http) {
-				var clientList = null;
+        return {
+            restrict: 'E',
+            template: '<div>module Staff List</div>',
+            scope: {}
+        };
+    });
+
+    app.directive('moduleInvoiceList',function() {
+        return {
+            restrict: 'E',
+            scope: {},
+            controller: function($scope) {
+                $scope.moduleInfo={
+                    curSubModule:"invoice-list"
+                    //clientDetail_clientId:null
+                };
+            },
+            templateUrl:'directives/modules/invoiceList.html',
+            controllerAs: 'invoiceListModule'
+        };
+    });
+
+    app.directive('invoiceListTmpl',function(){
+        return {
+            restrict: 'E',
+            controller: function($scope,$http) {
+                var clientList = null;
                 $http.get('/api/client/getClientList?timestamp='+ new Date())
-				.then(function(result) {
+                    .then(function(result) {
                         clientList = result.data.slice(0);
                         console.log(clientList);
                         $scope.clientListData = clientList;
-				});
-				this.viewClientDetail=function(clientId){
-					console.log(clientId);
-					console.log($scope.moduleInfo);
-					$scope.moduleInfo.curSubModule="client-detail";
-					$scope.moduleInfo.clientDetail_clientId = clientId;
-				};
+                    });
+                this.viewClientDetail=function(clientId){
+                    console.log(clientId);
+                    console.log($scope.moduleInfo);
+                    $scope.moduleInfo.curSubModule="client-detail";
+                    $scope.moduleInfo.clientDetail_clientId = clientId;
+                };
                 $scope.keyWord="";
                 $scope.filter=function(){
                     //console.log($scope.keyWord);
@@ -1761,23 +1775,23 @@
                     angular.forEach(clientList, function (value, key) {
                         var clientInfo = value;
                         var content = clientInfo.clientName +" "
-                                    +clientInfo.tel +" "
-                                    +clientInfo.address +" "
-                                    +clientInfo.district +" "
-                                    +clientInfo.jobDetail.frequency +" "
-                                    +clientInfo.price;
+                            +clientInfo.tel +" "
+                            +clientInfo.address +" "
+                            +clientInfo.district +" "
+                            +clientInfo.jobDetail.frequency +" "
+                            +clientInfo.price;
                         if(regex.test(content)){
                             newClientList.push(value);
                         }
                     });
                     $scope.clientListData = newClientList;
                 }
-			},
-			templateUrl:'directives/templates/invoiceListTmpl.html',
-			controllerAs: 'clientListTmpl'
-		};
-	});
-	
-	
-	
+            },
+            templateUrl:'directives/templates/invoiceListTmpl.html',
+            controllerAs: 'clientListTmpl'
+        };
+    });
+
+
+
 })();
