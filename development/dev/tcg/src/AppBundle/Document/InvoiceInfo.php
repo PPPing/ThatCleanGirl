@@ -6,16 +6,15 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
-class ServiceStatus{
+class InvoiceStatus{
     const Pending = 0;
-    const Completed =1;
-    const Cancelled = 2;
+    const Sent =1;
 }
 
 /**
- * @MongoDB\Document(repositoryClass="AppBundle\Repository\ServiceInfoRepository")
+ * @MongoDB\Document(repositoryClass="AppBundle\Repository\InvoiceInfoRepository")
  */
-class ServiceInfo extends BaseDocument
+class InvoiceInfo extends BaseDocument
 {
     /**
      * @MongoDB\Id
@@ -26,11 +25,6 @@ class ServiceInfo extends BaseDocument
      * @MongoDB\Int
      */
     protected $status;
-
-    /**
-     * @MongoDB\boolean
-     */
-    protected $isConfirmed;
 
     /**
      * @MongoDB\String
@@ -95,19 +89,6 @@ class ServiceInfo extends BaseDocument
     /**
      * @MongoDB\String
      */
-    protected $teamId;
-
-    /**
-     * @MongoDB\String
-     */
-    protected $notes;
-
-    /** @MongoDB\EmbedOne(targetDocument="JobDetail") */
-    protected $jobDetail;
-
-    /**
-     * @MongoDB\String
-     */
     protected $creatorId;
 
     /**
@@ -131,6 +112,7 @@ class ServiceInfo extends BaseDocument
     }
 
     function __construct() {
+        $this->status = InvoiceStatus::Pending;
         $this->clientId = null;
         $this->clientName = null;
         $this->tel=null;
@@ -145,9 +127,6 @@ class ServiceInfo extends BaseDocument
         $this->serviceDate = new \DateTime('Now');
         $this->serviceStartTime = "10:00";
 
-        $this->teamId=null;
-        $this->notes=null;
-        $this->jobDetail = new JobDetail();
         $this->creatorId = null;
         $this->createTime = new \DateTime("NOW");
         $this->modifyTime = new \DateTime("NOW");
@@ -173,10 +152,6 @@ class ServiceInfo extends BaseDocument
                         $value = false;
                     } else if ($value === "true") {
                         $value = true;
-                    } else if($key == 'jobDetail'){
-                        $jobDetail = new JobDetail();
-                        $jobDetail->loadFromArray($value);
-                        $value = $jobDetail;
                     }
                     $this->$method($value);
                 }
@@ -208,27 +183,6 @@ class ServiceInfo extends BaseDocument
         return $this->status;
     }
 
-    /**
-     * Set isConfirmed
-     *
-     * @param boolean $isConfirmed
-     * @return self
-     */
-    public function setIsConfirmed($isConfirmed)
-    {
-        $this->isConfirmed = $isConfirmed;
-        return $this;
-    }
-
-    /**
-     * Get isConfirmed
-     *
-     * @return boolean $isConfirmed
-     */
-    public function getIsConfirmed()
-    {
-        return $this->isConfirmed;
-    }
 
     /**
      * Set clientId
@@ -492,72 +446,6 @@ class ServiceInfo extends BaseDocument
     public function getServiceStartTime()
     {
         return $this->serviceStartTime;
-    }
-
-    /**
-     * Set teamId
-     *
-     * @param string $teamId
-     * @return self
-     */
-    public function setTeamId($teamId)
-    {
-        $this->teamId = $teamId;
-        return $this;
-    }
-
-    /**
-     * Get teamId
-     *
-     * @return string $teamId
-     */
-    public function getTeamId()
-    {
-        return $this->teamId;
-    }
-
-    /**
-     * Set notes
-     *
-     * @param string $notes
-     * @return self
-     */
-    public function setNotes($notes)
-    {
-        $this->notes = $notes;
-        return $this;
-    }
-
-    /**
-     * Get notes
-     *
-     * @return string $notes
-     */
-    public function getNotes()
-    {
-        return $this->notes;
-    }
-
-    /**
-     * Set jobDetail
-     *
-     * @param AppBundle\Document\JobDetail $jobDetail
-     * @return self
-     */
-    public function setJobDetail(\AppBundle\Document\JobDetail $jobDetail)
-    {
-        $this->jobDetail = $jobDetail;
-        return $this;
-    }
-
-    /**
-     * Get jobDetail
-     *
-     * @return AppBundle\Document\JobDetail $jobDetail
-     */
-    public function getJobDetail()
-    {
-        return $this->jobDetail;
     }
 
     /**

@@ -22,6 +22,8 @@ use AppBundle\Document\HolidayInfo;
 use AppBundle\Document\NotificationInfo;
 use AppBundle\Document\NotificationStatus;
 use AppBundle\Document\NotificationType;
+use AppBundle\Document\InvoiceInfo;
+use AppBundle\Document\InvoiceStatus;
 use \DateTime;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -30,6 +32,7 @@ class ServiceCommand extends ContainerAwareCommand
     protected $clientDao;
     protected $serviceDao;
 	protected $notificationDao;
+    protected $invoiceDao;
 	protected $dm;
     protected $logger;
 
@@ -53,15 +56,16 @@ class ServiceCommand extends ContainerAwareCommand
             $this->clientDao = $this->dm->getRepository('AppBundle:ClientInfo');
             $this->serviceDao = $this->dm->getRepository('AppBundle:ServiceInfo');
             $this->notificationDao = $this->dm->getRepository('AppBundle:NotificationInfo');
-			
+            $this->invoiceDao = $this->dm->getRepository('AppBundle:InvoiceInfo');
 			$this->logger = new Logger('ServiceCommand');
             $this->logger->pushHandler(new StreamHandler($this->getContainer()->getParameter('log_dir') . 'ServiceCommand.log'));
             $type = $input->getArgument('type');
             $text = 'Type - ' . $type . ' Started';
             if ($type === 'service') {
                 $output->writeln($text);
-                //$this->CreatePendingServices();
                 $this->CreateServices();
+                $this->CreateServices();
+                $this->UpdateServices();
                 $text = 'Type - ' . $type . ' Finish';
             } else if ($type === 'holiday') {
                 $output->writeln($text);
@@ -103,7 +107,7 @@ class ServiceCommand extends ContainerAwareCommand
                 $clientId = $client->getClientId();
                 $teamId = '';
 
-                $this->logger->addDebug($client->getClientId() . " : " . $client->getClientName());
+                $this->logger->addDebug('[Create] '.$client->getClientId() . " : " . $client->getClientName());
                 $lastService = $this->serviceDao->findLastService($clientId);
                 if ($lastService === null) {
                     $serviceDate = $client->getServiceDate();
@@ -153,6 +157,54 @@ class ServiceCommand extends ContainerAwareCommand
                     $service->setCreateTime(new DateTime('NOW'));
                     $this->serviceDao->save($service);
                 }
+            }
+        }
+    }
+
+    public function UpdateServices(){
+        $defaultTimeZone = date_default_timezone_get();
+        $pendingServiceList = $this->serviceDao->findPendingService();
+        foreach ($pendingServiceList as $serviceInfo) {
+            $serviceDate = $serviceInfo->getServiceDate();
+            $serviceDate->setTimezone(new \DateTimeZone($defaultTimeZone));
+            //$this->logger->addDebug('!!! '.$serviceInfo->getClientId() . " - " . $serviceInfo->getClientName() .$serviceDate->format('Y-m-d'));
+            $today = new DateTime('NOW');
+            if($serviceDate<$today){
+
+                if($serviceInfo->getIsConfirmed()==true){
+                    if($serviceInfo->getInvoiceNeeded()){
+                        $this->logger->addDebug('[Update] Confirmed '.$serviceInfo->getClientId() . " - " . $serviceInfo->getClientName() .$serviceDate->format('Y-m-d'));
+
+                        $invoiceInfo = new InvoiceInfo();
+                        $invoiceInfo->setStatus(ServiceStatus::Pending);
+                        $invoiceInfo->setIsConfirmed(false);
+                        $invoiceInfo->setClientId($serviceInfo->getClientId());
+                        $invoiceInfo->setClientName($serviceInfo->getClientName());
+                        $invoiceInfo->setTel($serviceInfo->getTel());
+                        $invoiceInfo->setEmail($serviceInfo->getEmail());
+                        $invoiceInfo->setAddress($serviceInfo->getAddress());
+                        $invoiceInfo->setSuburb($serviceInfo->getSuburb());
+                        $invoiceInfo->setPrice($serviceInfo->getPrice());
+                        $invoiceInfo->setPaymentType($serviceInfo->getPaymentType());
+                        $invoiceInfo->setInvoiceNeeded($serviceInfo->getInvoiceNeeded());
+                        $invoiceInfo->setInvoiceTitle($serviceInfo->getInvoiceTitle());
+                        $invoiceInfo->setServiceDate($serviceInfo->getServiceDate());
+                        $invoiceInfo->setServiceStartTime($serviceInfo->getServiceStartTime());
+
+                        $invoiceInfo->setCreatorId("auto");
+                        $invoiceInfo->setCreateTime(new DateTime('NOW'));
+
+                        $this->invoiceDao->save($invoiceInfo);
+                    }
+                    $serviceInfo->setStatus(ServiceStatus::Completed);
+                }else{
+                    $this->logger->addDebug('[Update] '.$serviceInfo->getClientId() . " - " . $serviceInfo->getClientName() .$serviceDate->format('Y-m-d'));
+                    $serviceInfo->setStatus(ServiceStatus::Cancelled);
+                }
+                $this->serviceDao->save($serviceInfo);
+
+            }else{
+                continue;
             }
         }
     }

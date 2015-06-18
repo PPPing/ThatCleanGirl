@@ -26,6 +26,15 @@ class ServiceInfoRepository extends DocumentRepository
         return $last;
     }
 
+    public function findPendingService(){
+
+        $query = $this->createQueryBuilder();
+        $serviceInfoList= $query->field("status")->addOr($query->expr()->field("status")->equals(ServiceStatus::Pending))
+            ->getQuery()
+            ->execute();
+
+        return $serviceInfoList;
+    }
 
 
 

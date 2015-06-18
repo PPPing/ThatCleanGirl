@@ -114,8 +114,8 @@ class NotificationInfoRepository extends DocumentRepository
 
     public function UpdateClientCleanNotification($client){
 
-        $log = new Logger('Notification');
-        $log->pushHandler(new StreamHandler( 'C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/' .'Notification.log', Logger::DEBUG));
+        //$log = new Logger('Notification');
+       // $log->pushHandler(new StreamHandler( 'C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/' .'Notification.log', Logger::DEBUG));
         $result = $this->createQueryBuilder()
             ->update()
             ->multiple(true)
@@ -136,7 +136,7 @@ class NotificationInfoRepository extends DocumentRepository
                     continue;
                 }
 				if(is_string($date)){
-					$log->debug('~~~~~ '.$method .':'.$date);
+					//$log->debug('~~~~~ '.$method .':'.$date);
 				}
                 
 				//$log->debug('- '.$method .':'.$date->format('Y-m-d'));
@@ -173,7 +173,7 @@ class NotificationInfoRepository extends DocumentRepository
         }
         $dm = $this->getDocumentManager();
         foreach($notificationList as $notify) {
-            $log->debug($notify->getDate()->format('Y-m-d'));
+            //$log->debug($notify->getDate()->format('Y-m-d'));
             $dm->persist($notify);
         }
         $dm->flush();

@@ -18,6 +18,31 @@ use \Swift_Image;
 class APIInvoiceController extends Controller
 {
     /**
+     * @Route("/api/invoice/getMonthInvoice/{dateStr}", name="_api_invoice_test")
+     */
+    public function findInvoice($dateStr)
+    {
+        $invoiceGroups = $this->get('doctrine_mongodb')
+            ->getManager()
+            ->getRepository('AppBundle:InvoiceInfo')
+            ->findByMonth($dateStr);
+        $list = array();
+
+        foreach($invoiceGroups as $item){
+           // $key = $item->getClientId();
+            //if(!isset($list[$key])){
+            //    $list[$key] = array();
+            //}
+            //$list[$key][] = $item;
+            $list[] = $item;
+        }
+        $response =  new Response(json_encode($list,JSON_PRETTY_PRINT));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
+
+    /**
      * @Route("/api/invoice/send", name="_api_invoice_send")
      */
     public function sendInvoice()

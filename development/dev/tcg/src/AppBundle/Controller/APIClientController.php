@@ -101,7 +101,7 @@ class APIClientController extends Controller
 		
 		$data=array('subject'=>'Client Info Confirmation','clientInfo'=>$clientInfo,'jobDetail'=>$jobDetail);
 		$pdfView = $this->renderView('AppBundle:email:clientInfo_pdf.html.twig',$data);
-		$pdfPath = 'C:\xampp\htdocs\GitHub\ThatCleanGirl\development\dev\tcg\web\PDF\\'.$clientId.'_'.$today->format('Y_m_d_his').'.pdf';
+		$pdfPath =$this->container->getParameter('pdf_dir').$clientId.'_'.$today->format('Y_m_d_his').'.pdf';
 		$this->container->get('knp_snappy.pdf')->generateFromHtml(
 				$pdfView,
 				$pdfPath,

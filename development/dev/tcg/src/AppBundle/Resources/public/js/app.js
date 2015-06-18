@@ -1754,41 +1754,47 @@
         return {
             restrict: 'E',
             controller: function($scope,$http) {
-                var clientList = null;
-                $http.get('/api/client/getClientList?timestamp='+ new Date())
+                var invoiceList = null;
+                $scope.invoiceListData = [];
+                $scope.dateStr = "2015-06-18";
+
+                $http.get('/api/invoice/getMonthInvoice/'+$scope.dateStr)
                     .then(function(result) {
-                        clientList = result.data.slice(0);
-                        console.log(clientList);
-                        $scope.clientListData = clientList;
+                        invoiceList = result.data;
+                        console.log(invoiceList);
+                        $scope.invoiceListData = invoiceList;
                     });
-                this.viewClientDetail=function(clientId){
-                    console.log(clientId);
-                    console.log($scope.moduleInfo);
-                    $scope.moduleInfo.curSubModule="client-detail";
-                    $scope.moduleInfo.clientDetail_clientId = clientId;
-                };
-                $scope.keyWord="";
-                $scope.filter=function(){
-                    //console.log($scope.keyWord);
-                    var regex = new RegExp( $scope.keyWord, 'i');
-                    var newClientList = [];
-                    angular.forEach(clientList, function (value, key) {
-                        var clientInfo = value;
-                        var content = clientInfo.clientName +" "
-                            +clientInfo.tel +" "
-                            +clientInfo.address +" "
-                            +clientInfo.district +" "
-                            +clientInfo.jobDetail.frequency +" "
-                            +clientInfo.price;
-                        if(regex.test(content)){
-                            newClientList.push(value);
+
+                $scope.selectedList=[];
+                $scope.toggleSelect=function($index){
+                    var info =  $scope.invoiceListData[$index];
+                    console.log(info);
+                    var isSelected = false;
+                    if($scope.selectedList.length>0){
+                        if($scope.selectedList[0].clientId != info.clientId){
+                            alert("Please select invoice info of same client.");
+                            return;
                         }
-                    });
-                    $scope.clientListData = newClientList;
-                }
+                        angular.forEach($scope.selectedList, function (value, key) {
+                            if(value.id == info.id){
+                                $scope.selectedList.splice(key,1);
+                                console.log("Remove ; " + value.id);
+                                console.log($scope.selectedList);
+                                isSelected = true;
+                            }
+
+                        });
+
+                    }
+                    if(isSelected == false){
+                        $scope.selectedList.push(info);
+                    }
+                    console.log($scope.selectedList);
+                };
+
             },
             templateUrl:'directives/templates/invoiceListTmpl.html',
-            controllerAs: 'clientListTmpl'
+            controllerAs: 'invoiceListTmpl'
         };
     });
 
