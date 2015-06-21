@@ -16,23 +16,33 @@
 				</div>
 			</div>
 		</div>
-		<table class="invoice-list-table table-hover">
+		<table class="invoice-list-table">
 			<thead>
 				<tr>
                     <th>Sent</th>
 					<th>Client Name</th>
+                    <th>Invoice Title</th>
+                    <th>Address</th>
+                    <th>Suburb</th>
 					<th>Service Date</th>
 					<th>Price</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="invoiceInfo in invoiceListData"  ng-click="toggleSelect($index)">
-                    <td>{{invoiceInfo.status?'Yes':'No'}}</td>
-                    <td>{{invoiceInfo.clientName}}</td>
-					<td>{{invoiceInfo.serviceDate| date:'EEEE, dd/MM/yyyy'}}</td>
-					<td>{{invoiceInfo.price| currency:'AUD$' }}</td>
+				<tr ng-repeat="invoiceInfo in invoiceListData"  ng-click="toggleSelect($index)" ng-class="{'selected':invoiceInfo.selected}">
+                    <td>{[{invoiceInfo.status?'Yes':'No'}]}</td>
+                    <td>{[{invoiceInfo.clientName}]}</td>
+                    <td>{[{invoiceInfo.invoiceTitle}]}</td>
+                    <td>{[{invoiceInfo.address}]}</td>
+                    <td>{[{invoiceInfo.suburb}]}</td>
+					<td>{[{invoiceInfo.serviceDate| date:'EEE, dd/MM/yyyy'}]}</td>
+					<td>{[{invoiceInfo.price| currency:'AUD$' }]}</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
+    <div class="row bottom-actions-section">
+        <span class="bottom-action-button" ng-click="GenerateInvoice()">Generate Invoice</span>
+        <span class="bottom-action-button" ng-click="openConfirmEmailPreviewer()">Reset</span>
+    </div>
 </div>

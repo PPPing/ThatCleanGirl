@@ -303,7 +303,8 @@ table {
 	float:left
 }
 .client-list-create{
-	float:right
+	float:left;
+    margin-left:12px;
 }
 .control-search{
 	position: relative;
@@ -346,6 +347,13 @@ table {
 	background-color:#cccccc;
 	color:#FAFAFA;
 	cursor:pointer;
+
+    -webkit-border-top-right-radius: 3px;
+    -webkit-border-bottom-right-radius: 3px;
+    -moz-border-radius-topright: 3px;
+    -moz-border-radius-bottomright: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
 }
 .client-list-table{
 	width:100%;
@@ -886,6 +894,10 @@ input.form-control.ng-invalid{
 	background-color:#ffad33;
 	color:#FAFAFA;
 }
+.invoice-list-table tr{
+    cursor: pointer;
+}
+
 .invoice-list-table>thead>tr>th{
 	padding:4px 6px;
 	font-weight: normal;
@@ -900,6 +912,11 @@ input.form-control.ng-invalid{
 .invoice-list-table>tbody>tr:nth-child(even){
 	background-color:#F0F0F0;
 }
+
+.invoice-list-table>tbody>tr.selected{
+    background-color: #B1F6FF;
+}
+
 .invoice-list-table>tbody>tr>td{
 	padding:4px 6px;
 	font-weight: normal;
@@ -909,6 +926,9 @@ input.form-control.ng-invalid{
 }
 .invoice-list-table>tbody>tr>td:last-child{
 	border-right: none;
+}
+.invoice-preview-list-table>tbody>tr>td,.invoice-preview-list-table>thead>tr>th{
+    border: none;
 }
 
 

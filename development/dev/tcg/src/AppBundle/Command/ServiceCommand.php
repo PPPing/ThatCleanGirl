@@ -63,8 +63,8 @@ class ServiceCommand extends ContainerAwareCommand
             $text = 'Type - ' . $type . ' Started';
             if ($type === 'service') {
                 $output->writeln($text);
-                $this->CreateServices();
-                $this->CreateServices();
+                //$this->CreateServices();
+               // $this->CreateServices();
                 $this->UpdateServices();
                 $text = 'Type - ' . $type . ' Finish';
             } else if ($type === 'holiday') {
@@ -167,7 +167,7 @@ class ServiceCommand extends ContainerAwareCommand
         foreach ($pendingServiceList as $serviceInfo) {
             $serviceDate = $serviceInfo->getServiceDate();
             $serviceDate->setTimezone(new \DateTimeZone($defaultTimeZone));
-            //$this->logger->addDebug('!!! '.$serviceInfo->getClientId() . " - " . $serviceInfo->getClientName() .$serviceDate->format('Y-m-d'));
+            $this->logger->addDebug('!!! '.$serviceInfo->getClientId() . " - " . $serviceInfo->getClientName() .$serviceDate->format('Y-m-d'));
             $today = new DateTime('NOW');
             if($serviceDate<$today){
 
@@ -176,8 +176,7 @@ class ServiceCommand extends ContainerAwareCommand
                         $this->logger->addDebug('[Update] Confirmed '.$serviceInfo->getClientId() . " - " . $serviceInfo->getClientName() .$serviceDate->format('Y-m-d'));
 
                         $invoiceInfo = new InvoiceInfo();
-                        $invoiceInfo->setStatus(ServiceStatus::Pending);
-                        $invoiceInfo->setIsConfirmed(false);
+                        $invoiceInfo->setStatus(InvoiceStatus::Pending);
                         $invoiceInfo->setClientId($serviceInfo->getClientId());
                         $invoiceInfo->setClientName($serviceInfo->getClientName());
                         $invoiceInfo->setTel($serviceInfo->getTel());

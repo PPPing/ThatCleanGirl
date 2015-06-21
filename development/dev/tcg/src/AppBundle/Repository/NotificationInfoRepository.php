@@ -146,14 +146,14 @@ class NotificationInfoRepository extends DocumentRepository
                 $date->setTimezone(new \DateTimeZone($defaultTimeZone));
                 $date_Ym = $date->format('Ym');
                 if ($today_Ym === $date_Ym){//$date > $today && $date <= $today->modify("+30 day")) {
-                    $log->debug('* '.$method .':'.$date->format('Y-m-d'));
+                    //$log->debug('* '.$method .':'.$date->format('Y-m-d'));
                     $dateKey = $date->format('md');
                     $itemKey = substr(substr($method, 3), 0, -4);
                     if (!empty($notificationList[$dateKey])) {
                         $notificationInfo = $notificationList[$dateKey];
                     } else {
                         $notificationInfo = new NotificationInfo();
-                        $notificationInfo->setTitle("Spring Clean Reminder");
+                        $notificationInfo->setTitle('Clean - '.$client->getClientName()."\n");
                         $notificationInfo->setClientId($client->getClientId());
                         $notificationInfo->setStatus(NotificationStatus::Unconfirmed);
                         $notificationInfo->setType(NotificationType::Clean);
@@ -166,14 +166,19 @@ class NotificationInfoRepository extends DocumentRepository
                     }
                     $items = $notificationInfo->getItems();
                     $items[] = $itemKey;
+                    $notificationInfo->setTitle($notificationInfo->getTitle().$itemKey.',');
                     $notificationInfo->setItems($items);
                     $notificationList[$dateKey] = $notificationInfo;
                 }
             }
         }
+
         $dm = $this->getDocumentManager();
         foreach($notificationList as $notify) {
             //$log->debug($notify->getDate()->format('Y-m-d'));
+            $title = $notify->getTitle();
+            $title = rtrim($title, ",");
+            $notify->setTitle($title);
             $dm->persist($notify);
         }
         $dm->flush();

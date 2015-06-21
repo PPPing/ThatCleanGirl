@@ -35,36 +35,39 @@ class APIClientController extends Controller
     }
 	
 	/**
-     * @Route("/api/client/viewClientInfo/{clientId}", name="_api_viewClientInfo")
+     * @Route("/api/client/previewClientInfo/{clientId}", name="_api_viewClientInfo")
      */
-    public function viewClientInfoAction($clientId)
+    public function previewClientInfoAction($clientId)
     {
-		$defaultTimeZone = date_default_timezone_get();
-		$clientInfo = $this->get('doctrine_mongodb')
+        $result = "start";
+        $defaultTimeZone = date_default_timezone_get();
+        $clientInfo = $this->get('doctrine_mongodb')
             ->getManager()
             ->getRepository('AppBundle:ClientInfo')
-            ->findOneBy(array("clientId"=>$clientId));
-		//$clientInfo->setAddress($clientInfo->getAddress().', '.$clientInfo->getSuburb());
-		$birthday = $clientInfo->getBirthday();
-		$birthday->setTimezone(new \DateTimeZone($defaultTimeZone));
-		$birthday = $birthday->format('Y-m-d');
-		$clientInfo->setBirthday($birthday);
-		
-		$serviceDate=$clientInfo->getServiceDate();
-		$serviceDate->setTimezone(new \DateTimeZone($defaultTimeZone));
-		$serviceDate = $serviceDate->format('Y-m-d');
-		$clientInfo->setServiceDate($serviceDate .' '.$clientInfo->getServiceTime());
-		
-		$jobDetail = $clientInfo->getJobDetail();
-		$jobDetail->setFrequency($this->container->getParameter('tcg_frequency_'.$jobDetail->getFrequency()));
-		$jobDetailKey =  $jobDetail->getKey();
-		$jobDetailKey->setNotes($this->container->getParameter('tcg_key_'.$jobDetailKey->getNotes()));
-		$jobDetailPet =  $jobDetail->getPet();
-		$jobDetailPet->setNotes($this->container->getParameter('tcg_pet_'.$jobDetailPet->getNotes()));
-		$clientInfo->setPaymentType($this->container->getParameter('tcg_pay_'.$clientInfo->getPaymentType()));
-		$headerImage = 'http://127.0.0.1:8000/images/invoice_header.PNG';
-		$data=array('subject'=>'Client Info Confirmation','clientInfo'=>$clientInfo,'jobDetail'=>$jobDetail,'headerImage'=>$headerImage);
-        return $this->render('AppBundle:email:clientInfo_test.html.twig',$data);
+            ->findOneBy(array("clientId" => $clientId));
+        //$clientInfo->setAddress($clientInfo->getAddress().', '.$clientInfo->getSuburb());
+        $birthday = $clientInfo->getBirthday();
+        $birthday->setTimezone(new \DateTimeZone($defaultTimeZone));
+        $birthday = $birthday->format('Y-m-d');
+        $clientInfo->setBirthday($birthday);
+        $today = new DateTime('Now');
+        $today->setTimezone(new \DateTimeZone($defaultTimeZone));
+        $serviceDate = $clientInfo->getServiceDate();
+        $serviceDate->setTimezone(new \DateTimeZone($defaultTimeZone));
+        $serviceDate = $serviceDate->format('Y-m-d');
+        $clientInfo->setServiceDate($serviceDate . ' ' . $clientInfo->getServiceTime());
+
+        $jobDetail = $clientInfo->getJobDetail();
+        $jobDetail->setFrequency($this->container->getParameter('tcg_frequency_' . $jobDetail->getFrequency()));
+        $jobDetailKey = $jobDetail->getKey();
+        $jobDetailKey->setNotes($this->container->getParameter('tcg_key_' . $jobDetailKey->getNotes()));
+        $jobDetailPet = $jobDetail->getPet();
+        $jobDetailPet->setNotes($this->container->getParameter('tcg_pet_' . $jobDetailPet->getNotes()));
+        $clientInfo->setPaymentType($this->container->getParameter('tcg_pay_' . $clientInfo->getPaymentType()));
+
+        $headerImage = $this->container->get('router')->getContext()->getBaseUrl().'/images/invoice_header.PNG';
+        $data = array('subject' => 'Client Info Confirmation', 'clientInfo' => $clientInfo, 'jobDetail' => $jobDetail, 'headerImage' => $headerImage);
+        return $this->render('AppBundle:email:clientInfo_preview.html.twig', $data);
     }
 	
 	/**
@@ -72,64 +75,68 @@ class APIClientController extends Controller
      */
     public function sendClientInfo($clientId)
     {
-		$defaultTimeZone = date_default_timezone_get();
-		$clientInfo = $this->get('doctrine_mongodb')
-            ->getManager()
-            ->getRepository('AppBundle:ClientInfo')
-            ->findOneBy(array("clientId"=>$clientId));
-		//$clientInfo->setAddress($clientInfo->getAddress().', '.$clientInfo->getSuburb());
-		$birthday = $clientInfo->getBirthday();
-		$birthday->setTimezone(new \DateTimeZone($defaultTimeZone));
-		$birthday = $birthday->format('Y-m-d');
-		$clientInfo->setBirthday($birthday);
-		$today=new DateTime('Now');
-		$today->setTimezone(new \DateTimeZone($defaultTimeZone));
-		$serviceDate=$clientInfo->getServiceDate();
-		$serviceDate->setTimezone(new \DateTimeZone($defaultTimeZone));
-		$serviceDate = $serviceDate->format('Y-m-d');
-		$clientInfo->setServiceDate($serviceDate .' '.$clientInfo->getServiceTime());
-		$jobDetail = $clientInfo->getJobDetail();
-		
-		$jobDetail = $clientInfo->getJobDetail();
-		$jobDetail->setFrequency($this->container->getParameter('tcg_frequency_'.$jobDetail->getFrequency()));
-		$jobDetailKey =  $jobDetail->getKey();
-		$jobDetailKey->setNotes($this->container->getParameter('tcg_key_'.$jobDetailKey->getNotes()));
-		$jobDetailPet =  $jobDetail->getPet();
-		$jobDetailPet->setNotes($this->container->getParameter('tcg_pet_'.$jobDetailPet->getNotes()));
-		$clientInfo->setPaymentType($this->container->getParameter('tcg_pay_'.$clientInfo->getPaymentType()));
-		
-		
-		$data=array('subject'=>'Client Info Confirmation','clientInfo'=>$clientInfo,'jobDetail'=>$jobDetail);
-		$pdfView = $this->renderView('AppBundle:email:clientInfo_pdf.html.twig',$data);
-		$pdfPath =$this->container->getParameter('pdf_dir').$clientId.'_'.$today->format('Y_m_d_his').'.pdf';
-		$this->container->get('knp_snappy.pdf')->generateFromHtml(
-				$pdfView,
-				$pdfPath,
-				array()
-				);
-		
-        $message = Swift_Message::newInstance()
-            ->setSubject('[Confirm] - That Clean Girls Service')
-            ->setFrom('thatcleangirl@gmail.com')
-            ->setTo('zhongyp.design@gmail.com');
-            //->setCc('zhongyp.design@gmail.com');
-		$message = $message ->attach(Swift_Attachment::fromPath($pdfPath,'application/pdf'));	
-        $headerImage = "";//$message->embed(Swift_Image::fromPath('C:\xampp\htdocs\github\ThatCleanGirl\development\dev\tcg\web\images\invoice_header.PNG')) ;
-        //$headerImage= $message->attach(Swift_Attachment::fromPath('C:\xampp\htdocs\github\ThatCleanGirl\development\dev\tcg\web\images\invoice_header.PNG')->setDisposition('inline'));
-		
-		$data=array('subject'=>'Client Info Confirmation','clientInfo'=>$clientInfo,'jobDetail'=>$jobDetail,'headerImage'=>$headerImage);
-		$emailView =  $this->renderView('AppBundle:email:clientInfo.html.twig',$data);
-		
-		$message = $message ->setBody($emailView,'text/html');
-		
-        $this->get('mailer')->send($message);
+        $result="start";
+        try{
+            $defaultTimeZone = date_default_timezone_get();
+            $clientInfo = $this->get('doctrine_mongodb')
+                ->getManager()
+                ->getRepository('AppBundle:ClientInfo')
+                ->findOneBy(array("clientId"=>$clientId));
+            //$clientInfo->setAddress($clientInfo->getAddress().', '.$clientInfo->getSuburb());
+            $birthday = $clientInfo->getBirthday();
+            $birthday->setTimezone(new \DateTimeZone($defaultTimeZone));
+            $birthday = $birthday->format('Y-m-d');
+            $clientInfo->setBirthday($birthday);
+            $today=new DateTime('Now');
+            $today->setTimezone(new \DateTimeZone($defaultTimeZone));
+            $serviceDate=$clientInfo->getServiceDate();
+            $serviceDate->setTimezone(new \DateTimeZone($defaultTimeZone));
+            $serviceDate = $serviceDate->format('Y-m-d');
+            $clientInfo->setServiceDate($serviceDate .' '.$clientInfo->getServiceTime());
 
-        $response =  new Response(json_encode("Send",JSON_PRETTY_PRINT));
+            $jobDetail = $clientInfo->getJobDetail();
+            $jobDetail->setFrequency($this->container->getParameter('tcg_frequency_'.$jobDetail->getFrequency()));
+            $jobDetailKey =  $jobDetail->getKey();
+            $jobDetailKey->setNotes($this->container->getParameter('tcg_key_'.$jobDetailKey->getNotes()));
+            $jobDetailPet =  $jobDetail->getPet();
+            $jobDetailPet->setNotes($this->container->getParameter('tcg_pet_'.$jobDetailPet->getNotes()));
+            $clientInfo->setPaymentType($this->container->getParameter('tcg_pay_'.$clientInfo->getPaymentType()));
+
+
+            $data=array('subject'=>'Client Info Confirmation','clientInfo'=>$clientInfo,'jobDetail'=>$jobDetail);
+            $pdfView = $this->renderView('AppBundle:email:clientInfo_pdf.html.twig',$data);
+            $pdfPath = $this->container->getParameter('pdf_dir').$clientId.'_'.$today->format('Y_m_d_his').'.pdf';
+            $pdf = $this->container->get('knp_snappy.pdf');
+            $result = $pdfPath;
+            $pdf->generateFromHtml($pdfView,$pdfPath,array(),true);
+            //$pdf->generate('http://www.google.com',$pdfPath);
+            $message = Swift_Message::newInstance()
+                ->setSubject('[Confirm] - That Clean Girls Service')
+                ->setFrom('thatcleangirl@gmail.com')
+                ->setTo($clientInfo->getEmail())
+                ->setCc('zhongyp.design@gmail.com');
+            $message = $message ->attach(Swift_Attachment::fromPath($pdfPath,'application/pdf'));
+            $headerImage = $message->embed(Swift_Image::fromPath($this->get('kernel')->getRootDir().'/../web/images/invoice_header.PNG')) ;
+            //$headerImage= $message->attach(Swift_Attachment::fromPath('C:\xampp\htdocs\github\ThatCleanGirl\development\dev\tcg\web\images\invoice_header.PNG')->setDisposition('inline'));
+
+            $data=array('subject'=>'Client Information Confirmed','clientInfo'=>$clientInfo,'jobDetail'=>$jobDetail,'headerImage'=>$headerImage);
+            $emailView =  $this->renderView('AppBundle:email:clientInfo.html.twig',$data);
+
+            $message = $message ->setBody($emailView,'text/html');
+
+            $this->get('mailer')->send($message);
+        }catch(Exception $e){
+            $result = $e->getMessage();
+        }
+
+        $response =  new Response(json_encode($result,JSON_PRETTY_PRINT));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
-	
-	
+
+
+
+
 
     /**
      * @Route("/api/client/getClientInfo/{clientId}", name="_api_getClientInfo")

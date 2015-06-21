@@ -46,15 +46,11 @@ class ServiceInfoRepository extends DocumentRepository
             if($filters['pending']=="true"){
                 $query->addOr($query->expr()->field("status")->equals(ServiceStatus::Pending));
             }
-            if($filters['processing']=="true"){
-                $query->addOr($query->expr()->field("status")->equals(ServiceStatus::Processing));
-            }
+
             if($filters['completed']=="true"){
                 $query->addOr($query->expr()->field("status")->equals(ServiceStatus::Completed));
             }
-            if($filters['reviewed']=="true"){
-                $query->addOr($query->expr()->field("status")->equals(ServiceStatus::Reviewed));
-            }
+
             $query->addOr($query->expr()->field("status")->equals(ServiceStatus::Cancelled));
             if($filters['cancelled']=="true"){
                 $query->addOr($query->expr()->field("status")->equals(ServiceStatus::Cancelled));
@@ -86,36 +82,7 @@ class ServiceInfoRepository extends DocumentRepository
         return $activeClients;
     }
 
-    public function findCompleteService($clientId,$limit = 5){
-        $query = $this->createQueryBuilder();
 
-        $last = $this->createQueryBuilder()
-            ->field("status")
-            ->addOr($query->expr()->field("status")->equals(ServiceStatus::Completed))
-            ->addOr($query->expr()->field("status")->equals(ServiceStatus::Reviewed))
-            ->field("clientId")->equals($clientId)
-            ->limit($limit)
-            ->sort(array("serviceDate"=>'DESC'))
-            ->getQuery()
-            ->execute();
-        return $last;
-    }
-
-    public function findLastCompleteService($clientId){
-
-        $query = $this->createQueryBuilder();
-
-        $last = $this->createQueryBuilder()
-            ->field("status")
-            ->addOr($query->expr()->field("status")->equals(ServiceStatus::Completed))
-            ->addOr($query->expr()->field("status")->equals(ServiceStatus::Reviewed))
-            ->field("clientId")->equals($clientId)
-            ->limit(1)
-            ->sort(array("serviceDate"=>'DESC'))
-            ->getQuery()
-            ->getSingleResult();
-        return $last;
-    }
 
     public function findAllService(){
         $all = $this->findAll();

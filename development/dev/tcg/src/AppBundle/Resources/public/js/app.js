@@ -364,7 +364,7 @@
                         templateUrl: 'directives/templates/notificationViewerTmpl.html',
                         controller: function($scope,$modalInstance,notifyInfo){
                             $scope.notifyInfo = notifyInfo;
-                            //console.log($scope.notifyInfo);
+                            console.log($scope.notifyInfo);
                             if($scope.notifyInfo.type=='clean'){
                                 console.log($scope.notifyInfo.items);
                                 $scope.cleanItems = {};
@@ -392,8 +392,6 @@
             controllerAs: 'notifyList'
         };
     });
-
-
 
     app.directive('serviceCalendar',function($compile) {
         return {
@@ -577,8 +575,8 @@
                     event.start.setMinutes(startTime[1]);
 
                     event.end = new Date(data.serviceDate);
-                    event.end.setHours(event.start.getHours() + 1);
-                    event.end.setMinutes(event.start.getMinutes());
+                    event.end.setHours(event.start.getHours());
+                    event.end.setMinutes(event.start.getMinutes()+30);
 
                     event.allDay=false;
                     event.serviceInfo = data;
@@ -616,8 +614,9 @@
                         },
                         //weekends:false,
                         //businessHours:true,
-                        minTime:"07:00:00",
+                        minTime:"07:30:00",
                         maxTime:"18:00:00",
+                        columnFormat:"ddd",
                         //slotDuration:'00:15:00',
                         eventClick: $scope.alertOnEventClick,
                         eventRender: $scope.eventRender
@@ -829,7 +828,7 @@
                             console.log($scope.notifyInfo);
                             $scope.OK = function(){
 
-                                $modalInstance.close($scope.serviceInfo);
+                                $modalInstance.close();
                             };
 
                         },
@@ -867,6 +866,11 @@
                             });
                             console.log($scope.cleanItems);
 
+                            $scope.OK = function(){
+
+                                $modalInstance.close();
+                            };
+
                             $scope.Edit = function(){
                                 $scope.editMode = true;
                             };
@@ -903,75 +907,6 @@
         };
     });
 
-    app.directive('serviceEditorTmpl',function(){
-        return {
-            restrict: 'E',
-            require: 'ngModel',
-            scope: {
-                serviceInfo:'=ngModel'
-            },
-            controller: function($scope,$http,$element,MenuService,ValidationService){
-                /* $scope.editMode=false;
-                 $scope.serviceInfo={};
-                 var clientDetailModules=[
-                 {
-                 id:"service-editor",
-                 name:"Service",
-                 isSubModule:true
-                 }
-                 ];
-
-                 c
-
-                 function saveService( info ,callback){
-                 $http.post('job/saveService', {"serviceInfo":$scope.serviceInfo}).
-                 success(function(data, status, headers, config) {
-                 if(data==="SUCCESS"){
-                 if (callback && typeof(callback) === "function") {
-                 // execute the callback, passing parameters as necessary
-                 callback();
-                 }
-                 }
-                 }).
-                 error(function(data, status, headers, config) {
-                 });
-                 }
-                 $scope.Confirm = function(){
-                 console.log($scope.serviceInfo);
-                 console.log($scope.serviceInfo.serviceDate);
-                 console.log($scope.serviceInfo.teamId);
-                 $scope.serviceInfo.isConfirmed=true;
-                 if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
-                 alert("Please input all required information.");
-                 }
-                 saveService($scope.serviceInfo,function(){
-                 MenuService.popModulesStack();
-                 //console.log("Confirmed");
-                 });
-                 };
-                 $scope.Edit=function(){
-                 console.log("edit");
-                 $scope.editMode = true;
-                 };
-                 $scope.Save = function(){
-                 console.log($scope.serviceInfo);
-                 console.log($scope.serviceInfo.serviceDate);
-                 console.log($scope.serviceInfo.teamId);
-                 if(!$scope.serviceInfo.serviceDate || !$scope.serviceInfo.teamId ){
-                 alert("Please input all required information.");
-                 }
-
-                 saveService($scope.serviceInfo,function(){
-                 //MenuService.popModulesStack();
-                 console.log("save");
-                 $scope.editMode = false;
-                 });
-                 };*/
-            },
-            templateUrl:'directives/templates/serviceEditorTmpl.html',
-            controllerAs: 'serviceEditor'
-        };
-    });
     app.directive('serviceUnconfirmedTmpl',function(){
         return {
             restrict: 'E',
@@ -1190,6 +1125,8 @@
                         controller: function($scope,$modalInstance,clientInfo){
                             $scope.editMode=true;
                             $scope.serviceInfo = {};
+                            $scope.serviceInfo.status = 0;
+                            $scope.serviceInfo.clientId =clientInfo.clientId;
                             $scope.serviceInfo.clientName =clientInfo.clientName;
                             $scope.serviceInfo.tel =clientInfo.tel;
                             $scope.serviceInfo.address =clientInfo.address;
@@ -1199,7 +1136,7 @@
                             $scope.serviceInfo.price =angular.copy(clientInfo.price);
                             $scope.serviceInfo.invoiceNeeded =angular.copy(clientInfo.invoiceNeeded);
                             $scope.serviceInfo.invoiceTitle =angular.copy(clientInfo.invoiceTitle);
-                            $scope.serviceInfo.serviceDate =new Date();;
+                            $scope.serviceInfo.serviceDate =new Date();
                             $scope.serviceInfo.teamId ='';
                             $scope.serviceInfo.serviceStartTime =angular.copy(clientInfo.serviceTime);
                             $scope.serviceInfo.notes='';
@@ -1240,20 +1177,48 @@
                     });
                 }
 
-                $scope.SendConfirmEmail=function(){
-                    if(confirm("Send confirm email to this client?")){
-                        $http.get('api/client/confirmClientInfo/'+$scope.clientDetail.clientId).
-                            success(function(data, status, headers, config) {
+                $scope.openConfirmEmailPreviewer = function () {
+                    console.log("openConfirmEmailPreviewer");
+                    //console.log($scope.clientDetail);
+                    var modalInstance = $modal.open({
+                        animation: true,
+                        templateUrl: 'directives/templates/confirmEmailPreviewTmpl.html',
+                        controller: function($scope,$modalInstance,clientId){
+                            ///console.log(clientId);
+                            $scope.clientId = clientId;
+                            $scope.previewUrl = "api/client/previewClientInfo/"+$scope.clientId;
+                            $scope.Cancel= function(){
+                                $modalInstance.close();
+                            };
 
-                                alert("[SUCCESS] Confirmed email is send.");
+                            $scope.SendConfirmEmail=function(){
+                                if(confirm("Send confirm email to this client?")){
+                                    console.log(clientId);
+                                    $http.get('api/client/confirmClientInfo/'+clientId).
+                                        success(function(data, status, headers, config) {
 
-                            }).
-                            error(function(data, status, headers, config) {
-                                alert("[ERROR] Confirm error.");
-                                console.log(data);
-                            });
-                    }
-                };
+                                            alert("[SUCCESS] Confirmed email is send.");
+
+                                        }).
+                                        error(function(data, status, headers, config) {
+                                            alert("[ERROR] Confirm error.");
+                                            console.log(data);
+                                        });
+                                }
+                            };
+                        },
+                        resolve: {
+                            clientId: function () {
+                                return $scope.clientDetail.clientId
+                            }
+                        }
+                    });
+                    modalInstance.result.then(function (serviceInfo) {
+
+                    }, function () {
+                    });
+                }
+
             },
             templateUrl:'directives/templates/clientDetailTmpl.html',
             controllerAs: 'clientDetailTmpl'
@@ -1753,7 +1718,7 @@
     app.directive('invoiceListTmpl',function(){
         return {
             restrict: 'E',
-            controller: function($scope,$http) {
+            controller: function($scope,$http,$modal) {
                 var invoiceList = null;
                 $scope.invoiceListData = [];
                 $scope.dateStr = "2015-06-18";
@@ -1767,7 +1732,9 @@
 
                 $scope.selectedList=[];
                 $scope.toggleSelect=function($index){
+                    $scope.invoiceListData[$index].selected = ($scope.invoiceListData[$index].selected? false:true);
                     var info =  $scope.invoiceListData[$index];
+
                     console.log(info);
                     var isSelected = false;
                     if($scope.selectedList.length>0){
@@ -1782,7 +1749,6 @@
                                 console.log($scope.selectedList);
                                 isSelected = true;
                             }
-
                         });
 
                     }
@@ -1791,6 +1757,92 @@
                     }
                     console.log($scope.selectedList);
                 };
+
+                $scope.GenerateInvoice = function () {
+                    console.log("openConfirmEmailPreviewer");
+                    if($scope.selectedList.length<=0) {
+                        alert("Please select a invoice at least.");
+                        return;
+                    }
+                    var modalInstance = $modal.open({
+                        animation: true,
+                        templateUrl: 'directives/templates/invoicePreviewTmpl.html',
+                        controller: function($scope,$modalInstance,items){
+                            console.log(items);
+                            var clientId = items[0].clientId;
+                            $scope.editMode=false;
+                            $scope.invoiceHistory = {};
+                            $scope.invoiceHistory.clientId = clientId;
+                            $scope.invoiceHistory.total = 0;
+                            $scope.invoiceHistory.gst = 0;
+                            $scope.invoiceHistory.items = [];
+                            angular.forEach(items,function (value, key) {
+                                var item = {};
+                                item.invoiceId = value.id;
+                                item.serviceDate = value.serviceDate;
+                                item.price = value.price;
+                                item.description = 'General office cleaning';
+                                $scope.invoiceHistory.items.push(item);
+                                $scope.invoiceHistory.total += value.price;
+                                $scope.invoiceHistory.gst += (value.price*0.1) ;
+                            });
+                            console.log( $scope.invoiceHistory);
+                            $http.get('api/client/getClientInfo/'+clientId)
+                                .then(function(result) {
+                                    console.log(result);
+                                    var clientInfo = result.data;
+                                    $scope.invoiceHistory.clientName = clientInfo.clientName;
+                                    $scope.invoiceHistory.tel = clientInfo.tel;
+                                    $scope.invoiceHistory.address = clientInfo.address;
+                                    $scope.invoiceHistory.email = clientInfo.email;
+                                    $scope.invoiceHistory.suburb = clientInfo.suburb;
+                                    $scope.invoiceHistory.invoiceTitle = clientInfo.invoiceTitle;
+                                    $scope.invoiceHistory.invoiceDate = new Date();
+                                    $scope.invoiceHistory.invoiceYM =201506;
+                                });
+
+                            console.log(items);
+                            $scope.Cancel = function(){
+                                $modalInstance.close();
+                            };
+                            $scope.Send = function(){
+                                console.log($scope.invoiceHistory);
+                                $http.post('api/invoice/sendInvoice', {"invoiceHistory":$scope.invoiceHistory}).
+                                    success(function(data, status, headers, config) {
+                                        console.log(data);
+                                        console.log(config);
+                                        console.log(headers);
+                                        if(data==="SUCCESS"){
+                                            alert("[SUCCESS] Invoice sent.");
+                                            if (callback && typeof(callback) === "function") {
+                                                // execute the callback, passing parameters as necessary
+                                                callback();
+                                            }
+                                        }
+                                    }).
+                                    error(function(data, status, headers, config) {
+                                        console.log(data);
+                                        console.log(config);
+                                        console.log(headers);
+                                        alert("[ERROR] Send Invoice Error.");
+                                    });
+                                //$modalInstance.close();
+                            };
+                        },
+                        resolve: {
+                            items: function () {
+                                return  $scope.selectedList;
+                            }
+                        }
+                    });
+                    modalInstance.result.then(function (serviceInfo) {
+
+                    }, function () {
+                    });
+                };
+
+
+
 
             },
             templateUrl:'directives/templates/invoiceListTmpl.html',

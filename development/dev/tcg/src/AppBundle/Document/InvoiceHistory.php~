@@ -1,0 +1,121 @@
+<?php
+/// src/Acme/StoreBundle/Document/ServiceInfo.php
+namespace AppBundle\Document;
+
+use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
+
+
+/**
+ * @MongoDB\Document(repositoryClass="AppBundle\Repository\InvoiceHistoryRepository")
+ */
+class InvoiceHistory extends BaseDocument
+{
+    /**
+     * @MongoDB\Id
+     */
+    protected $id;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $clientId;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $clientName;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $tel;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $email;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $address;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $suburb;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $invoiceTitle;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $invoiceDate;
+
+    /**
+     * @MongoDB\int
+     */
+    protected $invoiceYM;
+
+    /** @MongoDB\collection*/
+    protected $items =  array();
+
+    /**
+     * @MongoDB\Float
+     */
+    protected $total;
+
+    /**
+     * @MongoDB\Float
+     */
+    protected $GST;
+
+    /**
+     * @MongoDB\String
+     */
+    protected $creatorId;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $createTime;
+
+    /**
+     * @MongoDB\Date
+     */
+    protected $modifyTime;
+
+    /**
+     * Get id
+     *
+     * @return id $id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    function __construct() {
+        $this->status = InvoiceStatus::Pending;
+        $this->clientId = null;
+        $this->clientName = null;
+        $this->tel=null;
+        $this->email=null;
+        $this->address = null;
+        $this->suburb=null;
+
+        $this->invoiceTitle=null;
+        $this->invoiceDate = new \DateTime("NOW");
+
+        $this->creatorId = null;
+        $this->createTime = new \DateTime("NOW");
+        $this->modifyTime = new \DateTime("NOW");
+    }
+
+}
