@@ -85,13 +85,13 @@ class APIClientController extends Controller
             //$clientInfo->setAddress($clientInfo->getAddress().', '.$clientInfo->getSuburb());
             $birthday = $clientInfo->getBirthday();
             $birthday->setTimezone(new \DateTimeZone($defaultTimeZone));
-            $birthday = $birthday->format('Y-m-d');
+            $birthday = $birthday->format('d/m/Y');
             $clientInfo->setBirthday($birthday);
             $today=new DateTime('Now');
             $today->setTimezone(new \DateTimeZone($defaultTimeZone));
             $serviceDate=$clientInfo->getServiceDate();
             $serviceDate->setTimezone(new \DateTimeZone($defaultTimeZone));
-            $serviceDate = $serviceDate->format('Y-m-d');
+            $serviceDate = $serviceDate->format('d/m/Y');
             $clientInfo->setServiceDate($serviceDate .' '.$clientInfo->getServiceTime());
 
             $jobDetail = $clientInfo->getJobDetail();

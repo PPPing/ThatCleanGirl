@@ -47,6 +47,7 @@ class APIInvoiceController extends Controller
      */
     public function sendInvoice(Request $request)
     {
+        $defaultTimeZone = date_default_timezone_get();
         $invoiceHistoryArray = $request->request->get('invoiceHistory');
         $log = new Logger('sendInvoice');
         $log->pushHandler(new StreamHandler($this->container->getParameter('log_dir') .'Invoice.log', Logger::DEBUG));
@@ -130,11 +131,19 @@ class APIInvoiceController extends Controller
      */
     public function invoiceTest()
     {
+        $defaultTimeZone = date_default_timezone_get();
         $invoice = $this->get('doctrine_mongodb')
             ->getManager()
            ->getRepository('AppBundle:InvoiceHistory')
            ->findOneBy(array("clientName"=>"111"));
+        $invoiceDate = $invoice->getInvoiceDate();
+        $invoiceDate->setTimezone(new \DateTimeZone($defaultTimeZone));
+        $invoiceDate = $invoiceDate->format('d/m/Y');
+        $invoice->setInvoiceDate($invoiceDate);
         $headerImage = $this->container->get('router')->getContext()->getBaseUrl().'/images/invoice_header.PNG';
+
+
+
         $data = array('headerImage'=>$headerImage,'invoice'=>$invoice);
         //$response =  new Response(json_encode($invoice,JSON_PRETTY_PRINT));
         //$response->headers->set('Content-Type', 'application/json');
