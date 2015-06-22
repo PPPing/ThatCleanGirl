@@ -21,6 +21,15 @@ class InvoiceInfoRepository extends DocumentRepository
         $this->dm->persist($invoiceInfo);
         $this->dm->flush();
     }
+	
+	public function setStatus($id,$status){
+		$this->createQueryBuilder()
+            ->findAndUpdate()
+            ->field('id')->equals($id)    
+            ->field('status')->set($status)
+            ->getQuery()
+            ->execute();
+	}
 
     public function  findByMonth($date){
         $log = new Logger('Notification');

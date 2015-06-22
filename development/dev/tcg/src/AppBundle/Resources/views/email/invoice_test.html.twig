@@ -463,7 +463,7 @@
                             <table border="0" cellpadding="0" cellspacing="0" width="100%" id="templatePreheader">
                                 <tr>
                                     <td valign="top" class="preheaderContent" style="padding-top:10px; padding-right:20px; padding-bottom:10px; padding-left:20px;">
-                                        Use this area to offer a short teaser of your email's content. Text here will show in the preview area of some email clients.
+                                        [Invoice] #{{invoice.invoiceYM}}  - That Clean Girl Service
                                     </td>
                                     <!-- *|IFNOT:ARCHIVE_PAGE|* -->
                                     <td valign="top" width="180" class="preheaderContent" style="padding-top:10px; padding-right:20px; padding-bottom:10px; padding-left:0;">
@@ -497,7 +497,7 @@
                                         <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                             <tr>
                                                 <td valign="top" class="bodyRowContent">
-                                                    <p style="text-align: right;font-weight: bold;">  Invoice Date : {{invoice.invoiceDate}}</p>
+                                                    <p style="text-align: right;font-weight: bold;">  Invoice Date : {{invoice.invoiceDate | date('d/m/Y') }}</p>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -519,66 +519,48 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td valign="top" class="bodyRowContent" mc:edit="body_row_content">
+                                    <td valign="top" class="bodyRowContent">
                                         <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                             <tr>
-                                                <th valign="top" class="bodyRowContent" mc:edit="body_row_content">
+                                                <th valign="top" class="bodyRowContent">
                                                     Service Date
                                                 </th>
-                                                <th valign="top" class="bodyRowContent" mc:edit="body_row_content">
+                                                <th valign="top" class="bodyRowContent">
                                                     Service/Product Description
                                                 </th>
-                                                <th valign="top" class="bodyRowContent" mc:edit="body_row_content">
+                                                <th valign="top" class="bodyRowContent" >
                                                     Price
                                                 </th>
                                             </tr>
-                                            <tr>
-                                                <td align="center"valign="top" class="bodyRowContent" mc:edit="body_row_content">07/06/2013</td>
-                                                <td align="center" valign="top" class="bodyRowContent" mc:edit="body_row_content">General office cleaning</td>
-                                                <td align="center"valign="top" class="bodyRowContent" mc:edit="body_row_content">60.00</td>
-                                            </tr>
-                                            <tr>
-                                                <td align="center"valign="top" class="bodyRowContent" mc:edit="body_row_content">07/06/2013</td>
-                                                <td align="center"valign="top" class="bodyRowContent" mc:edit="body_row_content">General office cleaning</td>
-                                                <td align="center"valign="top" class="bodyRowContent" mc:edit="body_row_content">60.00</td>
-                                            </tr>
-                                            {#<tr>
-                                                <td align="center"valign="top" class="bodyRowContent" mc:edit="body_row_content"></td>
-                                                <td align="center"valign="top" class="bodyRowContent" mc:edit="body_row_content">Total</td>
-                                                <td align="center"valign="top" class="bodyRowContent" mc:edit="body_row_content">120.00</td>
-                                            </tr>
-                                            <tr>
-                                                <td align="center"valign="top" class="bodyRowContent" mc:edit="body_row_content"></td>
-                                                <td align="center"valign="top" class="bodyRowContent" mc:edit="body_row_content">GST</td>
-                                                <td align="center"valign="top" class="bodyRowContent" mc:edit="body_row_content">12.00</td>
-                                            </tr>
-                                            <tr>
-                                                <td align="center"valign="top" class="bodyRowContent" mc:edit="body_row_content"></td>
-                                                <td align="center"valign="top" class="bodyRowContent" mc:edit="body_row_content">Total inc GST</td>
-                                                <td align="center"valign="top" class="bodyRowContent" mc:edit="body_row_content">132.00</td>
-                                            </tr>#}
+											{% for item in invoice.items %}
+											<tr>
+                                                <td align="center"valign="top" class="bodyRowContent">{{(item.serviceDate)| date('d/m/Y')}}</td>
+                                                <td align="center" valign="top" class="bodyRowContent">{{item.description}}</td>
+                                                <td align="center"valign="top" class="bodyRowContent">AUD${{item.price | number_format(2, '.', ',')}}</td>
+                                            </tr>			
+											{% endfor %}
                                         </table>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td valign="top" class="bodyRowContent" mc:edit="body_row_content">
+                                    <td valign="top" class="bodyRowContent">
                                         <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                             <tr>
-                                                <td valign="top" class="bodyRowContent" mc:edit="body_row_content">
-                                                    <div style="float:right;width:50px;overflow: hidden; word-wrap: break-word;;display: inline-block;font-weight: bold;text-align: right;margin-right: 15px;">120.00</div>
-                                                    <div style="width:150px;display: inline-block;float:right;font-weight: bold;text-align: left"> Total </div>
+                                                <td valign="top" class="bodyRowContent">
+                                                    <div style="float:right;width:130px;overflow: hidden; word-wrap: break-word;;display: inline-block;font-weight: bold;text-align: right;margin-right: 15px;">AUD${{invoice.total | number_format(2, '.', ',')}}</div>
+                                                    <div style="width:150px;display: inline-block;float:right;font-weight: bold;text-align: right"> Total </div>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td valign="top" class="bodyRowContent" mc:edit="body_row_content">
-                                                    <div style="float:right;width:100px;overflow: hidden; word-wrap: break-word;;display: inline-block;font-weight: bold;text-align: right;margin-right: 15px;">12.00</div>
-                                                    <div style="width:150px;display: inline-block;float:right;font-weight: bold;text-align: left"> GST </div>
+                                                <td valign="top" class="bodyRowContent">
+                                                    <div style="float:right;width:130px;overflow: hidden; word-wrap: break-word;;display: inline-block;font-weight: bold;text-align: right;margin-right: 15px;">AUD${{invoice.gst | number_format(2, '.', ',')}}</div>
+                                                    <div style="width:150px;display: inline-block;float:right;font-weight: bold;text-align: right"> GST </div>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td valign="top" class="bodyRowContent" mc:edit="body_row_content">
-                                                    <div style="float:right;width:100px;overflow: hidden; word-wrap: break-word;display: inline-block;font-weight: bold;text-align: right;margin-right: 15px;">132.00</div>
-                                                    <div style="width:150px;display: inline-block;float:right;font-weight: bold;text-align: left"> Total inc GST </div>
+                                                <td valign="top" class="bodyRowContent">
+                                                    <div style="float:right;width:130px;overflow: hidden; word-wrap: break-word;display: inline-block;font-weight: bold;text-align: right;margin-right: 15px;">AUD${{ (invoice.gst + invoice.total) | number_format(2, '.', ',')}}</div>
+                                                    <div style="width:150px;display: inline-block;float:right;font-weight: bold;text-align: right"> Total inc GST </div>
                                                 </td>
                                             </tr>
                                         </table>

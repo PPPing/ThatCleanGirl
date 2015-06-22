@@ -63,8 +63,8 @@ class ServiceCommand extends ContainerAwareCommand
             $text = 'Type - ' . $type . ' Started';
             if ($type === 'service') {
                 $output->writeln($text);
-                //$this->CreateServices();
-               // $this->CreateServices();
+                $this->CreateServices();
+                $this->CreateServices();
                 $this->UpdateServices();
                 $text = 'Type - ' . $type . ' Finish';
             } else if ($type === 'holiday') {
@@ -108,7 +108,7 @@ class ServiceCommand extends ContainerAwareCommand
                 $teamId = '';
 
                 $this->logger->addDebug('[Create] '.$client->getClientId() . " : " . $client->getClientName());
-                $lastService = $this->serviceDao->findLastService($clientId);
+                $lastService = $this->serviceDao->findLastRegularService($clientId);
                 if ($lastService === null) {
                     $serviceDate = $client->getServiceDate();
                 } else {

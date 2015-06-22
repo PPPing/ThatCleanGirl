@@ -236,7 +236,22 @@
         //MenuService.initMenuService();
         return MenuService;
     });
-
+	
+	app.controller('TcgController',['$scope','$element','$window',function($scope,$element,$window){
+        console.log("init TcgController");
+		
+		$scope.$watch(
+            function( $scope ) {
+				console.log();
+                return angular.element($window).height();
+            },
+            function( newValue ) {
+				 console.log(newValue);
+				 $element.find(".content").css("height",(newValue-40)+'px');
+            }
+         );
+    }]);
+	
     app.controller('TestController',['$scope','$http',function($scope, $http){
         this.testWebAPI = function() {
             $http.get('/api/test')
@@ -1141,6 +1156,7 @@
                             $scope.serviceInfo.serviceStartTime =angular.copy(clientInfo.serviceTime);
                             $scope.serviceInfo.notes='';
                             $scope.serviceInfo.jobDetail = angular.copy(clientInfo.jobDetail);
+							$scope.serviceInfo.jobDetail.frequency = "whenNeed";
                             $scope.serviceInfo.isConfirmed=false;
                             console.log($scope.serviceInfo);
                             //$scope.serviceInfo.clientId = "1038-5986";
@@ -1718,19 +1734,64 @@
     app.directive('invoiceListTmpl',function(){
         return {
             restrict: 'E',
-            controller: function($scope,$http,$modal) {
+            controller: function($scope,$http,$modal,$filter) {
                 var invoiceList = null;
+				var invoiceHistoryList= null;
                 $scope.invoiceListData = [];
-                $scope.dateStr = "2015-06-18";
-
-                $http.get('/api/invoice/getMonthInvoice/'+$scope.dateStr)
+				$scope.invoiceHistoryListData = [];
+                //$scope.dateStr = "2015-06-18";
+				$scope.curDate = new Date();
+				$scope.invoicePM=parseInt($filter('date')($scope.curDate, 'yyyyMM'));
+				console.log($scope.invoicePM);
+				
+				$scope.dateOffset = 0;
+				
+				function updateDateOffset(){
+					$scope.invoiceListData = [];
+					$scope.invoiceHistoryListData = [];
+					console.log($scope.dateOffset);
+					var date = new Date();
+					date.setYear(date.getFullYear());
+					date.setMonth(date.getMonth()+$scope.dateOffset);
+					$scope.curDate =date;
+					$scope.invoicePM=parseInt($filter('date')($scope.curDate, 'yyyyMM'));
+					console.log($scope.invoicePM);
+					loadUnsendInvoiceByMonth();
+					loadInvoiceHistory();
+				}
+				
+				$scope.next = function(){
+					if($scope.dateOffset==0){
+						return;
+					}
+					$scope.dateOffset++;
+					updateDateOffset();
+				};
+				$scope.previous = function(){
+					$scope.dateOffset--;
+					updateDateOffset()
+				};
+				
+				function loadUnsendInvoiceByMonth(){
+					$http.get('/api/invoice/getMonthInvoice/'+$filter('date')($scope.curDate, 'yyyy-MM-dd'))
                     .then(function(result) {
                         invoiceList = result.data;
                         console.log(invoiceList);
                         $scope.invoiceListData = invoiceList;
                     });
-
-                $scope.selectedList=[];
+				}
+				function loadInvoiceHistory(){
+					$http.get('/api/invoice/getInvoiceHistory/'+$scope.invoicePM)
+                    .then(function(result) {
+                        invoiceHistoryList = result.data;
+                        console.log(invoiceHistoryList);
+                        $scope.invoiceHistoryListData = invoiceHistoryList;
+                    });
+				}
+				
+				updateDateOffset();
+                
+				$scope.selectedList=[];
                 $scope.toggleSelect=function($index){
                     $scope.invoiceListData[$index].selected = ($scope.invoiceListData[$index].selected? false:true);
                     var info =  $scope.invoiceListData[$index];
@@ -1757,7 +1818,13 @@
                     }
                     console.log($scope.selectedList);
                 };
-
+				$scope.Reset = function () {
+					angular.forEach($scope.selectedList, function (value, key) {
+                            value.selected = false;
+                        });
+					$scope.selectedList = [];
+					
+				};
                 $scope.GenerateInvoice = function () {
                     console.log("openConfirmEmailPreviewer");
                     if($scope.selectedList.length<=0) {
@@ -1767,8 +1834,9 @@
                     var modalInstance = $modal.open({
                         animation: true,
                         templateUrl: 'directives/templates/invoicePreviewTmpl.html',
-                        controller: function($scope,$modalInstance,items){
+                        controller: function($scope,$modalInstance,items,invoiceYM,invoiceHistoryList){
                             console.log(items);
+							$scope.hasSent = false;
                             var clientId = items[0].clientId;
                             $scope.editMode=false;
                             $scope.invoiceHistory = {};
@@ -1798,27 +1866,32 @@
                                     $scope.invoiceHistory.suburb = clientInfo.suburb;
                                     $scope.invoiceHistory.invoiceTitle = clientInfo.invoiceTitle;
                                     $scope.invoiceHistory.invoiceDate = new Date();
-                                    $scope.invoiceHistory.invoiceYM =201506;
+                                    $scope.invoiceHistory.invoiceYM =invoiceYM;
                                 });
 
                             console.log(items);
                             $scope.Cancel = function(){
                                 $modalInstance.close();
                             };
+							
                             $scope.Send = function(){
+								
+								if(!confirm("Send this invoice to client?")){
+									return;
+								}
                                 console.log($scope.invoiceHistory);
-                                $http.post('api/invoice/sendInvoice', {"invoiceHistory":$scope.invoiceHistory}).
+								var invoiceHistory = angular.copy($scope.invoiceHistory);
+                                $http.post('api/invoice/sendInvoice', {"invoiceHistory":invoiceHistory}).
                                     success(function(data, status, headers, config) {
                                         console.log(data);
                                         console.log(config);
                                         console.log(headers);
-                                        if(data==="SUCCESS"){
-                                            alert("[SUCCESS] Invoice sent.");
-                                            if (callback && typeof(callback) === "function") {
-                                                // execute the callback, passing parameters as necessary
-                                                callback();
-                                            }
-                                        }
+                                        alert("[SUCCESS] Invoice sent.");
+										angular.forEach(items,function (value, key) {
+												value.status = 1;
+										});
+                                        $modalInstance.close();
+										invoiceHistoryList.push(invoiceHistory);
                                     }).
                                     error(function(data, status, headers, config) {
                                         console.log(data);
@@ -1826,18 +1899,41 @@
                                         console.log(headers);
                                         alert("[ERROR] Send Invoice Error.");
                                     });
-                                //$modalInstance.close();
                             };
                         },
                         resolve: {
                             items: function () {
                                 return  $scope.selectedList;
-                            }
+                            },
+							invoiceYM:function(){
+								return $scope.invoicePM;
+							},
+							invoiceHistoryList:function(){
+								return $scope.invoiceHistoryListData;
+							}
+							
                         }
                     });
-                    modalInstance.result.then(function (serviceInfo) {
-
-                    }, function () {
+                };
+				
+				
+				$scope.openInvoiceHistoryViewer = function ($index) {
+                    var modalInstance = $modal.open({
+                        animation: true,
+                        templateUrl: 'directives/templates/invoicePreviewTmpl.html',
+                        controller: function($scope,$modalInstance,invoiceHistory){
+                            $scope.invoiceHistory = invoiceHistory;
+							console.log(invoiceHistory);
+                            $scope.OK = function(){
+                                $modalInstance.close();
+                            };
+							$scope.hasSent = true;
+                        },
+                        resolve: {
+                            invoiceHistory: function () {
+                                return  $scope.invoiceHistoryListData[$index];
+                            }
+                        }
                     });
                 };
 

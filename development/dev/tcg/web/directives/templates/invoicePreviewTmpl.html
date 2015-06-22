@@ -91,8 +91,11 @@
             </div>
         </div>
     </div>
-	<div class="row bottom-actions-section">
+	<div class="row bottom-actions-section" ng-if="!hasSent">
         <span class="bottom-action-button" ng-click="Send()">Send</span>
         <span class="bottom-action-button" ng-click="Cancel()">Cancel</span>
+    </div>
+	<div class="row bottom-actions-section" ng-if="hasSent">
+        <span class="bottom-action-button-large" ng-click="OK()">OK</span>
     </div>
 </div>

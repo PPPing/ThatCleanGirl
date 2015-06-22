@@ -13,17 +13,19 @@
 		<thead>
 			<tr>
 				<th>Service Date</th>
+				<th>Service Time</th>
 				<th>Price</th>
                 <th>Team</th>
-                <th>Feedback</th>
+                <th>Notes</th>
 			</tr>
 		<thead>
 		<tbody>
 			<tr ng-repeat="serviceInfo in serviceHistory">
 				<td>{{serviceInfo.serviceDate | date:'EEEE, dd/MM/yyyy' }}</td>
-				<td>{{serviceInfo.price | currency:"AUD$"}}</td>
+				<td>{{serviceInfo.serviceStartTime}}</td>
+				<td>{{serviceInfo.price | currency:'AUD$' }}</td>
                 <td>{{serviceInfo.teamId}}</td>
-				<td>{{serviceInfo.feedback}}</td>
+				<td>{{serviceInfo.notes}}</td>
 			</tr>
 		</tbody>
 	</table>

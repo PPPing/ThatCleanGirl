@@ -5,7 +5,7 @@ namespace AppBundle\Repository;
 use AppBundle\Document\ServiceInfo;
 use AppBundle\Document\ServiceStatus;
 use Doctrine\ODM\MongoDB\DocumentRepository;
-
+use AppBundle\Document\FrequencyType;
 /**
  * ServiceInfoRepository
  *
@@ -14,10 +14,11 @@ use Doctrine\ODM\MongoDB\DocumentRepository;
  */
 class ServiceInfoRepository extends DocumentRepository
 {
-    public function findLastService($clientId){
+    public function findLastRegularService($clientId){
 
         $last = $this->createQueryBuilder()
             ->field("clientId")->equals($clientId)
+			->field("jobDetail.frequency")->notEqual(FrequencyType::WhenNeed)
             ->limit(1)
             ->sort(array("serviceDate"=>'DESC'))
             ->getQuery()
@@ -35,7 +36,16 @@ class ServiceInfoRepository extends DocumentRepository
 
         return $serviceInfoList;
     }
+	
+	public function findCompleteService(){
 
+        $query = $this->createQueryBuilder();
+        $serviceInfoList= $query->field("status")->addOr($query->expr()->field("status")->equals(ServiceStatus::Completed))
+            ->getQuery()
+            ->execute();
+
+        return $serviceInfoList;
+    }
 
 
     public function findConfirmed($filters){

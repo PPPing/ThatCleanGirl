@@ -16,9 +16,6 @@ use Monolog\Handler\StreamHandler;
  */
 class InvoiceHistoryRepository extends DocumentRepository
 {
-        public function Test()
-        {
-
-        }
+    
 
 }

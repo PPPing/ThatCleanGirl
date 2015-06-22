@@ -9,7 +9,12 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
-
+html{
+  height: 100%;
+}
+body {
+  min-height: 100%;
+}
 body{
 	/* font-family: "jaf-bernino-sans",
 				"Lucida Grande",
@@ -294,7 +299,7 @@ table {
 .main{
 	margin-left:120px;
 	background-color:#F5F5F5;
-	min-height:415px;
+	min-height:100%;
 }
 .client-list{
 	padding:20px  15px;
@@ -468,6 +473,7 @@ table {
 	font-size:13px;
 	line-height:20px;
     overflow: hidden;
+	background-color:#fff;
 }
 .module-section-hidden{
     height:20px;
@@ -522,6 +528,7 @@ table {
 .form-divider{
 	border-bottom:1px solid #DADADA;
 	margin:15px 0;
+	
 }
 .form-control-label{
 	font-size:12px;
