@@ -25,4 +25,17 @@
 
         <div class="calendar" ng-model="eventSources" calendar="serviceCalendar1"  calendar-watch-event="calenderWatcher" ui-calendar="uiConfig.calendar"></div>
     </div>
+
+    <div class="service-notes-list">
+        <div class="module-section-header">
+		<span class="module-section-header-square">
+		</span>
+		<span class="module-section-header-title">
+			Services Notes
+		</span>
+        </div>
+        <ul>
+            <li ng-repeat="service in serviceEventList" ng-show="service.serviceInfo.notes!=''">{[{service.serviceInfo.clientName +' - ' + service.serviceInfo.notes}]}</li>
+        </ul>
+    </div>
 </div>

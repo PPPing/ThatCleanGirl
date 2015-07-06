@@ -592,6 +592,7 @@
                     serviceEndTime:'12:00',
                     notes:'adfasdfasdf',
                     teamId:'TeamA',
+
                     jobDetail:{
                         frequency: "weekly",
                         key:{
@@ -629,6 +630,10 @@
                     }
                     event.title += serviceInfo.clientName+'\n'+ serviceInfo.teamId;
                     event.textColor='#333';
+                    event.className =serviceInfo.notes? 'service-event-highlight':'';
+                    event.borderColor =serviceInfo.notes?"#EC971F":"";
+
+
                     return event;
                 }
 
@@ -662,8 +667,8 @@
                     event.start.setMinutes(startTime[1]);
 
                     event.end = new Date(data.serviceDate);
-                    event.end.setHours(event.start.getHours() + 1);
-                    event.end.setMinutes(event.start.getMinutes());
+                    event.end.setHours(event.start.getHours());
+                    event.end.setMinutes(event.start.getMinutes()+30);
                     event = updateEvent(event);
                     return event;
                 }
@@ -778,30 +783,34 @@
                 }
 
                 $scope.serviceList=null;
+                $scope.serviceEventList = [];
                 $scope.serviceEvents = function(start, end, timezone, callback) {
                     if($scope.serviceList===null){
                         $http.get('/api/service/all?timestamp='+ new Date())
                             .then(function(result) {
                                 //console.log(result.data);
                                 $scope.serviceList = result.data;
-                                var events = [];
+                                $scope.serviceEventList = [];
                                 angular.forEach(result.data, function (value, key) {
                                     //console.log($scope.filters[value.teamId]);
                                     if($scope.filters[value.teamId]===true || value.isConfirmed===false){
-                                        events.push(eventDataTransform(value));
+                                        $scope.serviceEventList.push(eventDataTransform(value));
+
                                     }
                                 });
-                                callback(events);
+                                console.log($scope.serviceEventList);
+                                callback( $scope.serviceEventList);
                             });
                     }else{
-                        var events = [];
+                        $scope.serviceEventList = [];
                         angular.forEach($scope.serviceList, function (value, key) {
                             //console.log($scope.filters[value.teamId]);
                             if($scope.filters[value.teamId]===true || value.isConfirmed===false){
-                                events.push(eventDataTransform(value));
+                                $scope.serviceEventList.push(eventDataTransform(value));
                             }
                         });
-                        callback(events);
+                        console.log($scope.serviceEventList);
+                        callback( $scope.serviceEventList);
                     }
                 };
                 $scope.serviceEventSources = {

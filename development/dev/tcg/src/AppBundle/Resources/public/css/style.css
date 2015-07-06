@@ -444,6 +444,17 @@ table {
 	border-right: none;
 }
 
+.service-event-highlight:after{
+    position: absolute;
+    left:0;
+    top: 0;
+    height:5px;
+    right:0;
+    background-color: #EC971F;
+    content: "";
+}
+
+
 /*
 **** module Section ******
 */
@@ -937,8 +948,20 @@ input.form-control.ng-invalid{
 .invoice-preview-list-table>tbody>tr>td,.invoice-preview-list-table>thead>tr>th{
     border: none;
 }
-
-
+.service-notes-list{
+    display: none;
+}
+@media print {
+   .header, .sider, notification-list{
+       display: none;
+   }
+    .main{
+        margin:0;
+    }
+    .service-notes-list{
+        display: block;
+    }
+}
 
 
 
