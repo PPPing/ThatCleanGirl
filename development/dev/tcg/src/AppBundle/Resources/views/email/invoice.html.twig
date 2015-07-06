@@ -547,20 +547,27 @@
                                         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;border-collapse: collapse !important;">
                                             <tr>
                                                 <td valign="top" class="bodyRowContent" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;color: #505050;font-family: Helvetica;font-size: 14px;line-height: 150%;padding-top: 0px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px;">
-                                                    <div style="float:right;width:130px;overflow: hidden; word-wrap: break-word;;display: inline-block;font-weight: bold;text-align: right;margin-right: 15px;">AUD${{invoice.total | number_format(2, '.', ',')}}</div>
-                                                    <div style="width:150px;display: inline-block;float:right;font-weight: bold;text-align: right"> Total </div>
+                                                   <div style="width:150px;display: inline-block;float:right;font-weight: bold;text-align: right"> Total </div>
+                                                </td>
+												 <td valign="top" class="bodyRowContent" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;color: #505050;font-family: Helvetica;font-size: 14px;line-height: 150%;padding-top: 0px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px;">
+                                                    <div style="float:right;width:130px;overflow: hidden; word-wrap: break-word;;display: inline-block;font-weight: bold;text-align: right;margin-right: 15px;">AUD${{invoice.total | number_format(2, '.', ',')}}</div> 
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td valign="top" class="bodyRowContent" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;color: #505050;font-family: Helvetica;font-size: 14px;line-height: 150%;padding-top: 0px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px;">
-                                                    <div style="float:right;width:130px;overflow: hidden; word-wrap: break-word;;display: inline-block;font-weight: bold;text-align: right;margin-right: 15px;">AUD${{invoice.gst | number_format(2, '.', ',')}}</div>
                                                     <div style="width:150px;display: inline-block;float:right;font-weight: bold;text-align: right"> GST </div>
                                                 </td>
+												 <td valign="top" class="bodyRowContent" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;color: #505050;font-family: Helvetica;font-size: 14px;line-height: 150%;padding-top: 0px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px;">
+                                                    <div style="float:right;width:130px;overflow: hidden; word-wrap: break-word;;display: inline-block;font-weight: bold;text-align: right;margin-right: 15px;">AUD${{invoice.gst | number_format(2, '.', ',')}}</div>
+                                                    
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td valign="top" class="bodyRowContent" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;color: #505050;font-family: Helvetica;font-size: 14px;line-height: 150%;padding-top: 0px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px;">
-                                                    <div style="float:right;width:130px;overflow: hidden; word-wrap: break-word;display: inline-block;font-weight: bold;text-align: right;margin-right: 15px;">AUD${{ (invoice.gst + invoice.total) | number_format(2, '.', ',')}}</div>
                                                     <div style="width:150px;display: inline-block;float:right;font-weight: bold;text-align: right"> Total inc GST </div>
+                                                </td>
+												<td valign="top" class="bodyRowContent" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;color: #505050;font-family: Helvetica;font-size: 14px;line-height: 150%;padding-top: 0px;padding-right: 10px;padding-bottom: 10px;padding-left: 10px;">
+                                                    <div style="float:right;width:130px;overflow: hidden; word-wrap: break-word;display: inline-block;font-weight: bold;text-align: right;margin-right: 15px;">AUD${{ (invoice.gst + invoice.total) | number_format(2, '.', ',')}}</div>
                                                 </td>
                                             </tr>
                                         </table>

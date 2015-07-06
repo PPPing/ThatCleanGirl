@@ -236,6 +236,57 @@
         //MenuService.initMenuService();
         return MenuService;
     });
+
+    app.factory('ConfirmService',function($http,$modal) {
+
+        var ConfirmService = {
+
+            ConfirmClientInfo:function(clientId){
+                console.log("openConfirmEmailPreviewer");
+                //console.log($scope.clientDetail);
+                var modalInstance = $modal.open({
+                    animation: true,
+                    templateUrl: 'directives/templates/confirmEmailPreviewTmpl.html',
+                    controller: function($scope,$modalInstance,clientId){
+                        ///console.log(clientId);
+                        $scope.clientId = clientId;
+                        $scope.previewUrl = "api/client/previewClientInfo/"+$scope.clientId;
+                        $scope.Cancel= function(){
+                            $modalInstance.close();
+                        };
+
+                        $scope.SendConfirmEmail=function(){
+                            if(confirm("Send confirm email to this client?")){
+                                console.log(clientId);
+                                $http.get('api/client/confirmClientInfo/'+clientId).
+                                    success(function(data, status, headers, config) {
+
+                                        alert("[SUCCESS] Confirmed email is send.");
+										$modalInstance.close();
+
+                                    }).
+                                    error(function(data, status, headers, config) {
+                                        alert("[ERROR] Confirm error.");
+                                        console.log(data);
+                                    });
+                            }
+                        };
+                    },
+                    resolve: {
+                        clientId: function () {
+                            return clientId
+                        }
+                    }
+                });
+                modalInstance.result.then(function (serviceInfo) {
+
+                }, function () {
+                });
+            }
+        }
+        return ConfirmService;
+    });
+
 	
 	app.controller('TcgController',['$scope','$element','$window',function($scope,$element,$window){
         console.log("init TcgController");
@@ -251,7 +302,7 @@
             }
          );
     }]);
-	
+
     app.controller('TestController',['$scope','$http',function($scope, $http){
         this.testWebAPI = function() {
             $http.get('/api/test')
@@ -1114,6 +1165,85 @@
                             });
                     }
                 );
+            },
+            templateUrl:'directives/templates/clientDetailTmpl.html',
+            controllerAs: 'clientDetailTmpl'
+        };
+    });
+
+    app.directive('clientInfoSectionTmpl',function(){
+        return{
+            restrict: 'E',
+            require: 'ngModel',
+            scope: {
+                clientDetail : '=ngModel',
+                saveSection:'=saveSection',
+                editMode:'=editMode'
+            },
+            controller: function($scope,$http,$element,MenuService,ValidationService,ConfirmService) {
+                //console.log($scope.editMode);
+                //console.log($scope.saveSection);
+                //$scope.editMode=true;
+                $scope.submit=function() {
+                    if(!ValidationService.check($element)){
+                        alert("Please input all required information.");
+                        return;
+                    }
+                    var clientInfo = angular.copy($scope.clientDetail);
+                    $http.post('api/client/updateClientInfo', {"clientInfo":clientInfo}).
+                        success(function(data, status, headers, config) {
+                            console.log("[Update] - Client Info - SUCCESS");
+                            alert("[SUCCESS] Client Info saved.");
+                            $scope.editMode=false;
+                            if(confirm("Send Confirm Email to Client?")){
+                                ConfirmService.ConfirmClientInfo(clientInfo.clientId);
+                            }
+                        }).
+                        error(function(data, status, headers, config) {
+                            alert("[ERROR] Save Client Info Error.");
+                        });
+                };
+
+                $scope.delete=function() {
+                    if (confirm("Are sure want to DELETE this client?")) {
+                        console.log('api/client/deleteClientInfo/' + $scope.clientDetail.clientId);
+                        $http.get('api/client/deleteClientInfo/' + $scope.clientDetail.clientId)
+                            .then(function (result) {
+                                console.log(result);
+                                MenuService.popModulesStack();
+                                //MenuService.changeComponents(0);
+                            });
+                    }
+                };
+                $scope.$on('setEditMode', function (event,editMode) {
+                    //console.log("clientInfoSectionTmpl on setEditMode : "+editMode); // 'Data to send'
+                    $scope.editMode = editMode;
+                    if($scope.editMode){
+                        //$scope.submit();
+                    }
+                });
+            },
+            templateUrl:'directives/templates/clientInfoSectionTmpl.html',
+            controllerAs: 'clientInfoSection'
+        };
+    });
+
+    app.directive('jobDetailSectionTmpl',function(){
+        return{
+            restrict: 'E',
+            require: 'ngModel',
+            scope: {
+                clientInfo : '=ngModel',
+                editMode:'=editMode',
+                saveSection:'=saveSection',
+                isActive:'=isActive',
+                clientId:'@clientId'
+            },
+            controller: function($scope,$http,$modal,ConfirmService) {
+                this.curItemIndex=0;
+
+                $scope.itemIndex = null;
+
                 var saveServiceInfo = function(serviceinfo ,callback){
                     $http.post('api/service/save', {"serviceInfo":serviceinfo}).
                         success(function(data, status, headers, config) {
@@ -1187,134 +1317,18 @@
                         },
                         resolve: {
                             clientInfo: function () {
-                                return $scope.clientDetail;
+                                return $scope.clientInfo;
                             }
                         }
                     });
                 }
 
-                $scope.openConfirmEmailPreviewer = function () {
-                    console.log("openConfirmEmailPreviewer");
-                    //console.log($scope.clientDetail);
-                    var modalInstance = $modal.open({
-                        animation: true,
-                        templateUrl: 'directives/templates/confirmEmailPreviewTmpl.html',
-                        controller: function($scope,$modalInstance,clientId){
-                            ///console.log(clientId);
-                            $scope.clientId = clientId;
-                            $scope.previewUrl = "api/client/previewClientInfo/"+$scope.clientId;
-                            $scope.Cancel= function(){
-                                $modalInstance.close();
-                            };
-
-                            $scope.SendConfirmEmail=function(){
-                                if(confirm("Send confirm email to this client?")){
-                                    console.log(clientId);
-                                    $http.get('api/client/confirmClientInfo/'+clientId).
-                                        success(function(data, status, headers, config) {
-
-                                            alert("[SUCCESS] Confirmed email is send.");
-
-                                        }).
-                                        error(function(data, status, headers, config) {
-                                            alert("[ERROR] Confirm error.");
-                                            console.log(data);
-                                        });
-                                }
-                            };
-                        },
-                        resolve: {
-                            clientId: function () {
-                                return $scope.clientDetail.clientId
-                            }
-                        }
-                    });
-                    modalInstance.result.then(function (serviceInfo) {
-
-                    }, function () {
-                    });
-                }
-
-            },
-            templateUrl:'directives/templates/clientDetailTmpl.html',
-            controllerAs: 'clientDetailTmpl'
-        };
-    });
-
-    app.directive('clientInfoSectionTmpl',function(){
-        return{
-            restrict: 'E',
-            require: 'ngModel',
-            scope: {
-                clientDetail : '=ngModel',
-                saveSection:'=saveSection',
-                editMode:'=editMode'
-            },
-            controller: function($scope,$http,$element,MenuService,ValidationService) {
-                //console.log($scope.editMode);
-                //console.log($scope.saveSection);
-                //$scope.editMode=true;
-                $scope.submit=function() {
-                    if(!ValidationService.check($element)){
-                        alert("Please input all required information.");
-                        return;
-                    }
-                    var clientInfo = angular.copy($scope.clientDetail);
-                    $http.post('api/client/updateClientInfo', {"clientInfo":clientInfo}).
-                        success(function(data, status, headers, config) {
-                            console.log("[Update] - Client Info - SUCCESS");
-                            alert("[SUCCESS] Client Info saved.");
-                            $scope.editMode=false;
-                        }).
-                        error(function(data, status, headers, config) {
-                            alert("[ERROR] Save Client Info Error.");
-                        });
-                };
-
-                $scope.delete=function() {
-                    if (confirm("Are sure want to DELETE this client?")) {
-                        console.log('api/client/deleteClientInfo/' + $scope.clientDetail.clientId);
-                        $http.get('api/client/deleteClientInfo/' + $scope.clientDetail.clientId)
-                            .then(function (result) {
-                                console.log(result);
-                                MenuService.popModulesStack();
-                                //MenuService.changeComponents(0);
-                            });
-                    }
-                };
-                $scope.$on('setEditMode', function (event,editMode) {
-                    //console.log("clientInfoSectionTmpl on setEditMode : "+editMode); // 'Data to send'
-                    $scope.editMode = editMode;
-                    if($scope.editMode){
-                        //$scope.submit();
-                    }
-                });
-            },
-            templateUrl:'directives/templates/clientInfoSectionTmpl.html',
-            controllerAs: 'clientInfoSection'
-        };
-    });
-
-    app.directive('jobDetailSectionTmpl',function(){
-        return{
-            restrict: 'E',
-            require: 'ngModel',
-            scope: {
-                jobDetail : '=ngModel',
-                editMode:'=editMode',
-                saveSection:'=saveSection',
-                clientId:'@clientId'
-            },
-            controller: function($scope,$http,$modal) {
-                this.curItemIndex=0;
-
-                $scope.itemIndex = null;
 
                 $scope.openEditor = function ($index) {
 
                     $scope.itemIndex = $index;
                     console.log("Editor Job : "+ $index);
-                    console.log($scope.jobDetail.items);
+                    console.log($scope.clientInfo.jobDetail.items);
                     if($index==null||$index==-1){
                         $scope.item = {
                             name:"",
@@ -1323,12 +1337,12 @@
                             id:null
                         };
                     }else{
-                        if(typeof $scope.jobDetail.items[$index] === 'undefined') {
+                        if(typeof $scope.clientInfo.jobDetail.items[$index] === 'undefined') {
                             alert("Job : "+$index+" is not existing.");
                             return;
                         }
                         else {
-                            $scope.item = $scope.jobDetail.items[$index];
+                            $scope.item = $scope.clientInfo.jobDetail.items[$index];
                             console.log($scope.item);
                         }
                     }
@@ -1363,7 +1377,7 @@
                     modalInstance.result.then(function (editedItem) {
                         console.log(editedItem);
                         if($scope.itemIndex==-1){
-                            $scope.jobDetail.items.push(editedItem);
+                            $scope.clientInfo.jobDetail.items.push(editedItem);
                         }
                     }, function () {
                         // console.log('Modal dismissed at: ' + new Date());
@@ -1372,7 +1386,7 @@
 
                 $scope.deleteItem=function($index){
                     this.curItemIndex=0;
-                    $scope.jobDetail.items.splice($index, 1);
+                    $scope.clientInfo.jobDetail.items.splice($index, 1);
                 };
                 $scope.submit=function(){
 
@@ -1381,13 +1395,16 @@
                         return;
                     }
                     // console.log("submit");
-                    var jobDetail = angular.copy($scope.jobDetail);
+                    var jobDetail = angular.copy($scope.clientInfo.jobDetail);
                     //console.log(jobDetail);
-                    $http.post('api/client/updateClientJobDetail', {"jobDetail":jobDetail,"clientId":$scope.clientId}).
+                    $http.post('api/client/updateClientJobDetail', {"jobDetail":jobDetail,"clientId":$scope.clientInfo.id}).
                         success(function(data, status, headers, config) {
                             console.log("[Update] - JobDetail - SUCCESS");
                             alert("[SUCCESS] Job Details saved.");
                             $scope.editMode=false;
+                            if(confirm("Send Confirm Email to Client?")){
+                                ConfirmService.ConfirmClientInfo($scope.clientInfo.clientId);
+                            }
                         }).
                         error(function(data, status, headers, config) {
                             alert("[ERROR] Save Job Details Error..");
@@ -1417,7 +1434,7 @@
                 editMode:'=editMode',
                 saveSection:'=saveSection'
             },
-            controller: function($scope,$http) {
+            controller: function($scope,$http,ConfirmService) {
                 $scope.submit=function(){
                     if($scope.clientDetail.invoiceNeeded ==true && $scope.clientDetail.invoiceTitle==""){
                         alert("Please input Company Titile..");
@@ -1432,6 +1449,9 @@
                             console.log("[Update] - Payment Info - SUCCESS");
                             alert("[SUCCESS] Payment Info saved.");
                             $scope.editMode=false;
+                            if(confirm("Send Confirm Email to Client?")){
+                                ConfirmService.ConfirmClientInfo(clientInfo.clientId);
+                            }
                         }).
                         error(function(data, status, headers, config) {
                             alert("[ERROR] Save Payment Info Error.");
@@ -1456,28 +1476,27 @@
             restrict: 'E',
             require: 'ngModel',
             scope: {
-                reminderInfo : '=ngModel',
+                clientInfo : '=ngModel',
                 editMode:'=editMode',
-                clientId:'@clientId',
                 saveSection:'=saveSection'
             },
-            controller: function($scope,$http) {
+            controller: function($scope,$http,ConfirmService) {
 
                 $scope.submit=function(){
                     $scope.editMode=false;
-                    if($scope.clientId===null) {
-                        alert("Invalid Client Id.");
-                        return;
-                    }
+
                     //console.log("submit");
                     //console.log($scope.reminderInfo);
-                    var reminderInfo = angular.copy($scope.reminderInfo);
+                    var reminderInfo = angular.copy($scope.clientInfo.reminderInfo);
                     //console.log(reminderInfo);
-                    $http.post('api/client/updateClientReminderInfo', {"reminderInfo":reminderInfo,"clientId":$scope.clientId}).
+                    $http.post('api/client/updateClientReminderInfo', {"reminderInfo":reminderInfo,"clientId":$scope.clientInfo.id}).
                         success(function(data, status, headers, config) {
                             console.log("[Update] - reminderInfo - SUCCESS");
                             alert("[SUCCESS] reminder Info saved.");
                             $scope.editMode=false;
+                            if(confirm("Send Confirm Email to Client?")){
+                                ConfirmService.ConfirmClientInfo($scope.clientInfo.clientId);
+                            }
                         }).
                         error(function(data, status, headers, config) {
                             alert("[ERROR] Save reminder Info Error.");
