@@ -3,3 +3,6 @@ jessica chai - website + database/
 techniques/
 Doc/
 MeetingSummary/
+development/dev/tcg/deployment_steps
+development/dev/tcg/app/check.php
+development/dev/tcg/app/SymfonyRequirements.php
