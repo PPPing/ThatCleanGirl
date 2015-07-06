@@ -1,4 +1,5 @@
 <div class="client-detail module-container">
+<div class="client-detail module-container">
     <div class="module-section">
         <div class="module-section-header">
 		    <span class="module-section-header-square">
@@ -104,8 +105,8 @@
                 <div class="col-xs-6 form-group">
                     <label for="serviceDate" class="col-xs-4 form-control-label">Service Date</label>
                     <div class="col-xs-8">
-                        <plugin-date-picker ng-if="editMode" placeholder="EEEE, dd/MM/yyyy" ng-model ="serviceInfo.serviceDate" required></plugin-date-picker>
-                        <div ng-if="!editMode" ng-bind="serviceInfo.serviceDate | date:'EEEE, dd/MM/yyyy' "></div>
+                        <plugin-date-picker ng-if="editMode" placeholder="EEEE, dd/MM/yyyy" ng-model ="serviceInfo.serviceDate" data-date-format="EEE,dd/MM/yyyy" required></plugin-date-picker>
+                        <div ng-if="!editMode" ng-bind="serviceInfo.serviceDate | date:'EEE, dd/MM/yyyy' "></div>
                     </div>
                 </div>
                 <div class="col-xs-6 form-group">
@@ -140,7 +141,7 @@
             </div>
         </div>
     </div>
-    <job-detail-section-tmpl ng-model="serviceInfo.jobDetail" data-client-id="{{serviceInfo.clientId}}" data-save-section=false data-edit-mode="editMode"></job-detail-section-tmpl>
+    <job-detail-section-tmpl ng-model="serviceInfo" data-client-id="{{serviceInfo.clientId}}" data-save-section=false data-edit-mode="editMode"></job-detail-section-tmpl>
     <service-history-section-tmpl ng-model="serviceInfo.clientId" data-readonly=false></service-history-section-tmpl>
 
     <div ng-if="!serviceInfo.isConfirmed" class="row bottom-actions-section">

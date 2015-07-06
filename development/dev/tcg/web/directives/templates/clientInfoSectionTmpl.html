@@ -81,8 +81,8 @@
 			<div class="col-xs-6 form-group">
 				<label for="startDate" class="col-xs-4 form-control-label">Start Date</label>
 				<div class="col-xs-8">
-                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.startDate" data-date-format="EEEE,dd/MM/yyyy"></plugin-date-picker>
-					<div ng-if="!editMode" ng-bind="clientDetail.startDate | date:'EEEE, dd/MM/yyyy' "></div>
+                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.startDate" data-date-format="EEE,dd/MM/yyyy"></plugin-date-picker>
+					<div ng-if="!editMode" ng-bind="clientDetail.startDate | date:'EEE, dd/MM/yyyy' "></div>
                 </div>
 			</div>
 			<div class="col-xs-6 form-group">
@@ -97,8 +97,8 @@
             <div class="col-xs-6 form-group">
                 <label for="serviceDate" class="col-xs-4 form-control-label">Service Date</label>
                 <div class="col-xs-8">
-                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.serviceDate" data-date-format="EEEE, dd/MM/yyyy"></plugin-date-picker>
-                    <div ng-if="!editMode" ng-bind="clientDetail.serviceDate | date:'EEEE, dd/MM/yyyy' "></div>
+                    <plugin-date-picker ng-if="editMode" placeholder="dd/MM/yyyy" ng-model ="clientDetail.serviceDate" data-date-format="EEE, dd/MM/yyyy"></plugin-date-picker>
+                    <div ng-if="!editMode" ng-bind="clientDetail.serviceDate | date:'EEE, dd/MM/yyyy' "></div>
                 </div>
             </div>
         </div>
