@@ -32,8 +32,8 @@ class InvoiceInfoRepository extends DocumentRepository
 	}
 
     public function  findByMonth($date){
-        $log = new Logger('Notification');
-        $log->pushHandler(new StreamHandler( 'C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/' .'Invoice.log', Logger::DEBUG));
+        //$log = new Logger('Notification');
+        //$log->pushHandler(new StreamHandler( 'C:/xampp/htdocs/github/ThatCleanGirl/development/dev/tcg/app/logs/' .'Invoice.log', Logger::DEBUG));
 
         $date = date_create_from_format('Y-m-d', $date);
         $defaultTimeZone = date_default_timezone_get();
@@ -59,7 +59,7 @@ class InvoiceInfoRepository extends DocumentRepository
                 ->getQuery()
                 ->execute();
 
-        $log->addDebug("Start : ".$startDate->format('Y-m-d')."   End : ".$endDate->format('Y-m-d'));
+        //$log->addDebug("Start : ".$startDate->format('Y-m-d')."   End : ".$endDate->format('Y-m-d'));
         return $result;
     }
 
