@@ -99,9 +99,9 @@ class APIServiceController extends Controller
         return $response;
     }
     /**
-     * @Route("/api/service/all", name="_api_service_all")
+     * @Route("/api/service/all/{start}/{end}", name="_api_service_all")
      */
-    public function serviceList()
+    public function serviceList($start,$end)
     {
         $log = new Logger('serviceHistory');
         $log->pushHandler(new StreamHandler($this->container->getParameter('log_dir') .'serviceHistory.log', Logger::DEBUG));
@@ -110,7 +110,7 @@ class APIServiceController extends Controller
             ->getManager()
             ->getRepository('AppBundle:ServiceInfo');
 
-        $services = $serviceDao->findAll();
+        $services = $serviceDao->findService($start,$end);
         $list = array();
         foreach($services as $item){
             $list[]=$item;

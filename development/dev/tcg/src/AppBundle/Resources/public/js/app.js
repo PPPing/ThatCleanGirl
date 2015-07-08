@@ -129,7 +129,7 @@
                     role:""};
                 $http.get('/api/user_profile')
                     .then(function(result) {
-                        console.log(result);
+                        //console.log(result);
                         profile = result.data;
                     });
                 return profile;
@@ -157,7 +157,7 @@
             var moduleStackNode = modulesStack[modulesStack.length-1];
             //console.log(moduleStackNode);
             var curModule = moduleStackNode.modules[moduleStackNode.curModuleIndex];
-            console.log(curModule);
+            //console.log(curModule);
 
             if(curModule.changeAlart===true){
                 if(!confirm(curModule.alartMsg)){
@@ -172,7 +172,7 @@
         }
         var MenuService = {
             initMenuService:function(data){
-                console.log("initMenuService");
+                //console.log("initMenuService");
                 components = data;
                 pushModulesStack(0,components[curComponentIndex].modules);
             },
@@ -242,13 +242,13 @@
         var ConfirmService = {
 
             ConfirmClientInfo:function(clientId){
-                console.log("openConfirmEmailPreviewer");
+                //console.log("openConfirmEmailPreviewer");
                 //console.log($scope.clientDetail);
                 var modalInstance = $modal.open({
                     animation: true,
                     templateUrl: 'directives/templates/confirmEmailPreviewTmpl.html',
                     controller: function($scope,$modalInstance,clientId){
-                        ///console.log(clientId);
+                        //console.log(clientId);
                         $scope.clientId = clientId;
                         $scope.previewUrl = "api/client/previewClientInfo/"+$scope.clientId;
                         $scope.Cancel= function(){
@@ -257,7 +257,7 @@
 
                         $scope.SendConfirmEmail=function(){
                             if(confirm("Send confirm email to this client?")){
-                                console.log(clientId);
+                                //console.log(clientId);
                                 $http.get('api/client/confirmClientInfo/'+clientId).
                                     success(function(data, status, headers, config) {
 
@@ -267,7 +267,7 @@
                                     }).
                                     error(function(data, status, headers, config) {
                                         alert("[ERROR] Confirm error.");
-                                        console.log(data);
+                                        //console.log(data);
                                     });
                             }
                         };
@@ -289,15 +289,15 @@
 
 	
 	app.controller('TcgController',['$scope','$element','$window',function($scope,$element,$window){
-        console.log("init TcgController");
+        //console.log("init TcgController");
 		
 		$scope.$watch(
             function( $scope ) {
-				console.log();
+				//console.log();
                 return angular.element($window).height();
             },
             function( newValue ) {
-				 console.log(newValue);
+				 //console.log(newValue);
 				 $element.find(".content").css("height",(newValue-40)+'px');
             }
          );
@@ -307,7 +307,7 @@
         this.testWebAPI = function() {
             $http.get('/api/test')
                 .then(function(result) {
-                    console.log(result);
+                    //console.log(result);
                     //$scope.clientListData = result.data;
                 });
         };
@@ -317,7 +317,7 @@
     app.controller('TopMenuController',['$scope','$http','MenuService',function($scope,$http,MenuService){
         $http.get('/api/menu_info')
             .then(function(result) {
-                console.log(result);
+                //console.log(result);
                 MenuService.initMenuService(result.data);
                 $scope.getComponents = MenuService.getComponents;
                 $scope.changeComponents = MenuService.changeComponents;
@@ -347,7 +347,7 @@
                     function( newValue ) {
 
                         if($scope.getActiveModule()&&$scope.getActiveModule().isSubModule==false){
-                            console.log(newValue);
+                            //console.log(newValue);
                             var el = $compile( "<module-"+newValue+"></module-"+newValue+">" )( $scope );
                             $element.html( el );
                         }
@@ -393,7 +393,7 @@
                 $scope.setHidden=function(value){
                     $scope.isHidden=value;
                     $cookies.tcg_display_notification_list_isHidden=$scope.isHidden;
-                    console.log($cookies.tcg_display_notification_list_isHidden);
+                    //console.log($cookies.tcg_display_notification_list_isHidden);
                 }
 
                 $scope.predicateB = 'clientName';
@@ -415,7 +415,7 @@
                     $scope.cleans=[];
                     $http.get('/api/service/getNotificationGroups')
                         .then(function(result) {
-                            console.log(result.data);
+                            //console.log(result.data);
                             $scope.notifyInfoList =result.data;
                             $scope.birthdays = $scope.notifyInfoList.birthday;
                             $scope.cleans = $scope.notifyInfoList.clean;
@@ -430,9 +430,9 @@
                         templateUrl: 'directives/templates/notificationViewerTmpl.html',
                         controller: function($scope,$modalInstance,notifyInfo){
                             $scope.notifyInfo = notifyInfo;
-                            console.log($scope.notifyInfo);
+                            //console.log($scope.notifyInfo);
                             if($scope.notifyInfo.type=='clean'){
-                                console.log($scope.notifyInfo.items);
+                                //console.log($scope.notifyInfo.items);
                                 $scope.cleanItems = {};
                                 angular.forEach($scope.notifyInfo.items, function (value, key) {
                                     $scope.cleanItems[value]=$scope.notifyInfo.date;
@@ -465,7 +465,7 @@
             scope: {
             },
             controller:function($scope,$compile,$http,$modal,uiCalendarConfig) {
-                console.log(uiCalendarConfig);
+                //console.log(uiCalendarConfig);
                 var date = new Date();
                 var d = date.getDate();
                 var m = date.getMonth();
@@ -540,7 +540,7 @@
                 };
                 $scope.renderCalender = function() {
                     if(uiCalendarConfig.calendars[calendarId]){
-                        console.log('renderCalender : ' + calendarId);
+                        //console.log('renderCalender : ' + calendarId);
                         uiCalendarConfig.calendars[calendarId].fullCalendar('render');
                     }
                 };
@@ -551,11 +551,11 @@
                 };
                 /* alert on eventClick */
                 $scope.alertOnEventClick = function( data, jsEvent, view){
-                    console.log(data.title + ' was clicked ');
-                    console.log(data);
-                    console.log(data.type);
+                    //console.log(data.title + ' was clicked ');
+                    //console.log(data);
+                    //console.log(data.type);
                     if(data.type=='service'){
-                        console.log('openEditor');
+                        //console.log('openEditor');
                         $scope.openEditor(data);
                     }else if(data.type=='clean'){
                         $scope.openCleanReminderEditor(data);
@@ -568,12 +568,12 @@
                 /* alert on Drop */
                 $scope.alertOnDrop = function(event, delta, revertFunc, jsEvent, ui, view){
                     // $scope.alertMessage = ('Event Droped to make dayDelta ' + delta);
-                    console.log('Event Droped to make dayDelta ' + delta);
+                    //console.log('Event Droped to make dayDelta ' + delta);
                 };
                 /* alert on Resize */
                 $scope.alertOnResize = function(event, delta, revertFunc, jsEvent, ui, view ){
                     // $scope.alertMessage = ('Event Resized to make dayDelta ' + delta);
-                    console.log('Event Resized to make dayDelta ' + delta);
+                    //console.log('Event Resized to make dayDelta ' + delta);
                 };
 
                 var serviceInfoTest = {
@@ -699,7 +699,7 @@
                         if($scope.publicHolidays===null){
                             $http.get('/api/service/getHolidays')
                                 .then(function(result) {
-                                    console.log(result.data);
+                                    //console.log(result.data);
                                     $scope.publicHolidays = result.data;
                                     var events = [];
                                     angular.forEach(result.data, function (value, key) {
@@ -741,7 +741,7 @@
                             if($scope.notifications===null){
                                 $http.get('/api/service/getNotifications')
                                     .then(function(result) {
-                                        console.log(result.data);
+                                        //console.log(result.data);
                                         $scope.notifications = result.data;
                                         var events = [];
                                         angular.forEach(result.data, function (value, key) {
@@ -785,8 +785,11 @@
                 $scope.serviceList=null;
                 $scope.serviceEventList = [];
                 $scope.serviceEvents = function(start, end, timezone, callback) {
-                    if($scope.serviceList===null){
-                        $http.get('/api/service/all?timestamp='+ new Date())
+                    //console.log(start._d.getTime());
+					//console.log(end._d.getTime());
+					//console.log(timezone);
+					if(true){//$scope.serviceList===null){
+                        $http.get('/api/service/all/'+ start._d.getTime()+'/'+end._d.getTime())
                             .then(function(result) {
                                 //console.log(result.data);
                                 $scope.serviceList = result.data;
@@ -798,7 +801,7 @@
 
                                     }
                                 });
-                                console.log($scope.serviceEventList);
+                                //console.log($scope.serviceEventList);
                                 callback( $scope.serviceEventList);
                             });
                     }else{
@@ -809,7 +812,7 @@
                                 $scope.serviceEventList.push(eventDataTransform(value));
                             }
                         });
-                        console.log($scope.serviceEventList);
+                        //console.log($scope.serviceEventList);
                         callback( $scope.serviceEventList);
                     }
                 };
@@ -834,21 +837,21 @@
                             }
                         }).
                         error(function(data, status, headers, config) {
-                            console.log(data);
-                            console.log(config);
-                            console.log(headers);
+                            //console.log(data);
+                            //console.log(config);
+                            //console.log(headers);
                             alert("[ERROR] Service Info Error.");
                         });
                 };
                 $scope.openEditor = function (event) {
                     $scope.curEvent = event;
-                    console.log($scope.curEvent);
+                    //console.log($scope.curEvent);
                     var modalInstance = $modal.open({
                         animation: true,
                         templateUrl: 'directives/templates/serviceEditorTmpl.html',
                         controller: function($scope,$modalInstance,serviceInfo){
                             $scope.serviceInfo = serviceInfo;
-                            console.log($scope.serviceInfo);
+                            //console.log($scope.serviceInfo);
                             //$scope.serviceInfo.clientId = "1038-5986";
                             $scope.editMode=!$scope.serviceInfo.isConfirmed;
 
@@ -886,7 +889,7 @@
                     modalInstance.result.then(function (serviceInfo) {
                         //console.log(serviceInfo);
                         $scope.curEvent = eventDataUpdate($scope.curEvent,serviceInfo);
-                        console.log( $scope.curEvent);
+                        //console.log( $scope.curEvent);
                         uiCalendarConfig.calendars[calendarId].fullCalendar('updateEvent',$scope.curEvent);
                     }, function () {
                         //console.log('Modal dismissed at: ' + new Date());
@@ -894,13 +897,13 @@
                 };
                 $scope.openBirthdayInfoViewer = function (event) {
                     $scope.curEvent = event;
-                    console.log($scope.curEvent);
+                    //console.log($scope.curEvent);
                     var modalInstance = $modal.open({
                         animation: true,
                         templateUrl: 'directives/templates/birthdayInfoViewerTmpl.html',
                         controller: function($scope,$modalInstance,notifyInfo){
                             $scope.notifyInfo = notifyInfo;
-                            console.log($scope.notifyInfo);
+                            //console.log($scope.notifyInfo);
                             $scope.OK = function(){
 
                                 $modalInstance.close();
@@ -925,21 +928,21 @@
                 }
                 $scope.openCleanReminderEditor = function (event) {
                     $scope.curEvent = event;
-                    console.log($scope.curEvent);
+                    //console.log($scope.curEvent);
                     var modalInstance = $modal.open({
                         animation: true,
                         templateUrl: 'directives/templates/cleanReminderEditorTmpl.html',
                         controller: function($scope,$modalInstance,notifyInfo){
                             $scope.notifyInfo = notifyInfo;
-                            console.log($scope.notifyInfo);
+                            //console.log($scope.notifyInfo);
                             var clientId = $scope.notifyInfo.clientId
-                            console.log(clientId);
+                            //console.log(clientId);
                             $scope.cleanItems = {};
                             angular.forEach($scope.notifyInfo.items, function (value, key) {
                                 //console.log($scope.filters[value.teamId]);
                                 $scope.cleanItems[value]=$scope.notifyInfo.date;
                             });
-                            console.log($scope.cleanItems);
+                            //console.log($scope.cleanItems);
 
                             $scope.OK = function(){
 
@@ -988,16 +991,16 @@
             controller: function($scope,$http) {
                 $http.get('/job/serviceUnconfirmed?timestamp='+ new Date())
                     .then(function(result) {
-                        console.log(result.data);
+                        //console.log(result.data);
                         $scope.unconfirmedServices = result.data;
                     });
                 $scope.ConfirmService=function(index){
-                    console.log(index);
+                    //console.log(index);
 
                     $scope.moduleInfo.curSubModule="service-editor";
                     $scope.moduleInfo.serviceInfo = $scope.unconfirmedServices[index];
 
-                    console.log($scope.moduleInfo.serviceInfo);
+                    //console.log($scope.moduleInfo.serviceInfo);
                 };
             },
             templateUrl:'directives/templates/serviceUnconfirmedTmpl.html',
@@ -1036,7 +1039,7 @@
                         return $scope.filtersMask;
                     },
                     function( newValue ) {
-                        console.log(newValue);
+                        //console.log(newValue);
                         loadServiceList();
                     }
                 );
@@ -1056,9 +1059,9 @@
                 function loadServiceList(){
                     $http.post('/job/serviceConfirmed', {"filters":$scope.filters}).
                         success(function(data, status, headers, config) {
-                            console.log("[Update] - JobDetail - SUCCESS");
-                            console.log(config);
-                            console.log(data);
+                            //console.log("[Update] - JobDetail - SUCCESS");
+                            //console.log(config);
+                            //console.log(data);
                             $scope.serviceInfoList = data;
 
                         }).
@@ -1067,7 +1070,7 @@
                         });
                 }
                 $scope.EditService = function(index){
-                    console.log(index);
+                    //console.log(index);
                     $scope.moduleInfo.curSubModule="service-editor";
                     $scope.moduleInfo.serviceInfo = $scope.serviceInfoList[index];
                 };
@@ -1100,12 +1103,12 @@
                 $http.get('/api/client/getClientList?timestamp='+ new Date())
                     .then(function(result) {
                         clientList = result.data.slice(0);
-                        console.log(clientList);
+                        //console.log(clientList);
                         $scope.clientListData = clientList;
                     });
                 this.viewClientDetail=function(clientId){
-                    console.log(clientId);
-                    console.log($scope.moduleInfo);
+                    //console.log(clientId);
+                    //console.log($scope.moduleInfo);
                     $scope.moduleInfo.curSubModule="client-detail";
                     $scope.moduleInfo.clientDetail_clientId = clientId;
                 };
@@ -1163,10 +1166,10 @@
                     },
                     function( newValue ) {
                         //newValue = "111";
-                        console.log(newValue);
+                        //console.log(newValue);
                         $http.get('api/client/getClientInfo/'+newValue)
                             .then(function(result) {
-                                console.log(result);
+                                //console.log(result);
                                 $scope.clientDetail = result.data;
                                 $scope.UserService = UserService;
 
@@ -1201,7 +1204,7 @@
                     var clientInfo = angular.copy($scope.clientDetail);
                     $http.post('api/client/updateClientInfo', {"clientInfo":clientInfo}).
                         success(function(data, status, headers, config) {
-                            console.log("[Update] - Client Info - SUCCESS");
+                            //console.log("[Update] - Client Info - SUCCESS");
                             alert("[SUCCESS] Client Info saved.");
                             $scope.editMode=false;
                             if(confirm("Send Confirm Email to Client?")){
@@ -1215,10 +1218,10 @@
 
                 $scope.delete=function() {
                     if (confirm("Are sure want to DELETE this client?")) {
-                        console.log('api/client/deleteClientInfo/' + $scope.clientDetail.clientId);
+                        //console.log('api/client/deleteClientInfo/' + $scope.clientDetail.clientId);
                         $http.get('api/client/deleteClientInfo/' + $scope.clientDetail.clientId)
                             .then(function (result) {
-                                console.log(result);
+                                //console.log(result);
                                 MenuService.popModulesStack();
                                 //MenuService.changeComponents(0);
                             });
@@ -1265,9 +1268,9 @@
                             }
                         }).
                         error(function(data, status, headers, config) {
-                            console.log(data);
-                            console.log(config);
-                            console.log(headers);
+                            //console.log(data);
+                            //console.log(config);
+                            //console.log(headers);
                             alert("[ERROR] Service Info Error.");
                         });
                 };
@@ -1297,7 +1300,7 @@
                             $scope.serviceInfo.jobDetail = angular.copy(clientInfo.jobDetail);
 							$scope.serviceInfo.jobDetail.frequency = "whenNeed";
                             $scope.serviceInfo.isConfirmed=false;
-                            console.log($scope.serviceInfo);
+                            //console.log($scope.serviceInfo);
                             //$scope.serviceInfo.clientId = "1038-5986";
                             $scope.editMode=!$scope.serviceInfo.isConfirmed;
 
@@ -1336,8 +1339,8 @@
                 $scope.openEditor = function ($index) {
 
                     $scope.itemIndex = $index;
-                    console.log("Editor Job : "+ $index);
-                    console.log($scope.clientInfo.jobDetail.items);
+                    //console.log("Editor Job : "+ $index);
+                    //console.log($scope.clientInfo.jobDetail.items);
                     if($index==null||$index==-1){
                         $scope.item = {
                             name:"",
@@ -1352,7 +1355,7 @@
                         }
                         else {
                             $scope.item = $scope.clientInfo.jobDetail.items[$index];
-                            console.log($scope.item);
+                            //console.log($scope.item);
                         }
                     }
 
@@ -1384,7 +1387,7 @@
                     });
 
                     modalInstance.result.then(function (editedItem) {
-                        console.log(editedItem);
+                        //console.log(editedItem);
                         if($scope.itemIndex==-1){
                             $scope.clientInfo.jobDetail.items.push(editedItem);
                         }
@@ -1408,7 +1411,7 @@
                     //console.log(jobDetail);
                     $http.post('api/client/updateClientJobDetail', {"jobDetail":jobDetail,"clientId":$scope.clientInfo.id}).
                         success(function(data, status, headers, config) {
-                            console.log("[Update] - JobDetail - SUCCESS");
+                            //console.log("[Update] - JobDetail - SUCCESS");
                             alert("[SUCCESS] Job Details saved.");
                             $scope.editMode=false;
                             if(confirm("Send Confirm Email to Client?")){
@@ -1450,12 +1453,12 @@
                         return;
                     }
                     $scope.editMode=false;
-                    console.log("submit");
-                    console.log($scope.clientDetail);
+                    //console.log("submit");
+                    //console.log($scope.clientDetail);
                     var clientInfo = angular.copy($scope.clientDetail);
                     $http.post('api/client/updateClientPaymentInfo', {"clientInfo":clientInfo}).
                         success(function(data, status, headers, config) {
-                            console.log("[Update] - Payment Info - SUCCESS");
+                            //console.log("[Update] - Payment Info - SUCCESS");
                             alert("[SUCCESS] Payment Info saved.");
                             $scope.editMode=false;
                             if(confirm("Send Confirm Email to Client?")){
@@ -1500,7 +1503,7 @@
                     //console.log(reminderInfo);
                     $http.post('api/client/updateClientReminderInfo', {"reminderInfo":reminderInfo,"clientId":$scope.clientInfo.id}).
                         success(function(data, status, headers, config) {
-                            console.log("[Update] - reminderInfo - SUCCESS");
+                            //console.log("[Update] - reminderInfo - SUCCESS");
                             alert("[SUCCESS] reminder Info saved.");
                             $scope.editMode=false;
                             if(confirm("Send Confirm Email to Client?")){
@@ -1549,7 +1552,7 @@
                 function loadHistory(clientId){
                     $http.get('/api/service/history/'+clientId+'?timestamp='+ new Date())
                         .then(function(result) {
-                            console.log(result.data);
+                            //console.log(result.data);
                             $scope.serviceHistory = result.data;
                         });
                 }
@@ -1592,7 +1595,7 @@
                 $scope.UserService = UserService;
                 $scope.postComment=function(){
 
-                    console.log($scope.newComment);
+                    //console.log($scope.newComment);
                     var newComment=angular.copy($scope.newComment);
                     $http.post('api/client/postClientComment', {"clientId":$scope.clientId,"content":newComment}).
                         success(function(data, status, headers, config) {
@@ -1609,7 +1612,7 @@
                     $http.post('api/client/deleteClientComment', {"comment":$scope.comments[index]}).
                         success(function(data, status, headers, config) {
                             //console.log(config);
-                            console.log(data);
+                            //console.log(data);
                             $scope.comments.splice(index,1);
                             alert("[SUCCESS]  This comment has been deleted.");
                             //$scope.comments.push(data);
@@ -1641,9 +1644,9 @@
                 $scope.hasSubmit = false;
                 $http.get('api/client/create_client_info')
                     .then(function(result) {
-                        console.log(result);
+                        //console.log(result);
                         $scope.clientDetail=result.data;
-                        console.log($scope.clientDetail);
+                        //console.log($scope.clientDetail);
                         MenuService.pushModulesStack(clientDetailModules);
                     });
                 $scope.Save=function(){
@@ -1695,9 +1698,9 @@
                 $scope.hasSubmit = false;
                 $http.get('api/client/create_client_info')
                     .then(function(result) {
-                        console.log(result);
+                        //console.log(result);
                         $scope.clientDetail=result.data;
-                        console.log($scope.clientDetail);
+                        //console.log($scope.clientDetail);
                     });
                 $scope.Save=function(){
                     //$scope.hasSubmit=true;
@@ -1770,20 +1773,20 @@
                 //$scope.dateStr = "2015-06-18";
 				$scope.curDate = new Date();
 				$scope.invoicePM=parseInt($filter('date')($scope.curDate, 'yyyyMM'));
-				console.log($scope.invoicePM);
+				//console.log($scope.invoicePM);
 				
 				$scope.dateOffset = 0;
 				
 				function updateDateOffset(){
 					$scope.invoiceListData = [];
 					$scope.invoiceHistoryListData = [];
-					console.log($scope.dateOffset);
+					//console.log($scope.dateOffset);
 					var date = new Date();
 					date.setYear(date.getFullYear());
 					date.setMonth(date.getMonth()+$scope.dateOffset);
 					$scope.curDate =date;
 					$scope.invoicePM=parseInt($filter('date')($scope.curDate, 'yyyyMM'));
-					console.log($scope.invoicePM);
+					//console.log($scope.invoicePM);
 					loadUnsendInvoiceByMonth();
 					loadInvoiceHistory();
 				}
@@ -1804,7 +1807,7 @@
 					$http.get('/api/invoice/getMonthInvoice/'+$filter('date')($scope.curDate, 'yyyy-MM-dd'))
                     .then(function(result) {
                         invoiceList = result.data;
-                        console.log(invoiceList);
+                        //console.log(invoiceList);
                         $scope.invoiceListData = invoiceList;
                     });
 				}
@@ -1812,19 +1815,33 @@
 					$http.get('/api/invoice/getInvoiceHistory/'+$scope.invoicePM)
                     .then(function(result) {
                         invoiceHistoryList = result.data;
-                        console.log(invoiceHistoryList);
+                        //console.log(invoiceHistoryList);
                         $scope.invoiceHistoryListData = invoiceHistoryList;
                     });
 				}
 				
 				updateDateOffset();
                 
+				$scope.predicateUp = 'clientName';
+                $scope.reverseUp = true;
+                $scope.orderUp = function(predicate) {
+                    $scope.reverse = ($scope.predicateUp === predicate) ? !$scope.reverseUp : false;
+                    $scope.predicateUp = predicate;
+                };
+				
+				$scope.predicateDown = 'clientName';
+                $scope.reverseDown = true;
+                $scope.orderDown = function(predicate) {
+                    $scope.reverseDown = ($scope.predicateDown === predicate) ? !$scope.reverseDown : false;
+                    $scope.predicateDown = predicate;
+                };
+				
 				$scope.selectedList=[];
                 $scope.toggleSelect=function($index){
                     $scope.invoiceListData[$index].selected = ($scope.invoiceListData[$index].selected? false:true);
                     var info =  $scope.invoiceListData[$index];
 
-                    console.log(info);
+                    //console.log(info);
                     var isSelected = false;
                     if($scope.selectedList.length>0){
                         if($scope.selectedList[0].clientId != info.clientId){
@@ -1834,8 +1851,8 @@
                         angular.forEach($scope.selectedList, function (value, key) {
                             if(value.id == info.id){
                                 $scope.selectedList.splice(key,1);
-                                console.log("Remove ; " + value.id);
-                                console.log($scope.selectedList);
+                                //console.log("Remove ; " + value.id);
+                                //console.log($scope.selectedList);
                                 isSelected = true;
                             }
                         });
@@ -1844,7 +1861,7 @@
                     if(isSelected == false){
                         $scope.selectedList.push(info);
                     }
-                    console.log($scope.selectedList);
+                    //console.log($scope.selectedList);
                 };
 				$scope.Reset = function () {
 					angular.forEach($scope.selectedList, function (value, key) {
@@ -1854,7 +1871,7 @@
 					
 				};
                 $scope.GenerateInvoice = function () {
-                    console.log("openConfirmEmailPreviewer");
+                    //console.log("openConfirmEmailPreviewer");
                     if($scope.selectedList.length<=0) {
                         alert("Please select a invoice at least.");
                         return;
@@ -1863,7 +1880,7 @@
                         animation: true,
                         templateUrl: 'directives/templates/invoicePreviewTmpl.html',
                         controller: function($scope,$modalInstance,items,invoiceYM,invoiceHistoryList){
-                            console.log(items);
+                            //console.log(items);
 							$scope.hasSent = false;
                             var clientId = items[0].clientId;
                             $scope.editMode=false;
@@ -1882,10 +1899,10 @@
                                 $scope.invoiceHistory.total += value.price;
                                 $scope.invoiceHistory.gst += (value.price*0.1) ;
                             });
-                            console.log( $scope.invoiceHistory);
+                            //console.log( $scope.invoiceHistory);
                             $http.get('api/client/getClientInfo/'+clientId)
                                 .then(function(result) {
-                                    console.log(result);
+                                    //console.log(result);
                                     var clientInfo = result.data;
                                     $scope.invoiceHistory.clientName = clientInfo.clientName;
                                     $scope.invoiceHistory.tel = clientInfo.tel;
@@ -1897,7 +1914,7 @@
                                     $scope.invoiceHistory.invoiceYM =invoiceYM;
                                 });
 
-                            console.log(items);
+                            //console.log(items);
                             $scope.Cancel = function(){
                                 $modalInstance.close();
                             };
@@ -1907,13 +1924,13 @@
 								if(!confirm("Send this invoice to client?")){
 									return;
 								}
-                                console.log($scope.invoiceHistory);
+                                //console.log($scope.invoiceHistory);
 								var invoiceHistory = angular.copy($scope.invoiceHistory);
                                 $http.post('api/invoice/sendInvoice', {"invoiceHistory":invoiceHistory}).
                                     success(function(data, status, headers, config) {
-                                        console.log(data);
-                                        console.log(config);
-                                        console.log(headers);
+                                        //console.log(data);
+                                        //console.log(config);
+                                        //console.log(headers);
                                         alert("[SUCCESS] Invoice sent.");
 										angular.forEach(items,function (value, key) {
 												value.status = 1;
@@ -1922,9 +1939,9 @@
 										invoiceHistoryList.push(invoiceHistory);
                                     }).
                                     error(function(data, status, headers, config) {
-                                        console.log(data);
-                                        console.log(config);
-                                        console.log(headers);
+                                        //console.log(data);
+                                        //console.log(config);
+                                        //console.log(headers);
                                         alert("[ERROR] Send Invoice Error.");
                                     });
                             };
@@ -1951,7 +1968,7 @@
                         templateUrl: 'directives/templates/invoicePreviewTmpl.html',
                         controller: function($scope,$modalInstance,invoiceHistory){
                             $scope.invoiceHistory = invoiceHistory;
-							console.log(invoiceHistory);
+							//console.log(invoiceHistory);
                             $scope.OK = function(){
                                 $modalInstance.close();
                             };

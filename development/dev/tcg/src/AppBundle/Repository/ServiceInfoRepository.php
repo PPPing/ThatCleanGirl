@@ -93,6 +93,27 @@ class ServiceInfoRepository extends DocumentRepository
     }
 
 
+	public function findService($startTimestamp,$endTimestamp){
+        $startTimestamp = substr($startTimestamp, 0, -3);
+        $endTimestamp = substr($endTimestamp, 0, -3);
+		
+		$startDate = new \DateTime();
+		$startDate = $startDate->setTimestamp((int)$startTimestamp);
+		$startDate = $startDate->modify("-1 day");
+		$endDate = new \DateTime();
+        $endDate = $endDate->setTimestamp((int)$endTimestamp);
+        $endDate = $endDate->modify("+1 day");
+        
+		$query=$this->createQueryBuilder();
+          $result = $query ->field('serviceDate')
+                ->addAnd($query->expr()->field('serviceDate')->gte($startDate))
+                ->addAnd($query->expr()->field('serviceDate')->lt($endDate))
+                ->sort(array("serviceDate"=>'ASC'))
+                ->getQuery()
+                ->execute();
+
+        return $result;
+	}
 
     public function findAllService(){
         $all = $this->findAll();

@@ -114,8 +114,9 @@ class APIInvoiceController extends Controller
         $message = Swift_Message::newInstance()
             ->setSubject($subject)
             ->setFrom('thatcleangirl@gmail.com')
-            ->setTo($invoice->getEmail());
-            //->setCc('zhongyp.design@gmail.com');
+            ->setTo($invoice->getEmail())
+            ->setCc('zhongyp.design@gmail.com')
+			->setCc('thatcleangirl@gmail.com');
         $message = $message ->attach(Swift_Attachment::fromPath($pdfPath,'application/pdf'));
         $headerImage = $message->embed(Swift_Image::fromPath($this->get('kernel')->getRootDir().'/../web/images/invoice_header.PNG')) ;
         $data=array('subject'=>$subject ,'invoice'=>$invoice,'headerImage'=>$headerImage);

@@ -114,7 +114,8 @@ class APIClientController extends Controller
                 ->setSubject('[Confirm] - That Clean Girls Service')
                 ->setFrom('thatcleangirl@gmail.com')
                 ->setTo($clientInfo->getEmail())
-                ->setCc('zhongyp.design@gmail.com');
+                ->setCc('zhongyp.design@gmail.com')
+				->setCc('thatcleangirl@gmail.com');
             $message = $message ->attach(Swift_Attachment::fromPath($pdfPath,'application/pdf'));
             $headerImage = $message->embed(Swift_Image::fromPath($this->get('kernel')->getRootDir().'/../web/images/invoice_header.PNG')) ;
             //$headerImage= $message->attach(Swift_Attachment::fromPath('C:\xampp\htdocs\github\ThatCleanGirl\development\dev\tcg\web\images\invoice_header.PNG')->setDisposition('inline'));

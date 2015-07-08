@@ -378,6 +378,7 @@ table {
 	padding:4px 6px;
 	font-weight: normal;
 	border-right: 1px solid #FAFAFA;
+	cursor:pointer;
 }
 .client-list-table>thead>tr>th:last-child{
 	border-right: none;
@@ -422,9 +423,11 @@ table {
 	font-weight: normal;
 	border-right: 1px solid #DFDFDF;
 	border-bottom: 1px solid #DFDFDF;
+	cursor:pointer;
 }
 .service-list-table>thead>tr>th:last-child{
 	border-right: none;
+	cursor:pointer;
 }
 .service-list-table>tbody{
 	background-color:#FAFAFA;
